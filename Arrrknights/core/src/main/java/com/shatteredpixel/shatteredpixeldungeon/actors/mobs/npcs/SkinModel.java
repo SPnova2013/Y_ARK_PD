@@ -19,6 +19,7 @@ import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.SchwarzSkinSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.SkadiSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.SpecterSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.SussurroSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.TlipocaSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.TomimiSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.WeedySkinSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.talrufightSprite;
@@ -72,6 +73,8 @@ public class SkinModel extends NPC {
                 break;
            case 17: spriteClass= HinaSprite.class;
                break;
+           case 18: spriteClass= TlipocaSprite.class;
+               break;
 
        }
     }
@@ -104,7 +107,7 @@ public class SkinModel extends NPC {
     public void SkinChange()
     {
         Dungeon.skin_ch++;
-        if (Dungeon.skin_ch > 17) Dungeon.skin_ch = 0;
+        if (Dungeon.skin_ch > 18) Dungeon.skin_ch = 0;
 
         int ppos = this.pos;
         this.destroy();

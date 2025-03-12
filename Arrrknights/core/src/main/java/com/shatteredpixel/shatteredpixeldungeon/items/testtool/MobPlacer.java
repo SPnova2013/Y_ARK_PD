@@ -15,9 +15,12 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.ArmoredBrute;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.ArmoredStatue;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Bandit;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Bat;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.BlackwaterSlug;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Bombtail;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Brute;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Cannot;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.CausticSlime;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.CocktailThrower;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Crownslayer_shadow;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.EmpireDrone;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Ergate;
@@ -26,6 +29,9 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Fanatic;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.FireCore;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.FloatingSeaDrifter;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.GiantMushroom;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Gloompincer;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.GuerrillaHerald;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.GuerrillaSiegebreaker;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.HeavyBoat;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Hound;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.DM100;
@@ -41,6 +47,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.GnollTrickster;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Golem;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Infantry;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.LavaSlug;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.LightArmoredSoldier;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.MetalCrab;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.MudrockZealot;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.MutantSpider;
@@ -53,10 +60,15 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Monk;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Necromancer;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Piranha;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.RioterLeader;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Rockbreaker;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Rodent;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.RoughlyRaisedSlug;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.SandPillar;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.SarkazGuerrillaFighter;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.SeaReaper;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.SeaRunner;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.ShieldedGuard;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Slug;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.RipperDemon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.RotHeart;
@@ -86,6 +98,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.TiacauhShaman;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.TiacauhShredder;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.TiacauhSniper;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.TiacauhWarrior;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.UrsusCrossbowman;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Warlock;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.WaveCaster;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Wraith;
@@ -101,6 +114,7 @@ import com.shatteredpixel.shatteredpixeldungeon.custom.dict.DictSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.custom.messages.M;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfTeleportation;
 import com.shatteredpixel.shatteredpixeldungeon.items.testtool.Generators;
+import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.CellSelector;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
@@ -179,6 +193,7 @@ public class MobPlacer extends Generators {
                                 }
                                 ScrollOfTeleportation.appear(m, cell);
                                 Dungeon.level.occupyCell(m);
+                                if(m instanceof GuerrillaHerald) Dungeon.level.heraldAlive = true;
                             } catch (Exception e) {
                                 TomorrowRogueNight.reportException(e);
                             }
@@ -206,9 +221,9 @@ public class MobPlacer extends Generators {
 
     protected int maxMobIndex(int tier){
         switch (tier){
-            case 1: return DataPack.GREAT_CRAB.ordinal();
-            case 2: return DataPack.NEW_FIRE_ELE.ordinal() - DataPack.GREAT_CRAB.ordinal() - 1;
-            case 3: return DataPack.DM201.ordinal() - DataPack.NEW_FIRE_ELE.ordinal() - 1;
+            case 1: return DataPack.SHIELDED_GUARD.ordinal();
+            case 2: return DataPack.GUERRILLA_HERALD.ordinal() - DataPack.SHIELDED_GUARD.ordinal() - 1;
+            case 3: return DataPack.DM201.ordinal() - DataPack.GUERRILLA_HERALD.ordinal() - 1;
             case 4: return DataPack.ELE_CHAOS.ordinal() - DataPack.DM201.ordinal() - 1;
             case 5: return DataPack.ACIDIC.ordinal() - DataPack.ELE_CHAOS.ordinal() - 1;
             case 6: return DataPack.PIRANHA.ordinal() - DataPack.ACIDIC.ordinal() - 1;
@@ -222,9 +237,9 @@ public class MobPlacer extends Generators {
             case 1: default:
                 return 0;
             case 2:
-                return DataPack.GREAT_CRAB.ordinal()+1;
+                return DataPack.SHIELDED_GUARD.ordinal()+1;
             case 3:
-                return DataPack.NEW_FIRE_ELE.ordinal()+1;
+                return DataPack.GUERRILLA_HERALD.ordinal()+1;
             case 4:
                 return DataPack.DM201.ordinal()+1;
             case 5:
@@ -452,6 +467,14 @@ public class MobPlacer extends Generators {
         F_RAT(FetidSlug.class, DictSpriteSheet.F_RAT),
         GNOLL_DARTER(GnollTrickster.class, DictSpriteSheet.GNOLL_DARTER),
         GREAT_CRAB(ReunionDefender.class, DictSpriteSheet.GREAT_CRAB),
+        BLACKWATER_SLUG(BlackwaterSlug.class,ItemSpriteSheet.UNDONE_MARK),
+        ROUGHLY_RAISED_SLUG(RoughlyRaisedSlug.class,ItemSpriteSheet.UNDONE_MARK),
+        RIOTER_LEADER(RioterLeader.class,ItemSpriteSheet.UNDONE_MARK),
+        COCKTAIL_THROWER(CocktailThrower.class,ItemSpriteSheet.UNDONE_MARK),
+        GLOOMPINCER(Gloompincer.class,ItemSpriteSheet.UNDONE_MARK),
+        RODENT(Rodent.class,ItemSpriteSheet.UNDONE_MARK),
+        LIGHT_ARMORED_SOLDIER(LightArmoredSoldier.class,ItemSpriteSheet.UNDONE_MARK),
+        SHIELDED_GUARD(ShieldedGuard.class,ItemSpriteSheet.UNDONE_MARK),
 
         SKELETON(Skeleton.class, DictSpriteSheet.SKELETON),
         AIR(AirborneSoldier.class,-1),//now the id is meaningless
@@ -464,6 +487,12 @@ public class MobPlacer extends Generators {
         ROT_LASHER(RotLasher.class, DictSpriteSheet.ROT_LASHER),
         ROT_HEART(RotHeart.class, DictSpriteSheet.ROT_HEART),
         NEW_FIRE_ELE(Elemental.NewbornFireElemental.class, DictSpriteSheet.NEW_FIRE_ELE),
+        BOMBTAIL(Bombtail.class,ItemSpriteSheet.UNDONE_MARK),
+        URSUS_CROSSBOWMAN(UrsusCrossbowman.class,ItemSpriteSheet.UNDONE_MARK),
+        GUERRILLA_SIEGEBREAKER(GuerrillaSiegebreaker.class,ItemSpriteSheet.UNDONE_MARK),
+        SARKAZ_GUERRILLA_FIGHTER(SarkazGuerrillaFighter.class,ItemSpriteSheet.UNDONE_MARK),
+        GUERRILLA_HERALD(GuerrillaHerald.class,ItemSpriteSheet.UNDONE_MARK),
+
 
         BAT(Bat.class, DictSpriteSheet.BAT),
         BRUTE(Brute.class, DictSpriteSheet.BRUTE),

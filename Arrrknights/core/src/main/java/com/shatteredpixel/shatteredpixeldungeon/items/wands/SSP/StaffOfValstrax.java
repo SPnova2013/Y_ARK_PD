@@ -18,7 +18,6 @@ import com.shatteredpixel.shatteredpixeldungeon.effects.particles.BlastParticle;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.SmokeParticle;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.TalismanOfForesight;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.DamageWand;
-import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfBlastWave;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.enchantments.Blazing;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MagesStaff;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
@@ -31,11 +30,9 @@ import com.shatteredpixel.shatteredpixeldungeon.utils.BArray;
 import com.watabou.noosa.Camera;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.Group;
-import com.watabou.noosa.Halo;
 import com.watabou.noosa.Image;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.PathFinder;
-import com.watabou.utils.PointF;
 import com.watabou.utils.Random;
 
 import java.util.ArrayList;
@@ -86,30 +83,30 @@ public class StaffOfValstrax extends DamageWand {
     }
 
     public static class ValstraxIncoming extends Buff{
-        private int targetpos;
+        private int targetPos;
         private int explodeDepth;
-        private int left;
-        private int phase;
-        private int originphase;
+        private int remainingPhases;
+        private int currentPhase;
+        private int totalPhases;
         private int wandLevel;
         public void setup( int pos, int explodeDepth, int phase, int lvl){
-            this.targetpos = pos;
+            this.targetPos = pos;
             this.explodeDepth = explodeDepth;
-            left = phase+1;
-            this.phase = phase;
-            originphase = phase;
+            remainingPhases = phase+1;
+            this.currentPhase = phase;
+            totalPhases = phase;
             wandLevel = lvl;
         }
 
         @Override
         public boolean act() {
             if (explodeDepth == Dungeon.depth){
-                left--;
-                if (left <= 0){
+                remainingPhases--;
+                if (remainingPhases <= 0){
                     StaffOfValstrax sov = new StaffOfValstrax();
                     ArrayList<Char> affected = new ArrayList<>();
                     do{
-                        PathFinder.buildDistanceMap( targetpos, BArray.not( Dungeon.level.solid, null ), phase );
+                        PathFinder.buildDistanceMap(targetPos, BArray.not( Dungeon.level.solid, null ), currentPhase);
                         for (int i = 0; i < PathFinder.distance.length; i++) {
                             if (PathFinder.distance[i] < Integer.MAX_VALUE) {
                                 Char ch = Actor.findChar(i);
@@ -118,7 +115,7 @@ public class StaffOfValstrax extends DamageWand {
                                 }
                             }
                         }
-                        PathFinder.buildDistanceMap( targetpos, BArray.not( Dungeon.level.solid, null ), phase-1 );
+                        PathFinder.buildDistanceMap(targetPos, BArray.not( Dungeon.level.solid, null ), currentPhase -1 );
                         for (int i = 0; i < PathFinder.distance.length; i++) {
                             if (PathFinder.distance[i] < Integer.MAX_VALUE) {
                                 Char ch = Actor.findChar(i);
@@ -129,19 +126,19 @@ public class StaffOfValstrax extends DamageWand {
                         }
                         for (Char ch : affected){
                             int damage = Random.NormalIntRange( 5 + wandLevel, 15 + 3*wandLevel );
-                            ch.damage(Math.round(damage*(originphase-phase+1)), sov);
+                            ch.damage(Math.round(damage*(totalPhases - currentPhase +1)), sov);
                             if (ch == Dungeon.hero && !ch.isAlive()){
                                 Dungeon.fail(StaffOfValstrax.class);
                             }
                         }
                         affected.clear();
-                        phase--;
-                    }while(phase>0);
-                    if (Actor.findChar( targetpos ) != null){
+                        currentPhase--;
+                    }while(currentPhase >0);
+                    if (Actor.findChar(targetPos) != null){
                         int damage = Random.NormalIntRange( 5 + wandLevel, 15 + 3*wandLevel );
-                        Actor.findChar( targetpos ).damage(Math.round(damage*(originphase+1)), sov);
+                        Actor.findChar(targetPos).damage(Math.round(damage*(totalPhases +1)), sov);
                     }//每次循环都排除内圈，所以单独处理最中心的伤害
-                    PathFinder.buildDistanceMap( targetpos, BArray.not( Dungeon.level.solid, null ), originphase );
+                    PathFinder.buildDistanceMap(targetPos, BArray.not( Dungeon.level.solid, null ), totalPhases);
                     for (int i = 0; i < PathFinder.distance.length; i++) {
                         if (PathFinder.distance[i] < Integer.MAX_VALUE) {
                             Char ch = Actor.findChar(i);
@@ -157,12 +154,12 @@ public class StaffOfValstrax extends DamageWand {
                         }
                         if (ch != Dungeon.hero &&
                                 Dungeon.hero.subClassSet.contains(HeroSubClass.WARLOCK) &&
-                                Random.Float() > (Math.pow(0.95f - Dungeon.hero.pointsInTalent(Talent.EMOTION) / 15f, (wandLevel*originphase)+1) - 0.07f)){//change from budding
+                                Random.Float() > (Math.pow(0.95f - Dungeon.hero.pointsInTalent(Talent.EMOTION) / 15f, (wandLevel* totalPhases)+1) - 0.07f)){//change from budding
                             SoulMark.prolong(ch, SoulMark.class, SoulMark.DURATION + wandLevel + (Dungeon.hero.pointsInTalent(Talent.LORD) * 2));
                         }
                         if (ch.isAlive()) {
                             Buff.affect(ch, Burning.class).reignite(ch);
-                            switch (phase) {
+                            switch (currentPhase) {
                                 case 1:
                                     break; //no effects
                                 case 2:
@@ -180,59 +177,59 @@ public class StaffOfValstrax extends DamageWand {
                         }
                     }
                     //特效部分
-                    phase = originphase;
+                    currentPhase = totalPhases;
                     do{
-                        PathFinder.buildDistanceMap( targetpos, BArray.not( Dungeon.level.solid, null ), phase );
+                        PathFinder.buildDistanceMap(targetPos, BArray.not( Dungeon.level.solid, null ), currentPhase);
                         for (int i = 0; i < PathFinder.distance.length; i++) {
                             if (PathFinder.distance[i] < Integer.MAX_VALUE) {
-                                CellEmitter.get(i).burst(BlastParticle.FACTORY, (int)(Math.pow((originphase-phase+1),2)));
+                                CellEmitter.get(i).burst(BlastParticle.FACTORY, (int)(Math.pow((totalPhases - currentPhase +1),2)));
                             }
                         }
-                        phase--;
+                        currentPhase--;
                     }
-                    while (phase>0);
-                    switch(originphase){
+                    while (currentPhase >0);
+                    switch(totalPhases){
                         case 0:
                             break;
                         case 1: default:
-                            CellEmitter.get(targetpos).burst(BlastParticle.FACTORY, 10);
+                            CellEmitter.get(targetPos).burst(BlastParticle.FACTORY, 10);
                             Sample.INSTANCE.play(Assets.Sounds.BLAST);
                             break;
                         case 2:
                             Camera.main.shake(1, 0.7f);
                             GameScene.flash(0x20FF0000);
-                            CellEmitter.get(targetpos).burst(BlastParticle.FACTORY, 12);
+                            CellEmitter.get(targetPos).burst(BlastParticle.FACTORY, 12);
                             Sample.INSTANCE.play(Assets.Sounds.BLAST);
                             Sample.INSTANCE.play(Assets.Sounds.ROCKS);
                             break;
                         case 3:
-                            Wave.blast(targetpos);
+                            Wave.blast(targetPos);
                             Camera.main.shake(2, 0.9f);
                             GameScene.flash(0x60FF0000);
-                            PathFinder.buildDistanceMap( targetpos, BArray.not( Dungeon.level.solid, null ), 1 );
+                            PathFinder.buildDistanceMap(targetPos, BArray.not( Dungeon.level.solid, null ), 1 );
                             for (int i = 0; i < PathFinder.distance.length; i++) {
                                 if (PathFinder.distance[i] < Integer.MAX_VALUE) {
                                     CellEmitter.get(i).burst(SmokeParticle.FACTORY, 5);
                                 }
                             }
-                            CellEmitter.get(targetpos).burst(SmokeParticle.FACTORY, 5);
-                            CellEmitter.get(targetpos).burst(BlastParticle.FACTORY, 15);
+                            CellEmitter.get(targetPos).burst(SmokeParticle.FACTORY, 5);
+                            CellEmitter.get(targetPos).burst(BlastParticle.FACTORY, 15);
                             Sample.INSTANCE.play(Assets.Sounds.BLAST);
                             Sample.INSTANCE.play(Assets.Sounds.ROCKS);
                             Sample.INSTANCE.play(Assets.Sounds.HIT_STRIKE);
                             break;
                         case 4:
-                            Wave.blast(targetpos);
+                            Wave.blast(targetPos);
                             Camera.main.shake(3, 1.2f);
                             GameScene.flash(0xA0FF0000);
-                            PathFinder.buildDistanceMap( targetpos, BArray.not( Dungeon.level.solid, null ), 2 );
+                            PathFinder.buildDistanceMap(targetPos, BArray.not( Dungeon.level.solid, null ), 2 );
                             for (int i = 0; i < PathFinder.distance.length; i++) {
                                 if (PathFinder.distance[i] < Integer.MAX_VALUE) {
                                     CellEmitter.get(i).burst(SmokeParticle.FACTORY, 5);
                                 }
                             }
-                            CellEmitter.get(targetpos).burst(SmokeParticle.FACTORY, 10);
-                            CellEmitter.get(targetpos).burst(BlastParticle.FACTORY, 15);
+                            CellEmitter.get(targetPos).burst(SmokeParticle.FACTORY, 10);
+                            CellEmitter.get(targetPos).burst(BlastParticle.FACTORY, 15);
                             Sample.INSTANCE.play(Assets.Sounds.BLAST);
                             Sample.INSTANCE.play(Assets.Sounds.ROCKS);
                             Sample.INSTANCE.play(Assets.Sounds.HIT_STRIKE);
@@ -242,7 +239,7 @@ public class StaffOfValstrax extends DamageWand {
                     detach();
                     return false;
                 }else {
-                    PathFinder.buildDistanceMap(targetpos, BArray.not(Dungeon.level.solid, null), (phase-left)+1);
+                    PathFinder.buildDistanceMap(targetPos, BArray.not(Dungeon.level.solid, null), (currentPhase - remainingPhases)+1);
                     for (int i = 0; i < PathFinder.distance.length; i++) {
                         if (PathFinder.distance[i] < Integer.MAX_VALUE) {
                             curUser.sprite.parent.addToBack(new TargetedCell(i, 0xFF0000));

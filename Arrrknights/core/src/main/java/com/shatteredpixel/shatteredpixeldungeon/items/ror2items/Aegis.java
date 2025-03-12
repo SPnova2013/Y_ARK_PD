@@ -13,9 +13,8 @@ public class Aegis extends ROR2item{
     }
 
     public static void addShield(float HealAmount){
-            Buff.affect(Dungeon.hero, Barrier.class).incShield(
-                    Math.max(0,Math.round((HealAmount-(Dungeon.hero.HT-Dungeon.hero.HP))))
-            );
+        int targetShield = Math.max(0,Math.round((HealAmount-(Dungeon.hero.HT-Dungeon.hero.HP))));
+        if(targetShield>0) Buff.affect(Dungeon.hero, Barrier.class).incShield(targetShield);
     }
 
     @Override

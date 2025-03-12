@@ -150,7 +150,11 @@ public class Brute extends Mob {
 		public String desc () {
 			return Messages.get(this, "desc", shielding());
 		}
-
+		@Override
+		public void detach() {
+			super.detach();
+			if(target.HP<=0)target.die(null);
+		}
 		{
 			immunities.add(Terror.class);
 		}

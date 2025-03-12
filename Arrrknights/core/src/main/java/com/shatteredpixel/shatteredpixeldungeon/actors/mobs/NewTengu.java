@@ -231,7 +231,7 @@ public class NewTengu extends Mob {
     @Override
     public void die(Object cause) {
 
-        if (Dungeon.hero.subClass == null || Statistics.victoryLapRounds>0) {
+        if (Dungeon.hero.subClass.isEmpty() || Statistics.victoryLapRounds>0) {
             Dungeon.level.drop(new TomeOfMastery(), pos).sprite.drop();
             if (Dungeon.isChallenged(Challenges.DECISIVE_BATTLE)) {
                 Dungeon.level.drop(new Token2(), pos).sprite.drop(pos);

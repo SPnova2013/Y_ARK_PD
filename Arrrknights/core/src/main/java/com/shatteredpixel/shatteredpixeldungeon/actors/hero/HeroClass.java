@@ -64,6 +64,7 @@ package com.shatteredpixel.shatteredpixeldungeon.actors.hero;
  import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfParalyticGas;
  import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfStrength;
  import com.shatteredpixel.shatteredpixeldungeon.items.potions.exotic.PotionOfCleansing;
+ import com.shatteredpixel.shatteredpixeldungeon.items.rings.SP.BadgeOfCharger;
  import com.shatteredpixel.shatteredpixeldungeon.items.ror2items.FrostRelic;
  import com.shatteredpixel.shatteredpixeldungeon.items.ror2items.SymbioticScorpion;
  import com.shatteredpixel.shatteredpixeldungeon.items.ror2items.UnstableTeslaCoil;
@@ -244,7 +245,7 @@ package com.shatteredpixel.shatteredpixeldungeon.actors.hero;
 			new ChimeraGiver().collect();
 
 			new FlameKatana().chimera(Reflection.newInstance(Flame.class)).chimera(Reflection.newInstance(Sylvestris.class)).chimera(Reflection.newInstance(Blossoming.class)).identify().collect();
-			new SymbioticScorpion().collect();
+			new BadgeOfCharger().collect();
 		}
 	}
 
@@ -563,6 +564,7 @@ package com.shatteredpixel.shatteredpixeldungeon.actors.hero;
 				case 17: return Assets.Sprites.LILITH;
 				case 18: return Assets.Sprites.KAYOKO;
 				case 19: return Assets.Sprites.HINA;
+				case 20: return Assets.Sprites.TLIPOCA;
 			}
 		}
 		switch (this) {

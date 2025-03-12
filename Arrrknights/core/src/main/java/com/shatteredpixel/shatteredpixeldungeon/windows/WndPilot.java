@@ -4,6 +4,7 @@ import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroAction;
 import com.shatteredpixel.shatteredpixeldungeon.items.quest.Obsidian;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
+import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.InterlevelScene;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
@@ -52,7 +53,13 @@ public class WndPilot extends Window {
         RedButton btnReward = new RedButton( Messages.get(this, "move") ) {
             @Override
             protected void onClick() {
+                if(Dungeon.DLC == Dungeon.ROR){ GameScene.show(new WndMessage("不许去!"));}
+                else move();
+            }
+            @Override
+            protected boolean onLongClick() {
                 move();
+                return true;
             }
         };
         btnReward.setRect( 0, message.top() + message.height() + GAP, WIDTH, BTN_HEIGHT );

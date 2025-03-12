@@ -23,7 +23,7 @@ public class Enfild2 extends MeleeWeapon {
         //also cannot surprise attack, see Hero.canSurpriseAttack
     }
 
-
+//FIXME 得心应手在两把狙上没有做到随着天赋点的增加变成2-2
     @Override
     public int min(int lvl) {
        return 8+lvl+ Maccessories;

@@ -53,6 +53,7 @@ public class Enfild extends MeleeWeapon {
         DLY = 1.5f; //0.67x speed
         RCH = 50;    //extra reach
     }
+    //FIXME 得心应手在两把狙上没有做到随着天赋点的增加变成2-2
     @Override
     public int min(int lvl) { return  9 + buffedLvl() * 2 + Maccessories; }
 

@@ -894,11 +894,11 @@ public abstract class Mob extends Char {
 				Buff.prolong(Dungeon.hero, Recharging.class, boc.level()/3f);
 				Buff.affect(Dungeon.hero, ArtifactRecharge.class).prolong(boc.level()/3f);
 				SkillBook Item = Dungeon.hero.belongings.getItem(SkillBook.class);
-				Item.SetCharge(1);
+				if(Item!=null)Item.SetCharge(1);
 				Dungeon.level.curMoves -= boc.level();
 			}
 
-			if(Dungeon.hero.subClassSet.contains(HeroSubClass.KEYANIMATOR)){
+			if(Dungeon.hero.subClass.contains(HeroSubClass.KEYANIMATOR)){
 				MagicPaper mp = new MagicPaper();
 				Dungeon.level.drop(mp, this.pos).sprite.drop();
 				if(Dungeon.hero.isStarving() && Dungeon.hero.pointsInTalent(Talent.PIE_IN_THE_PAPER)>=2){
@@ -919,7 +919,7 @@ public abstract class Mob extends Char {
 		if (Dungeon.hero.buff(Talent.SWEEPTraker.class) != null) {
 			if (Dungeon.hero.belongings.getItem(SkillBook.class) != null) {
 				SkillBook Item = Dungeon.hero.belongings.getItem(SkillBook.class);
-				Item.SetCharge(Dungeon.hero.pointsInTalent(Talent.SWEEP) * 2);
+				if(Item!=null)Item.SetCharge(Dungeon.hero.pointsInTalent(Talent.SWEEP) * 2);
 				if (Dungeon.hero.pointsInTalent(Talent.SWEEP) > 1)  Buff.affect(Dungeon.hero, MagicalSight.class, 3f);
 			}}
 

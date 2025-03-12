@@ -42,6 +42,7 @@ import com.shatteredpixel.shatteredpixeldungeon.windows.WndChooseSubclass;
 import com.watabou.noosa.audio.Sample;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 public class TomeOfMastery extends Item {
 	
@@ -101,6 +102,7 @@ public class TomeOfMastery extends Item {
 		curUser.busy();
 		
 		curUser.subClass.add(way);
+		curUser.subClassSet = new HashSet<>(Dungeon.hero.subClass);
 		Talent.initSubclassTalents(curUser);
 		
 		curUser.sprite.operate( curUser.pos );

@@ -463,7 +463,8 @@ public class Bestiary {
 						case 1: cl = SarkazGuerrillaFighter.class; break;
 					}
 				}else if (cl == Necromancer.class) {
-					switch(Random.Int(2)){
+					//switch(Random.Int(2)){
+					switch(1){
 						default:
 						case 0: cl = Necromancer.class; break;
 						case 1: cl = GuerrillaHerald.class; break;

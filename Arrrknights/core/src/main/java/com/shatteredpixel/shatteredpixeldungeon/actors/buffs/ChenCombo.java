@@ -350,7 +350,7 @@ public class ChenCombo extends Buff implements ActionIndicator.Action {
                 break;
         }
 
-        if (Dungeon.hero.subClass.contains(HeroSubClass.SWORDMASTER) && hits == 0) {
+        if (Dungeon.hero.subClassSet.contains(HeroSubClass.SWORDMASTER) && hits == 0) {
             if (Random.Int(4) == 0) Buff.affect(target, Adrenaline.class, 1f);
             else if (Random.Int(2) == 0) Buff.affect(target, Bless.class, 3f);
             else Buff.affect(target, Barrier.class).incShield(1 + hero.lvl / 5);

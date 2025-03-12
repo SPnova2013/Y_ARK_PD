@@ -33,6 +33,7 @@ import com.shatteredpixel.shatteredpixeldungeon.effects.Flare;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
 import com.shatteredpixel.shatteredpixeldungeon.items.Amulet;
 import com.shatteredpixel.shatteredpixeldungeon.items.Generator;
+import com.shatteredpixel.shatteredpixeldungeon.items.spells.BeaconOfReturning;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Notes;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RedButton;
@@ -160,6 +161,8 @@ public class AmuletScene extends PixelScene {
 		Imp.Quest.reset();
 		Generator.fullReset();
 		Dungeon.LimitedDrops.victoryLapReset();//重置升级、力量、敌人掉落的治疗、装备等
+		BeaconOfReturning bor = Dungeon.hero.belongings.getItem(BeaconOfReturning.class);
+		if(bor != null && bor.returnDepth!=-1) bor.returnDepth = -1;//重置返回晶柱
 
 		InterlevelScene.mode = InterlevelScene.Mode.DESCEND;
 		Game.switchScene( InterlevelScene.class );

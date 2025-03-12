@@ -23,7 +23,7 @@ public class PotionOfDivineInspiration extends ExoticPotion{
     {
         icon = ItemSpriteSheet.Icons.POTION_HOLYFUROR;
     }
-
+//FIXME 有反馈称在某层天赋未满之前就喝下神意启发并选择该层，会导致该层天赋点的最后两点消失
     @Override
     //need to override drink so that time isn't spent right away
     protected void drink(final Hero hero) {

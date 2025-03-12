@@ -50,7 +50,7 @@ public class Statue extends Mob {
 	}
 	
 	protected Weapon weapon;
-	
+	public Weapon getWeapon(){return weapon;}
 	public Statue() {
 		super();
 		
