@@ -967,6 +967,10 @@ public class ItemSpriteSheet {
 	public static final int AEGIS			= ROR2ITEMS_RED +1;
 	public static final int BEHEMOTH        = ROR2ITEMS_RED +2;
 	public static final int RAINCOAT        = ROR2ITEMS_RED +3;
+	public static final int FROST_RELIC        = ROR2ITEMS_RED +4;
+	public static final int SYMBIOTIC_SCORPION        = ROR2ITEMS_RED +5;
+	public static final int TESLA        = ROR2ITEMS_RED +6;
+	public static final int WAKE_OF_VULTURES        = ROR2ITEMS_RED +7;
 
 	static{
 		assignItemRect(LUCKYLEAF,        16, 16);

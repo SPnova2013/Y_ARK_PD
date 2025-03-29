@@ -131,6 +131,7 @@ public class Hunger extends Buff implements Hero.Doom {
 
 		if (energy < 0 && target.buff(WellFed.class) != null){
 			target.buff(WellFed.class).left += energy;
+			if(target.buff(WellFed.class).left <= 0) target.buff(WellFed.class).detach();
 			BuffIndicator.refreshHero();
 			return;
 		}

@@ -16,7 +16,7 @@ import java.util.List;
 public class UnstableTeslaCoil extends ROR2item{
     {
         tier = 3;
-        image = ItemSpriteSheet.UNDONE_MARK;
+        image = ItemSpriteSheet.TESLA;
     }
     @Override
     protected ROR2itemBuff passiveBuff() {

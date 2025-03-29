@@ -35,9 +35,12 @@ import com.shatteredpixel.shatteredpixeldungeon.items.Amulet;
 import com.shatteredpixel.shatteredpixeldungeon.items.Generator;
 import com.shatteredpixel.shatteredpixeldungeon.items.spells.BeaconOfReturning;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Notes;
+import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.secret.SecretRoom;
+import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.special.SpecialRoom;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RedButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
+import com.shatteredpixel.shatteredpixeldungeon.utils.DungeonSeed;
 import com.watabou.noosa.Camera;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.Image;
@@ -156,13 +159,22 @@ public class AmuletScene extends PixelScene {
 		Dungeon.mboss4 = Dungeon.mboss9 = Dungeon.mboss14 = Dungeon.mboss19 = 1;
 		Notes.reset();
 		Ghost.Quest.reset();
+		Dungeon.guardquest = -1;
 		Wandmaker.Quest.reset();
+		Dungeon.acequest = -1;
 		Blacksmith.Quest.reset();
 		Imp.Quest.reset();
 		Generator.fullReset();
 		Dungeon.LimitedDrops.victoryLapReset();//重置升级、力量、敌人掉落的治疗、装备等
 		BeaconOfReturning bor = Dungeon.hero.belongings.getItem(BeaconOfReturning.class);
 		if(bor != null && bor.returnDepth!=-1) bor.returnDepth = -1;//重置返回晶柱
+		//移除已有的博士
+		if(Dungeon.hero.belongings.getItem(Amulet.class)!=null)Dungeon.hero.belongings.getItem(Amulet.class).detach(Dungeon.hero.belongings.backpack);
+		Dungeon.seed = DungeonSeed.randomSeed();
+		Random.pushGenerator( Dungeon.seed );//非常丑陋的实现方式
+		SpecialRoom.initForRun();
+		SecretRoom.initForRun();
+		Random.resetGenerators();
 
 		InterlevelScene.mode = InterlevelScene.Mode.DESCEND;
 		Game.switchScene( InterlevelScene.class );

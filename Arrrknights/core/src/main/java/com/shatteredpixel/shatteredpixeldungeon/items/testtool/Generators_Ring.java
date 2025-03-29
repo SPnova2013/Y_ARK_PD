@@ -310,7 +310,7 @@ public class Generators_Ring extends Generators {
 
     private void buildWandList() {
         if (!wandList.isEmpty()) return;
-        for (int i = 0; i < 16; ++i) {
+        for (int i = 0; i < 17; ++i) {
             wandList.add(idToWand(i));
         }
     }

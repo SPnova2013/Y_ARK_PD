@@ -53,12 +53,14 @@ public class Enfild extends MeleeWeapon {
         DLY = 1.5f; //0.67x speed
         RCH = 50;    //extra reach
     }
-    //FIXME 得心应手在两把狙上没有做到随着天赋点的增加变成2-2
-    @Override
-    public int min(int lvl) { return  9 + buffedLvl() * 2 + Maccessories; }
 
     @Override
-    public int max(int lvl) {return  9 + buffedLvl() * 2 + 2* Maccessories; }
+    public int min(int lvl) { return  9 + buffedLvl() * 2 + Maccessories +
+            ((Dungeon.hero.hasTalent(Talent.PROFICIENCY)&& Maccessories > 2) ? Maccessories : 0); }
+
+    @Override
+    public int max(int lvl) {return  9 + buffedLvl() * 2 + 2* Maccessories +
+            ((Dungeon.hero.hasTalent(Talent.PROFICIENCY)&& Maccessories > 1) ? Maccessories : 0); }
     @Override
     public int STRReq(int lvl){
         int strreq=STRReq(tier, lvl);//change from budding

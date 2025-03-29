@@ -11,7 +11,7 @@ import com.watabou.utils.Reflection;
 public class WakeOfVultures extends ROR2item{
     {
         tier = 3;
-        image = ItemSpriteSheet.UNDONE_MARK;
+        image = ItemSpriteSheet.WAKE_OF_VULTURES;
     }
 
     public void VulturesUponKill(Char attacker, Char defender) {

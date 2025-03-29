@@ -27,7 +27,7 @@ import java.util.ArrayList;
 public class FrostRelic extends ROR2item{
     {
         tier = 3;
-        image = ItemSpriteSheet.UNDONE_MARK;
+        image = ItemSpriteSheet.FROST_RELIC;
     }
     public ArrayList<Emitter> frostRelicEmitters = new ArrayList<>();
     public int frostRelicRange = 0;

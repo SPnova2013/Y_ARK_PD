@@ -60,6 +60,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.armor.glyphs.Swiftness;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.glyphs.Thorns;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.glyphs.Viscosity;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.DriedRose;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MeleeWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.HeroSprite;
@@ -482,8 +483,13 @@ public class Armor extends EquipableItem {
 			}
 		} else {
 			info += "\n\n" + Messages.get(Armor.class, "avg_absorb", DRMin(0), DRMax(0), STRReq(0));
-
-			if (STRReq(0) > Dungeon.hero.STR()) {
+			if(isEquipped(Dungeon.hero)){
+				if ((STRReq() - Dungeon.hero.STR()) <-1) info += " " + Messages.get(Armor.class, "feels_very_light");
+				if ((STRReq() - Dungeon.hero.STR())==-1) info += " " + Messages.get(Armor.class, "feels_bit_light");
+				if ((STRReq() - Dungeon.hero.STR())== 0) info += " " + Messages.get(Armor.class, "feels_just_right");
+				if ((STRReq() - Dungeon.hero.STR())== 1) info += " " + Messages.get(Armor.class, "feels_little_heavy");
+				if ((STRReq() - Dungeon.hero.STR()) > 1) info += " " + Messages.get(Armor.class, "feels_very_heavy");
+			}else if (STRReq(0) > Dungeon.hero.STR()) {
 				info += " " + Messages.get(Armor.class, "probably_too_heavy");
 			}
 		}

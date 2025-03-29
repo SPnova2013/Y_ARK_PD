@@ -25,6 +25,7 @@ import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Badges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.SPChallenges;
+import com.shatteredpixel.shatteredpixeldungeon.Statistics;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.items.BrokenSeal;
@@ -329,11 +330,11 @@ public class Blacksmith extends NPC {
 		
 		public static ArrayList<Room> spawn( ArrayList<Room> rooms ) {
 			if (!spawned && Dungeon.depth > 11 && Random.Int( 15 - Dungeon.depth ) == 0) {
-				
+
 				rooms.add(new BlacksmithRoom());
 				spawned = true;
 				alternative = Random.Int( 2 ) == 0;
-				
+				if(Statistics.victoryLapRounds>0) alternative = false;
 				given = false;
 				chiFirstTalk = true;
 			}

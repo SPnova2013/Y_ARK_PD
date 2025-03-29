@@ -148,6 +148,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.ror2items.Aegis;
 import com.shatteredpixel.shatteredpixeldungeon.items.ror2items.ArmorPlate;
 import com.shatteredpixel.shatteredpixeldungeon.items.ror2items.Behemoth;
 import com.shatteredpixel.shatteredpixeldungeon.items.ror2items.Crowbar;
+import com.shatteredpixel.shatteredpixeldungeon.items.ror2items.FrostRelic;
 import com.shatteredpixel.shatteredpixeldungeon.items.ror2items.Gasoline;
 import com.shatteredpixel.shatteredpixeldungeon.items.ror2items.LightFluxPauldron;
 import com.shatteredpixel.shatteredpixeldungeon.items.ror2items.LuckyLeaf;
@@ -157,11 +158,13 @@ import com.shatteredpixel.shatteredpixeldungeon.items.ror2items.ROR2item;
 import com.shatteredpixel.shatteredpixeldungeon.items.ror2items.Raincoat;
 import com.shatteredpixel.shatteredpixeldungeon.items.ror2items.Recycler;
 import com.shatteredpixel.shatteredpixeldungeon.items.ror2items.StunGrenade;
+import com.shatteredpixel.shatteredpixeldungeon.items.ror2items.SymbioticScorpion;
 import com.shatteredpixel.shatteredpixeldungeon.items.ror2items.TitanicKnurl;
 import com.shatteredpixel.shatteredpixeldungeon.items.ror2items.TopazBrooch;
 import com.shatteredpixel.shatteredpixeldungeon.items.ror2items.TougherTimes;
 import com.shatteredpixel.shatteredpixeldungeon.items.ror2items.Transcendence;
 import com.shatteredpixel.shatteredpixeldungeon.items.ror2items.TriTipDagger;
+import com.shatteredpixel.shatteredpixeldungeon.items.ror2items.UnstableTeslaCoil;
 import com.shatteredpixel.shatteredpixeldungeon.items.ror2items.WakeOfVultures;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.Scroll;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfIdentify;
@@ -193,6 +196,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfIntuition;
 import com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfShock;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.Wand;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfBlastWave;
+import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfBlowStone;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfCorrosion;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfCorruption;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfDisintegration;
@@ -475,8 +479,10 @@ public class Generator {
                     WandOfRegrowth.class,
                     WandOfSilence.class,
                     WandOfHealing.class,
-                    WandOfHallucination.class};
-            WAND.probs = new float[]{3, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3, 2, 3, 2, 3};
+                    WandOfHallucination.class,
+                    WandOfBlowStone.class
+            };
+            WAND.probs = new float[]{3, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3, 2, 3, 2, 3, 2};
 
             //see generator.randomWeapon
             WEAPON.classes = new Class<?>[]{};
@@ -789,6 +795,9 @@ public class Generator {
                     Behemoth.class,
                     LuckyLeaf.class,
                     Raincoat.class,
+                    FrostRelic.class,
+                    UnstableTeslaCoil.class,
+                    SymbioticScorpion.class,
                     WakeOfVultures.class,
                     //yellow
                     Perforator.class,
@@ -803,7 +812,7 @@ public class Generator {
                     };
             ROR2ITEM.defaultProbs = new float[]
                     {8, 8, 8, 8, 8, 8, 8, 8, 8,//white
-                    1, 1, 1, 1, 1,//red
+                    1, 1, 1, 1, 1, 1, 1, 1,//red
                     2, 2,//yellow
                     3,//orange
                     2, 2,//blue

@@ -43,6 +43,7 @@ package com.shatteredpixel.shatteredpixeldungeon.actors.hero;
  import com.shatteredpixel.shatteredpixeldungeon.items.Skill.SkillBook;
  import com.shatteredpixel.shatteredpixeldungeon.items.TomeOfMastery;
  import com.shatteredpixel.shatteredpixeldungeon.items.armor.ClothArmor;
+ import com.shatteredpixel.shatteredpixeldungeon.items.armor.LeatherArmor;
  import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.CloakOfShadows;
  import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.SealOfLight;
  import com.shatteredpixel.shatteredpixeldungeon.items.bags.EquipmentsBag;
@@ -246,6 +247,12 @@ package com.shatteredpixel.shatteredpixeldungeon.actors.hero;
 
 			new FlameKatana().chimera(Reflection.newInstance(Flame.class)).chimera(Reflection.newInstance(Sylvestris.class)).chimera(Reflection.newInstance(Blossoming.class)).identify().collect();
 			new BadgeOfCharger().collect();
+
+			new LeatherArmor().collect();
+			new LeatherArmor().upgrade(1).collect();
+			new LeatherArmor().upgrade(3).collect();
+			new LeatherArmor().upgrade(6).collect();
+			new LeatherArmor().upgrade(10).collect();
 		}
 	}
 

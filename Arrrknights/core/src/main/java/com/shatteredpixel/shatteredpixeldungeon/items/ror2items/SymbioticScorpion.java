@@ -9,7 +9,7 @@ import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 public class SymbioticScorpion extends ROR2item{
     {
         tier = 3;
-        image = ItemSpriteSheet.UNDONE_MARK;
+        image = ItemSpriteSheet.SYMBIOTIC_SCORPION;
     }
     @Override
     public int attackProc(Char attacker, Char defender, int damage ) {

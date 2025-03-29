@@ -5,6 +5,7 @@ import static com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent.PROFIC
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.items.Gunaccessories.Accessories;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
@@ -26,14 +27,16 @@ public class Enfild2 extends MeleeWeapon {
 //FIXME 得心应手在两把狙上没有做到随着天赋点的增加变成2-2
     @Override
     public int min(int lvl) {
-       return 8+lvl+ Maccessories;
+       return 8+lvl+ Maccessories +
+               ((Dungeon.hero.hasTalent(Talent.PROFICIENCY)&& Maccessories > 2) ? Maccessories : 0);
     }
 
     @Override
     public int max(int lvl) {
         return  8*(tier+1) +    // 48 + 15
                 lvl*(tier+10) +
-                 Maccessories;   //scaling unchanged
+                 Maccessories +
+                ((Dungeon.hero.hasTalent(Talent.PROFICIENCY)&& Maccessories > 1) ? Maccessories : 0);   //scaling unchanged
     }
 
     @Override

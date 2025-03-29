@@ -8,6 +8,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.ror2items.Aegis;
 import com.shatteredpixel.shatteredpixeldungeon.items.ror2items.ArmorPlate;
 import com.shatteredpixel.shatteredpixeldungeon.items.ror2items.Behemoth;
 import com.shatteredpixel.shatteredpixeldungeon.items.ror2items.Crowbar;
+import com.shatteredpixel.shatteredpixeldungeon.items.ror2items.FrostRelic;
 import com.shatteredpixel.shatteredpixeldungeon.items.ror2items.Gasoline;
 import com.shatteredpixel.shatteredpixeldungeon.items.ror2items.LightFluxPauldron;
 import com.shatteredpixel.shatteredpixeldungeon.items.ror2items.LuckyLeaf;
@@ -17,11 +18,14 @@ import com.shatteredpixel.shatteredpixeldungeon.items.ror2items.ROR2item;
 import com.shatteredpixel.shatteredpixeldungeon.items.ror2items.Raincoat;
 import com.shatteredpixel.shatteredpixeldungeon.items.ror2items.Recycler;
 import com.shatteredpixel.shatteredpixeldungeon.items.ror2items.StunGrenade;
+import com.shatteredpixel.shatteredpixeldungeon.items.ror2items.SymbioticScorpion;
 import com.shatteredpixel.shatteredpixeldungeon.items.ror2items.TitanicKnurl;
 import com.shatteredpixel.shatteredpixeldungeon.items.ror2items.TopazBrooch;
 import com.shatteredpixel.shatteredpixeldungeon.items.ror2items.TougherTimes;
 import com.shatteredpixel.shatteredpixeldungeon.items.ror2items.Transcendence;
 import com.shatteredpixel.shatteredpixeldungeon.items.ror2items.TriTipDagger;
+import com.shatteredpixel.shatteredpixeldungeon.items.ror2items.UnstableTeslaCoil;
+import com.shatteredpixel.shatteredpixeldungeon.items.ror2items.WakeOfVultures;
 import com.shatteredpixel.shatteredpixeldungeon.items.testtool.Generators;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
@@ -103,20 +107,24 @@ public class Generators_ROR2item extends Generators {
             case 10: return Behemoth.class;
             case 11: return LuckyLeaf.class;
             case 12: return Raincoat.class;
+            case 13: return FrostRelic.class;
+            case 14: return SymbioticScorpion.class;
+            case 15: return UnstableTeslaCoil.class;
+            case 16: return WakeOfVultures.class;
             //yellow
-            case 13: return Perforator.class;
-            case 14: return TitanicKnurl.class;
+            case 17: return Perforator.class;
+            case 18: return TitanicKnurl.class;
             //orange
-            case 15: return Recycler.class;
+            case 19: return Recycler.class;
             //blue
-            case 16: return Transcendence.class;
-            default:case 17: return LightFluxPauldron.class;
+            case 20: return Transcendence.class;
+            default:case 21: return LightFluxPauldron.class;
         }
     }
     private static ArrayList<Class<? extends ROR2item>> r2iList = new ArrayList<Class<? extends ROR2item>>();
     private void buildROR2itemArray(){
         if(!r2iList.isEmpty()) return;
-        for(int i=0;i<18;++i){
+        for(int i=0;i<22;++i){
             r2iList.add(idToROR2item(i));
         }
     }
@@ -150,7 +158,7 @@ public class Generators_ROR2item extends Generators {
         }
 
         private void layout(){
-            t_selected.setPos(0, 3*GAP + BTN_SIZE *2);
+            t_selected.setPos(0, 3*GAP + BTN_SIZE *3);
             b_create.setRect(0, t_selected.bottom() + GAP, WIDTH, 16);
             resize(WIDTH, (int)b_create.bottom() + GAP);
         }
@@ -177,10 +185,12 @@ public class Generators_ROR2item extends Generators {
                 if(i<9) {
                     left = (WIDTH - BTN_SIZE * 9) / 2f;
                     btn.setRect(left + placed * BTN_SIZE, top, BTN_SIZE, BTN_SIZE);
-                }
-                else {
+                }else if (i < 18) {
                     left = (WIDTH - BTN_SIZE * 9) / 2f;
                     btn.setRect(left + (placed-9) * BTN_SIZE, top + GAP + BTN_SIZE, BTN_SIZE, BTN_SIZE);
+                } else {
+                    left = (WIDTH - BTN_SIZE * 9) / 2f;
+                    btn.setRect(left + (placed-18) * BTN_SIZE, top + 2*GAP + 2*BTN_SIZE, BTN_SIZE, BTN_SIZE);
                 }
                 add(btn);
                 placed++;
