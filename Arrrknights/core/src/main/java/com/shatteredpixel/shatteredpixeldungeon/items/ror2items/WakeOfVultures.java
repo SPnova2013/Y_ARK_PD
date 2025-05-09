@@ -21,6 +21,16 @@ public class WakeOfVultures extends ROR2item{
             }
         }
     }
+    @Override
+    public boolean doUnequip(Hero hero, boolean collect, boolean single) {
+        if(super.doUnequip(hero, collect, single)){
+            for(Buff b: hero.buffs()){
+                if(b instanceof ChampionHero) b.detach();
+            }
+            return true;
+        }
+        return false;
+    }
 
     @Override
     protected ROR2itemBuff passiveBuff() {

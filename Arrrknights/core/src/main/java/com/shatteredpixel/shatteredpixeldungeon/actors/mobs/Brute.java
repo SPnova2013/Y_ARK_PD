@@ -115,7 +115,7 @@ public class Brute extends Mob {
 		{
 			type = buffType.POSITIVE;
 		}
-		
+
 		@Override
 		public boolean act() {
 			int rounds = Statistics.victoryLapRounds;
@@ -149,11 +149,6 @@ public class Brute extends Mob {
 		@Override
 		public String desc () {
 			return Messages.get(this, "desc", shielding());
-		}
-		@Override
-		public void detach() {
-			super.detach();
-			if(target.HP<=0)target.die(null);
 		}
 		{
 			immunities.add(Terror.class);

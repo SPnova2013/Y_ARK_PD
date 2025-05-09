@@ -14,17 +14,34 @@ public class ROR2Shield extends ShieldBuff{
         type = buffType.POSITIVE;
     }
     private float waitBeforeRecover = 10;
-    private int maxShield;
+    private int maxShield = 0;
+
     public void setMaxShield(int maxShield, boolean hard){
         this.maxShield=maxShield;
         if(hard) super.hardSetShield(maxShield);
     }
+
+    public void addMaxShield(int maxShield){addMaxShield(maxShield, true);}
+
+    public void addMaxShield(int maxShield, boolean hard){
+        this.maxShield += maxShield;
+        if(hard) super.incShield(maxShield);
+    }
+
+    public void decMaxShield(int maxShield){
+        this.maxShield -= maxShield;
+        if(shielding()>this.maxShield) super.hardSetShield(maxShield);
+        if(this.maxShield<=0) Buff.detach(Dungeon.hero, ROR2Shield.class);
+    }
+
     public int getMaxShield(){
         return maxShield;
     }
+
     public void setShield(int shield){
         super.hardSetShield(shield);
     }
+
     @Override
     public boolean act() {
         if(waitBeforeRecover<=0 && !(shielding()>maxShield)) {

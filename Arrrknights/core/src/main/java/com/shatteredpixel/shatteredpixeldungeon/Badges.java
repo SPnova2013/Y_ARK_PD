@@ -34,6 +34,7 @@ import com.shatteredpixel.shatteredpixeldungeon.journal.Catalog;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.FileUtils;
 
@@ -269,8 +270,8 @@ public class Badges {
 		SKIN_WEEDY(303, false, true),
 		SKIN_LILITH(304,false,true),
 		SKIN_KAYOKO(305,false,true),
-		SKIN_HINA(306,false,true),
-		SKIN_TLIPOCA(307,false,true),
+		SKIN_TLIPOCA(306,false,true),
+		SKIN_HINA(307,false,true),
 
 		//기타
 		SUPPORT;
@@ -1178,6 +1179,9 @@ public class Badges {
 
 	// 0.3.2버전의 스킨 관련 처리로 인해 추가된 구문입니다. 추후 필요없어질 수 있습니다.
 	public static void allskindestroy() {
+		if (Dungeon.isChallenged(TEST)) {
+			return;
+		}
 		saveNeeded = true;
 		if(isUnlocked(Badge.SKIN_TALU)) {
 			global.remove(Badge.SKIN_TALU);
@@ -1534,7 +1538,6 @@ public class Badges {
 	public static boolean isdollcollector() {
 		return local.contains( Badge.DOLL_COLLECTOR) ;
 	}
-
 
 	private static void displayBadge( Badge badge ) {
 		

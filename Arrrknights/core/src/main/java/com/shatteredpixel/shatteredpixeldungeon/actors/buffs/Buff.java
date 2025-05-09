@@ -45,6 +45,7 @@ public class Buff extends Actor {
 	
 	//whether or not the buff announces its name
 	public boolean announced = false;
+	public boolean isPermanent = false;
 	
 	protected HashSet<Class> resistances = new HashSet<>();
 	
@@ -57,6 +58,7 @@ public class Buff extends Actor {
 	public HashSet<Class> immunities() {
 		return new HashSet<>(immunities);
 	}
+
 	
 	public boolean attachTo( Char target ) {
 		TomorrowRogueNight.actorLogger.logActorEntry(this.getClass(),"attachTo" + target.getClass().getSimpleName());

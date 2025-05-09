@@ -41,6 +41,11 @@ import com.shatteredpixel.shatteredpixeldungeon.items.wands.SP.StaffOfSuzuran;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.SP.StaffOfTime;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.SP.StaffOfVigna;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.SP.StaffOfWeedy;
+import com.shatteredpixel.shatteredpixeldungeon.items.wands.SSP.StaffOfConcept;
+import com.shatteredpixel.shatteredpixeldungeon.items.wands.SSP.StaffOfMageHand;
+import com.shatteredpixel.shatteredpixeldungeon.items.wands.SSP.StaffOfTwinTurbo;
+import com.shatteredpixel.shatteredpixeldungeon.items.wands.SSP.StaffOfValstrax;
+import com.shatteredpixel.shatteredpixeldungeon.items.wands.SSP.StaffOfVision;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.Wand;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfBlastWave;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfBlowStone;
@@ -90,6 +95,11 @@ public class Generators_Ring extends Generators {
     private static final int RING_CAT = 0;
     private static final int WAND_CAT = 1;
     private static final int WAND_SP  = 2;
+    private static final int WAND_SSP  = 3;
+    private static final int MAX_RING = 17;
+    private static final int MAX_WAND = 17;
+    private static final int MAX_SPWAND = 20;
+    private static final int MAX_SSPWAND = 5;
 
     @Override
     public void execute(Hero hero, String action) {
@@ -130,8 +140,20 @@ public class Generators_Ring extends Generators {
                     w.doDrop(curUser);
                 }
             }
-        }else {
+        }else if (category == WAND_SP){
             Wand w= Reflection.newInstance(idToSPWand(selected));
+            if (w!=null){
+                if(Challenges.isItemBlocked(w)) return;
+                modifyWand(w);
+                collect = w.identify().collect();
+                if(collect){
+                    GLog.i(Messages.get(this, "collect_success", w.name()));
+                }else{
+                    w.doDrop(curUser);
+                }
+            }
+        }else {
+            Wand w= Reflection.newInstance(idToSSPWand(selected));
             if (w!=null){
                 if(Challenges.isItemBlocked(w)) return;
                 modifyWand(w);
@@ -297,33 +319,50 @@ public class Generators_Ring extends Generators {
                 return StaffOfWeedy.class;
         }
     }
+    private Class<? extends Wand> idToSSPWand(int id) {
+        switch (id) {
+            case 0: return StaffOfConcept.class;
+            case 1: return StaffOfMageHand.class;
+            case 2: return StaffOfTwinTurbo.class;
+            case 3: return StaffOfValstrax.class;
+            default: return StaffOfVision.class;
+        }
+    }
     private static ArrayList<Class<? extends Ring>> ringList = new ArrayList<>();
     private static ArrayList<Class<? extends Wand>> wandList = new ArrayList<>();
     private static ArrayList<Class<? extends Wand>> spwandList = new ArrayList<>();
+    private static ArrayList<Class<? extends Wand>> sspWandList = new ArrayList<>();
 
     private void buildRingList() {
         if (!ringList.isEmpty()) return;
-        for (int i = 0; i < 17; ++i) {
+        for (int i = 0; i < MAX_RING; ++i) {
             ringList.add(idToRing(i));
         }
     }
 
     private void buildWandList() {
         if (!wandList.isEmpty()) return;
-        for (int i = 0; i < 17; ++i) {
+        for (int i = 0; i < MAX_WAND; ++i) {
             wandList.add(idToWand(i));
         }
     }
     private void buildSPWandList(){
         if (!spwandList.isEmpty()) return;
-        for (int i = 0; i < 20; ++i) {
+        for (int i = 0; i < MAX_SPWAND; ++i) {
             spwandList.add(idToSPWand(i));
         }
     }
+    private void buildSSPWandList() {
+        if (!sspWandList.isEmpty()) return;
+        for (int i = 0; i < MAX_SSPWAND; ++i) {
+            sspWandList.add(idToSSPWand(i));
+        }
+    }
     private int total(int category){
-        if (category == RING_CAT) return 17;
-        if (category == WAND_CAT) return 16;
-        if (category == WAND_SP) return 20;
+        if (category == RING_CAT) return MAX_RING;
+        if (category == WAND_CAT) return MAX_WAND;
+        if (category == WAND_SP) return MAX_SPWAND;
+        if (category == WAND_SSP) return MAX_SSPWAND;
         return 0;
     }
 
@@ -342,7 +381,11 @@ public class Generators_Ring extends Generators {
             buildRingList();
             buildWandList();
             buildSPWandList();
-            o_category = new OptionSlider(Messages.get(this, "category"), Messages.get(this, "ring"), Messages.get(this, "wand"), 0, 2) {
+            buildSSPWandList();
+            o_category = new OptionSlider(
+                    Messages.get(this, "category"),
+                    Messages.get(this, "ring"),
+                    Messages.get(this, "wand"), 0, 3) {
                 @Override
                 protected void onChange() {
                     category = getSelectedValue();
@@ -410,8 +453,10 @@ public class Generators_Ring extends Generators {
             }
             else if (category == WAND_CAT) {
                 item = wandList.get(selected);
-            }else {
+            }else if (category == WAND_SP){
                 item = spwandList.get(selected);
+            }else {
+                item = sspWandList.get(selected);
             }
             t_selected.text(Messages.get(Generators_Ring.class, "selected", Messages.get(item, "name")));
             layout();
@@ -431,6 +476,9 @@ public class Generators_Ring extends Generators {
                     break;
                 case WAND_SP:
                     length=spwandList.size();
+                    break;
+                case WAND_SSP:
+                    length = sspWandList.size();
                     break;
                 default:
                     length=0;
@@ -456,9 +504,18 @@ public class Generators_Ring extends Generators {
                     im.frame(ItemSpriteSheet.film.get(Objects.requireNonNull(Reflection.newInstance(wandList.get(i))).image));
                     im.scale.set(0.45f);
                     btn.icon(im);
-                }else {
+                }else if (category == WAND_SP){
                     Image im = new Image(Assets.Sprites.ITEMS);
                     im.frame(ItemSpriteSheet.film.get(Objects.requireNonNull(Reflection.newInstance(spwandList.get(i))).image));
+                    im.scale.set(0.45f);
+                    btn.icon(im);
+                }else {
+                    Image im = new Image(Assets.Sprites.ITEMS);
+                    im.frame(ItemSpriteSheet.film.get(
+                            Objects.requireNonNull(
+                                    Reflection.newInstance(sspWandList.get(i))
+                            ).image
+                    ));
                     im.scale.set(0.45f);
                     btn.icon(im);
                 }

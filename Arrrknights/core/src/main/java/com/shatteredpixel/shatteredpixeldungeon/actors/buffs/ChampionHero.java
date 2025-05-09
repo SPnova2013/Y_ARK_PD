@@ -1,6 +1,7 @@
 package com.shatteredpixel.shatteredpixeldungeon.actors.buffs;
 
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.Statistics;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Blob;
@@ -32,6 +33,8 @@ public abstract class ChampionHero extends Buff{
 
     public int color;
     protected float left;
+    private static int R2ShieldHP = -1;
+    private int particalR2SHP = 0;
     private static final String LEFT	= "left";
     @Override
     public boolean act() {
@@ -39,6 +42,10 @@ public abstract class ChampionHero extends Buff{
         left -= TICK;
         if (left <= 0){
             detach();
+        }
+        if(R2ShieldHP != -1){
+            particalR2SHP++;
+            if(particalR2SHP == 10) R2ShieldHP++;
         }
         return true;
     }
@@ -60,6 +67,7 @@ public abstract class ChampionHero extends Buff{
     }
     public static void getEliteByEnemy(Hero hero,ChampionEnemy el,float dur){
         ChampionHero ch;
+        int R2ShieldToBe = 0;
         if(el instanceof ChampionEnemy.Blazing) ch = Reflection.newInstance(ChampionHero.Blazing.class);
         else if (el instanceof ChampionEnemy.Projecting) ch = Reflection.newInstance(ChampionHero.Projecting.class);
         else if (el instanceof ChampionEnemy.AntiMagic) ch = Reflection.newInstance(ChampionHero.AntiMagic.class);
@@ -74,6 +82,14 @@ public abstract class ChampionHero extends Buff{
         else if (el instanceof ChampionEnemy.R2Perfected) ch = Reflection.newInstance(ChampionHero.R2Perfected.class);
         else if (el instanceof ChampionEnemy.R2Mending) ch = Reflection.newInstance(ChampionHero.R2Mending.class);
         else ch = Reflection.newInstance(Blazing.class);
+
+        if(ch instanceof ChampionHero.R2Overloading && hero.buff(ChampionHero.R2Overloading.class) == null) R2ShieldToBe = hero.HT/2;
+        if(ch instanceof ChampionHero.R2Perfected && hero.buff(ChampionHero.R2Perfected.class) == null) R2ShieldToBe = hero.HT;
+        if(R2ShieldToBe > 0){
+            Buff.affect(hero, ROR2Shield.class).addMaxShield(R2ShieldToBe);
+            if(R2ShieldHP == -1) R2ShieldHP = hero.HP;
+        }
+
         Buff.affect(hero, ch.getClass()).set(dur);
     }
     @Override
@@ -138,11 +154,11 @@ public abstract class ChampionHero extends Buff{
 
         @Override
         public void detach() {
-            for (int i : PathFinder.NEIGHBOURS9){
+            /*for (int i : PathFinder.NEIGHBOURS9){
                 if (!Dungeon.level.solid[target.pos+i]){
                     GameScene.add(Blob.seed(target.pos+i, 2, Fire.class));
                 }
-            }
+            }*/
             super.detach();
         }
 
@@ -231,9 +247,8 @@ public abstract class ChampionHero extends Buff{
 
         @Override
         public boolean act() {
-            multiplier += 0.01f;
-            spend(3*TICK);
-            return true;
+            multiplier += 0.003f;
+            return super.act();
         }
 
         @Override
@@ -282,8 +297,7 @@ public abstract class ChampionHero extends Buff{
         @Override
         public boolean act() {
             GameScene.add(Blob.seed(target.pos, 3, Fire.class));
-            spend(TICK);
-            return true;
+            return super.act();
         }
         {
             immunities.add(Burning.class);
@@ -300,8 +314,19 @@ public abstract class ChampionHero extends Buff{
         @Override
         public boolean act() {
             target.HP = Math.min(target.HT/2, target.HP);
-            spend(TICK);
-            return true;
+            return super.act();
+        }
+        @Override
+        public void detach() {
+            if(target.buff(ChampionHero.R2Perfected.class)!=null){
+                Buff.affect(target, ROR2Shield.class).decMaxShield(target.HT/2);
+                target.HP = Math.min(target.HT,R2ShieldHP);
+            }else{
+                Buff.detach(target, ROR2Shield.class);
+                target.HP = Math.min(target.HT,R2ShieldHP);
+                R2ShieldHP = -1;
+            }
+            super.detach();
         }
         public static class BlazingBomb extends Buff{
             private Char victim;
@@ -346,9 +371,9 @@ public abstract class ChampionHero extends Buff{
         }
         @Override
         public void detach() {
-            Bomb bomb = new GlacialBomb();
+            /*Bomb bomb = new GlacialBomb();
             Actor.addDelayed(bomb.fuse = new Bomb.Fuse().ignite(bomb), 2);
-            Dungeon.level.drop(bomb, target.pos);
+            Dungeon.level.drop(bomb, target.pos);*/
             super.detach();
         }
         public static class GlacialBomb extends Bomb {
@@ -362,7 +387,7 @@ public abstract class ChampionHero extends Buff{
                     if (PathFinder.distance[i] < Integer.MAX_VALUE) {
                         Char ch = Actor.findChar(i);
                         if (ch != null){
-                            ch.damage(Dungeon.depth, this);
+                            ch.damage(Dungeon.depth + Statistics.victoryLapRounds*25, this);
                             Buff.affect(ch, Frost.class, 2f);
                         }
                     }
@@ -400,15 +425,15 @@ public abstract class ChampionHero extends Buff{
             ArrayList<Char> affected = new ArrayList<>();
             for (Mob mob : Dungeon.level.mobs) {
                 if (Dungeon.level.distance(target.pos, mob.pos) <= 3
-                        && mob.buff(R2Celestine.class) == null) {
+                        && mob.buff(R2Celestine.class) == null
+                        && mob.alignment == Char.Alignment.ALLY) {
                     affected.add(mob);
                 }
             }
             for ( Char ch : affected ){
                 Buff.prolong(ch, Vanish.class, 2f);
             }
-            spend(TICK);
-            return true;
+            return super.act();
         }
     }
     public static class R2Perfected extends ChampionHero {
@@ -418,13 +443,23 @@ public abstract class ChampionHero extends Buff{
         @Override
         public boolean act() {
             target.HP = Math.min(1, target.HP);
-            spend(TICK);
-            return true;
+            return super.act();
         }
         @Override
         public void onAttackProc(Char enemy, int damage) {
             Buff.affect(enemy, Cripple.class, 1f);
             Buff.affect(enemy, Vulnerable.class, 1f);
+        }
+        @Override
+        public void detach() {
+            if(target.buff(ChampionHero.R2Overloading.class)!=null){
+                Buff.affect(target, ROR2Shield.class).decMaxShield(target.HT);
+            }else{
+                Buff.detach(target, ROR2Shield.class);
+                target.HP = Math.min(target.HT,R2ShieldHP);
+                R2ShieldHP = -1;
+            }
+            super.detach();
         }
     }
     public static class R2Mending extends ChampionHero {
@@ -436,7 +471,8 @@ public abstract class ChampionHero extends Buff{
             ArrayList<Char> affected = new ArrayList<>();
             for (Mob mob : Dungeon.level.mobs) {
                 if (Dungeon.level.distance(target.pos, mob.pos) <= 2
-                        && mob.buff(R2Mending.class) == null) {
+                        && mob.buff(R2Mending.class) == null
+                        && mob.alignment == Char.Alignment.ALLY) {
                     affected.add(mob);
                 }
             }
@@ -445,19 +481,18 @@ public abstract class ChampionHero extends Buff{
                 ch.HP=Math.min(ch.HP, ch.HT);
                 ch.sprite.emitter().start( Speck.factory( Speck.HEALING ), 0.4f, 4 );
             }
-            spend(TICK);
-            return true;
+            return super.act();
         }
         @Override
         public void detach() {
-            Bomb bomb = new MendingBomb();
+            /*Bomb bomb = new MendingBomb();
             Actor.addDelayed(bomb.fuse = new Bomb.Fuse().ignite(bomb), 2);
-            Dungeon.level.drop(bomb, target.pos);
+            Dungeon.level.drop(bomb, target.pos);*/
             super.detach();
         }
         public static class MendingBomb extends Bomb {
             {
-                image = ItemSpriteSheet.FROST_BOMB;
+                image = ItemSpriteSheet.REGROWTH_BOMB;
             }
             @Override
             public void explode(int cell) {

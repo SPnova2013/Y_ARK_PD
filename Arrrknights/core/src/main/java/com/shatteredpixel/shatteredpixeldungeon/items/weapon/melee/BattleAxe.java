@@ -29,6 +29,8 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Camouflage;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Preparation;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.ArmoredBrute;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Brute;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.MudrockZealot;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.NewDM300;
@@ -113,9 +115,6 @@ public class BattleAxe extends MeleeWeapon {
 					dmg = Math.round(dmg * (starpower * 0.7f));
 
 					mob.damage(dmg, attacker);
-					if (starpower == 3) {
-						dispel(mob);
-					}
 				}
 			}
 			if (starpower == 3) {
@@ -187,6 +186,9 @@ public class BattleAxe extends MeleeWeapon {
 		if(defender instanceof Pompeii) {
 			if(Statistics.coreAlive>0)defender.sprite.showStatus( CharSprite.NEGATIVE, Messages.get(Pompeii.class, "dispel"));
 			Statistics.coreAlive = 0;
+		}
+		if(defender instanceof Brute){
+			if(defender.HP <= 0) defender.die(null);
 		}
 	}
 }

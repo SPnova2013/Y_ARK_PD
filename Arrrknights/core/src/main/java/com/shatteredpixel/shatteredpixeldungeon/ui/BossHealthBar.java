@@ -107,9 +107,17 @@ public class BossHealthBar extends Component {
 				float shield = boss.shielding();
 				float max = boss.HT;
 
-				hp.scale.x = Math.max( 0, (health-shield)/max);
-				shieldedHP.scale.x = health/max;
-				rawShielding.scale.x = shield/max;
+				float hpWidth = Math.max(0, (health - shield) / max) * 47;
+				float shieldedWidth = Math.min(health / max, 1) * 47;
+				float shieldWidth = Math.min(shield / max, 1) * 47;
+
+				hp.frame(15, 19, (int)hpWidth, 4);
+				shieldedHP.frame(15, 25, (int)shieldedWidth, 4);
+				rawShielding.frame(15, 25, (int)shieldWidth, 4);
+
+				hp.scale.set(1, 1);
+				shieldedHP.scale.set(1, 1);
+				rawShielding.scale.set(1, 1);
 
 				if (hp.scale.x < 0.25f) bleed( true );
 

@@ -215,6 +215,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.ror2items.ROR2item;
 import com.shatteredpixel.shatteredpixeldungeon.items.ror2items.TitanicKnurl;
 import com.shatteredpixel.shatteredpixeldungeon.items.ror2items.TougherTimes;
 import com.shatteredpixel.shatteredpixeldungeon.items.ror2items.Transcendence;
+import com.shatteredpixel.shatteredpixeldungeon.items.ror2items.WakeOfVultures;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.Scroll;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfMagicMapping;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.SP.StaffOfMudrock;
@@ -326,6 +327,8 @@ public class Hero extends Char {
     public ArrayList<LinkedHashMap<Talent, Integer>> talents = new ArrayList<>();
     public LinkedHashMap<Talent, Talent> metamorphedTalents = new LinkedHashMap<>();
 
+    private HashSet<Buff> permanentBuffs = new HashSet<>();
+
     private int attackSkill = 10;
     //private int attackSkill = 1000;
     private int defenseSkill = 5;
@@ -392,7 +395,7 @@ public class Hero extends Char {
         }
 
         if (buff(TitanicKnurl.TitanicKnurlBuff.class) != null) {
-            HT += (int)(10 + HT*0.1f*(Dungeon.depth/5));
+            HT += (int)(10 + HT*0.1f*((Dungeon.depth + Statistics.victoryLapRounds*25)/5));
         }
 
         if (boostHP) {
@@ -407,6 +410,12 @@ public class Hero extends Char {
         if(buff(Transcendence.TranscendenceBuff.class)!=null) {
             Buff.affect(Dungeon.hero, ROR2Shield.class).setMaxShield((int)(Dungeon.hero.HT*1.5),false);
             HT = 1;
+        }
+        if(buff(WakeOfVultures.WakeOfVulturesBuff.class)!=null){
+            int R2ShieldToBe = 0;
+            if(buff(ChampionHero.R2Overloading.class) != null) R2ShieldToBe += HT/2;
+            if(buff(ChampionHero.R2Perfected.class) != null) R2ShieldToBe += HT;
+            Buff.affect(Dungeon.hero, ROR2Shield.class).setMaxShield(R2ShieldToBe, false);
         }
         HP = Math.min(HP, HT);
     }
@@ -444,9 +453,13 @@ public class Hero extends Char {
         super.storeInBundle(bundle);
 
         heroClass.storeInBundle(bundle);
-        int[] subClassIndexes = new int[subClass.size()];
+        // 确保即使没有转职也存储空数组
+        int[] subClassIndexes = subClass.isEmpty() ?
+                new int[0] :
+                new int[subClass.size()];
+
         int count = 0;
-        for(HeroSubClass heroSubClass:subClass){
+        for(HeroSubClass heroSubClass : subClass){
             subClassIndexes[count] = heroSubClass.ordinal();
             count++;
         }
@@ -488,10 +501,27 @@ public class Hero extends Char {
 
         heroClass = HeroClass.restoreInBundle(bundle);
         int[] subClassIndexes = bundle.getIntArray(SUBCLASS);
+        // 如果没有数组数据，尝试读取旧版字符串
+        if (subClassIndexes == null) {
+            String oldSubClass = bundle.getString(SUBCLASS);
+            if (oldSubClass != null) {
+                try {
+                    subClassIndexes = new int[]{HeroSubClass.valueOf(oldSubClass).ordinal()};
+                } catch (IllegalArgumentException e) {
+                    // 处理无效的旧版转职数据
+                    subClassIndexes = new int[0];
+                }
+            } else {
+                // 完全无转职数据的情况
+                subClassIndexes = new int[0];
+            }
+        }
         HeroSubClass[] origin = HeroSubClass.values();
         ArrayList<HeroSubClass> subClasses = new ArrayList<>();
         for(int hsc: subClassIndexes){
-            subClasses.add(origin[hsc]);
+            if (hsc >= 0 && hsc < origin.length) {
+                subClasses.add(origin[hsc]);
+            }
         }
         subClass = subClasses;
         subClassSet = new HashSet<>(subClass);
@@ -628,7 +658,9 @@ public class Hero extends Char {
     }
 
     public void live() {
-
+        for (Buff b : permanentBuffs){
+            b.attachTo(this);
+        }
         Buff.affect(this, Regeneration.class);
         Buff.affect(this, Hunger.class);
     }
@@ -2644,6 +2676,10 @@ public class Hero extends Char {
         }
 
         Actor.fixTime();
+        permanentBuffs.clear();
+        for(Buff b: buffs()){
+            if(b.isPermanent) permanentBuffs.add(b);
+        }
         super.die(cause);
 
         if (ankh == null) {

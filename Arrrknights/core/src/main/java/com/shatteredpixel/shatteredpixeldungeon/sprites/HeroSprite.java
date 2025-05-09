@@ -29,6 +29,7 @@ import com.watabou.gltextures.SmartTexture;
 import com.watabou.gltextures.TextureCache;
 import com.watabou.noosa.Camera;
 import com.watabou.noosa.Image;
+import com.watabou.noosa.MovieClip;
 import com.watabou.noosa.TextureFilm;
 import com.watabou.utils.Callback;
 import com.watabou.utils.PointF;
@@ -62,7 +63,7 @@ public class HeroSprite extends CharSprite {
 	public void updateArmor() {
 		texture(Dungeon.hero.heroClass.spritesheet());
 		TextureFilm film = new TextureFilm(tiers(), Dungeon.hero.tier(), 36, 34);
-		if(Dungeon.hero.CharSkin == Hero.HINA) film = new TextureFilm(texture, 50, 40);
+		//if(Dungeon.hero.CharSkin == Hero.HINA) film = new TextureFilm(texture, 50, 40);
 
 		idle = new Animation( 7, true );
 		idle.frames( film, 41, 42, 43, 44, 45, 46, 41, 42, 43, 44, 45, 46, 41, 42, 43, 44, 45, 46, 41, 42, 43, 44, 45, 46, 41, 42, 43, 47, 48, 46 );
@@ -89,11 +90,33 @@ public class HeroSprite extends CharSprite {
 
 		read = new Animation( 10, false );
 		read.frames( film, 18, 19, 20, 21, 22, 23, 24, 25, 25, 25 );
-		
+
+		if(Dungeon.hero.CharSkin == Hero.HINA) updateHinaSkin();
+
 		if (Dungeon.hero.isAlive())
 			idle();
 		else
 			die();
+	}
+
+	public void updateHinaSkin() {
+		TextureFilm film = new TextureFilm(texture, 50, 40);
+		idle = new MovieClip.Animation( 7, true );
+		idle.frames( film, 52, 52, 52, 52, 52, 52, 52, 52, 52, 52, 52, 52, 52, 52, 52, 52, 52, 52, 52, 52, 45, 46, 47, 48, 49, 50, 51, 52);
+		run = new MovieClip.Animation( 20, true );
+		run.frames( film, 1, 2, 3, 4, 5, 6, 7, 8 );
+		die = new MovieClip.Animation( 8, false );
+		die.frames( film, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39 );
+		attack = new MovieClip.Animation( 25, false );
+		attack.frames( film, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20 );
+		Sattack = attack.clone();
+		zap = attack.clone();
+		operate = new Animation( 8, false );
+		operate.frames( film, 40, 41, 40, 41 );
+		fly = new Animation( 8, true );
+		fly.frames( film, 42, 43, 44 );
+		read = new Animation( 10, false );
+		read.frames( film, 21, 22, 23, 24, 25, 26, 27, 28 );
 	}
 	
 	@Override

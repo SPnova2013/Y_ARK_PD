@@ -155,6 +155,7 @@ public class InterlevelScene extends PixelScene {
 				scrollSpeed = returnDepth > Dungeon.depth ? 15 : -15;
 				break;
 		}
+		if (loadingDepth <= 26) Dungeon.DLC = 0;//清空选择的DLC，尝试避免地图生成问题
 		if (loadingDepth <= 5)          loadingAsset = Assets.Interfaces.LOADING_SEWERS;
 		else if (loadingDepth <= 10)    loadingAsset = Assets.Interfaces.LOADING_PRISON;
 		else if (loadingDepth <= 15)    loadingAsset = Assets.Interfaces.LOADING_CAVES;

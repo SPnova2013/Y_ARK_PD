@@ -1,6 +1,7 @@
 package com.shatteredpixel.shatteredpixeldungeon.items.ror2items;
 
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
@@ -51,7 +52,9 @@ public class UnstableTeslaCoil extends ROR2item{
             List<Mob> mobsCopy = new ArrayList<>(Dungeon.level.mobs);
             for (Mob mob : mobsCopy) {
                 int p = mob.pos;
-                if (Dungeon.level.distance(Dungeon.hero.pos, p) <= 3 && count < 3) {
+                if (Dungeon.level.distance(Dungeon.hero.pos, p) <= 3 && count < 3
+                        && mob.alignment != Char.Alignment.ALLY
+                        && mob.alignment != Char.Alignment.NEUTRAL) {
                     Dungeon.hero.sprite.parent.add(new Lightning(Dungeon.hero.pos, p, null));
                     mob.damage(Math.round(Dungeon.hero.damageRoll()/3f), Reflection.newInstance(WandOfLightning.class));
                     count++;

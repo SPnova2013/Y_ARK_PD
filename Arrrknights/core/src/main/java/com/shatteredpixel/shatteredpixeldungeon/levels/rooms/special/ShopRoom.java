@@ -135,7 +135,7 @@ public class ShopRoom extends SpecialRoom {
 		} else {
 			itemPlacement.x--;
 		}
-
+		int maxAttempts = 100;
 		for (Item item : itemsToSpawn) {
 
 			if (itemPlacement.x == left+1 && itemPlacement.y != top+1){
@@ -151,8 +151,12 @@ public class ShopRoom extends SpecialRoom {
 			int cell = level.pointToCell(itemPlacement);
 
 			if (level.heaps.get( cell ) != null) {
+				int attempts = 0;
 				do {
 					cell = level.pointToCell(random());
+					if (++attempts > maxAttempts) {
+						break;
+					}
 				} while (level.heaps.get( cell ) != null || level.findMob( cell ) != null);
 			}
 

@@ -150,7 +150,7 @@ public class MobPlacer extends Generators {
     private int mobTier = 1;
     private int mobIndex = 0;
     private int elite = 0;
-    private static final int MAX_ELITE = 6;
+    private static final int MAX_ELITE = 13;
     private int elite_op = 0;
 
     private final ArrayList<Class<? extends ChampionEnemy>> eliteBuffs = new ArrayList<>();
@@ -161,6 +161,13 @@ public class MobPlacer extends Generators {
         eliteBuffs.add(ChampionEnemy.Giant.class);
         eliteBuffs.add(ChampionEnemy.Growing.class);
         eliteBuffs.add(ChampionEnemy.Projecting.class);
+        eliteBuffs.add(ChampionEnemy.R2Blazing.class);
+        eliteBuffs.add(ChampionEnemy.R2Overloading.class);
+        eliteBuffs.add(ChampionEnemy.R2Glacial.class);
+        eliteBuffs.add(ChampionEnemy.R2Malachite.class);
+        eliteBuffs.add(ChampionEnemy.R2Celestine.class);
+        eliteBuffs.add(ChampionEnemy.R2Perfected.class);
+        eliteBuffs.add(ChampionEnemy.R2Mending.class);
     };
 
     @Override
@@ -185,7 +192,7 @@ public class MobPlacer extends Generators {
                                 m.pos = cell;
                                 GameScene.add(m);
                                 if(elite_op>0){
-                                    for(int i=0;i<6;++i){
+                                    for(int i=0;i<MAX_ELITE;++i){
                                         if((elite_op & (1<<i))>0){
                                             Buff.affect(m, eliteBuffs.get(i));
                                         }
@@ -280,11 +287,12 @@ public class MobPlacer extends Generators {
         private static final int HEIGHT = 120;
         private static final int BTN_SIZE = 16;
         private static final int GAP = 2;
+        private static final int COLS_PER_ROW = 8;
 
         private RenderedTextBlock selectedPage;
         private ArrayList<IconButton> mobButtons = new ArrayList<>();
         private RenderedTextBlock selectedMob;
-        private ArrayList<CheckBox> eliteOptions = new ArrayList<>(6);
+        private ArrayList<CheckBox> eliteOptions = new ArrayList<>(MAX_ELITE);
 
         public WndSetMob(){
             super();
@@ -343,7 +351,7 @@ public class MobPlacer extends Generators {
 
  */
             float pos = 92;
-            for(int i=0;i<6;++i){
+            for(int i=0;i<MAX_ELITE;++i){
                 CheckBox cb = new CheckBox(M.L(MobPlacer.class, "elite_name"+ i));
                 cb.active = true;
                 cb.checked((elite_op & (1<<i))>0);
@@ -365,7 +373,7 @@ public class MobPlacer extends Generators {
 
         private void updateEliteSettings(){
             int el = 0;
-            for(int i=0;i<6;++i){
+            for(int i=0;i<MAX_ELITE;++i){
                 el += eliteOptions.get(i).checked() ? (1<<i) : 0;
             }
             elite_op = el;
@@ -387,41 +395,65 @@ public class MobPlacer extends Generators {
             selectedMob.text( M.L(allData.get(dataThreshold(mobTier) + mobIndex).mobClass, "name") );
         }
 
-        private void layout(){
+        private void layout() {
             selectedPage.maxWidth(WIDTH / 2);
-            selectedPage.setPos((WIDTH - selectedPage.width())/2, 5);
+            selectedPage.setPos((WIDTH - selectedPage.width()) / 2, 5);
+
+            int rows = (mobButtons.size() + COLS_PER_ROW - 1) / COLS_PER_ROW;
+            float buttonsBottom = 30f + rows * (BTN_SIZE + GAP);
+
             selectedMob.maxWidth(WIDTH);
-            selectedMob.setPos((WIDTH - selectedMob.width())/2, 80);
-            resize(WIDTH, (int)eliteOptions.get(5).bottom() + 1);
+            selectedMob.setPos((WIDTH - selectedMob.width()) / 2, buttonsBottom + GAP);
+
+            float pos = selectedMob.bottom() + GAP;
+            for(int i=0;i<eliteOptions.size();++i){
+                CheckBox cb = eliteOptions.get(i);
+                int col = i % 3;  // 改为每行3个
+                float colWidth = (WIDTH - 2*GAP)/3f;
+
+                cb.setRect(
+                        GAP + col*(colWidth + GAP),  // X坐标
+                        pos,                         // Y坐标
+                        colWidth,                    // 宽度
+                        16                           // 高度
+                );
+
+                if(col == 2){
+                    pos += 16 + GAP;
+                }
+            }
+
+            // 调整窗口高度
+            resize(WIDTH, (int)pos + GAP*2);
         }
 
         private void createMobImage() {
             int maxNum = maxMobIndex(mobTier) + 1;
-            //(N+1)/2
-            int firstLine = (maxNum >> 1) + (maxNum & 1);
-            float left1 = (WIDTH - (GAP + BTN_SIZE) * firstLine + GAP)/2f;
-            float left2 = (WIDTH - (GAP + BTN_SIZE) * (maxNum - firstLine) + GAP)/2f;
+            float startY = 30f;
+
             for (int i = 0; i < maxNum; ++i) {
                 final int j = i;
                 IconButton btn = new IconButton() {
                     @Override
                     public void onClick() {
-                        super.onClick();
                         mobIndex = j;
                         updateMobText();
                     }
                 };
-                btn.icon( Reflection.newInstance(allData.get(dataThreshold(mobTier)+i).getMobClass()).sprite());
-                //btn.icon( DictSpriteSheet.miscImages(allData.get(dataThreshold(mobTier)+i).imageId) );
+                btn.icon(Reflection.newInstance(allData.get(dataThreshold(mobTier) + j).getMobClass()).sprite());
                 float max = Math.max(btn.icon().width(), btn.icon().height());
-                btn.icon().scale = new PointF(BTN_SIZE/max, BTN_SIZE/max);
-                if(i<firstLine){
-                    btn.setRect(left1, 30f, BTN_SIZE, BTN_SIZE );
-                    left1 += GAP + BTN_SIZE;
-                }else{
-                    btn.setRect(left2, 56f, BTN_SIZE, BTN_SIZE);
-                    left2 += GAP + BTN_SIZE;
-                }
+                btn.icon().scale = new PointF(BTN_SIZE / max, BTN_SIZE / max);
+
+                int row = i / COLS_PER_ROW;
+                int col = i % COLS_PER_ROW;
+
+                float rowWidth = COLS_PER_ROW * BTN_SIZE + (COLS_PER_ROW - 1) * GAP;
+                float left = (WIDTH - rowWidth) / 2f;
+
+                float x = left + col * (BTN_SIZE + GAP);
+                float y = startY + row * (BTN_SIZE + GAP);
+
+                btn.setRect(x, y, BTN_SIZE, BTN_SIZE);
                 add(btn);
                 mobButtons.add(btn);
             }

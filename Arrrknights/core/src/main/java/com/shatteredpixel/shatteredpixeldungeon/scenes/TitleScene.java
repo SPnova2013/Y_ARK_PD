@@ -185,7 +185,7 @@ public class TitleScene extends PixelScene {
 				TomorrowRogueNight.actorLogger.exportLog("actor_log", "clear");
 			}
 		};
-		add(btnCopy);
+		//add(btnCopy);
 
 		StyledButton btnShare = new StyledButton(GREY_TR, "Complete Log"){
 			@Override
@@ -195,14 +195,14 @@ public class TitleScene extends PixelScene {
 				Game.platform.shareZipFiles(logList, "all_logs.zip");
 			}
 		};
-		add(btnShare);
+		//add(btnShare);
 		StyledButton crashButton = new StyledButton(GREY_TR,"Test Crash") {@Override
 			protected void onClick() {
 				super.onClick();
 				throw new RuntimeException("Test Crash");
 			}
 		};
-		add(crashButton);
+		//add(crashButton);
 
 		if (landscape()) {
 			btnPlay.setRect(title.x-50, topRegion+GAP, ((title.width()+100)/2)-1, BTN_HEIGHT);

@@ -326,6 +326,9 @@ public enum Talent {
 		}
 	}
 	public static class TTLbuff extends Buff{
+		{
+			isPermanent = true;
+		}
 		public Class fromItem;
 		public Class toItem;
 		public void set(Class from, Class to){

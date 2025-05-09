@@ -10,12 +10,13 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Silence;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Stamina;
 import com.shatteredpixel.shatteredpixeldungeon.items.ScholarNotebook;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.MysteryMeat;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.GloompincerSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.HaundSprite;
 import com.watabou.utils.Random;
 
 public class Gloompincer extends Hound{
     {
-        spriteClass = HaundSprite.class;
+        spriteClass = GloompincerSprite.class;
 
         HP = HT = 15;
         damageMax = 5;

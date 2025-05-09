@@ -36,12 +36,15 @@ import com.shatteredpixel.shatteredpixeldungeon.Statistics;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Blob;
+import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Fire;
+import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Freezing;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.SmokeScreen;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Web;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.WellWater;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Awareness;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Blindness;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Burning;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.ChampionEnemy;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.LockedFloor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.MagicalSight;
@@ -1048,6 +1051,16 @@ public abstract class Level implements Bundlable {
 			}
 			GameScene.updateMap(ch.pos);
 			Buff.affect(ch, Talent.RejuvenatingStepsCooldown.class, 24f - 6f*Dungeon.hero.pointsInTalent(Talent.REJUVENATING_STEPS));
+
+			Fire fire = (Fire)Dungeon.level.blobs.get( Fire.class );
+			if(fire != null){
+				for (int offset : PathFinder.NEIGHBOURS9){
+					fire.clear(ch.pos + offset);
+				}
+			}
+			if (ch.buff(Burning.class) != null) {
+				Buff.detach( ch, Burning.class );
+			}
 		}
 
 		if (!ch.flying){

@@ -110,7 +110,7 @@ public class WndGameInProgress extends Window {
 			}
 		};
 		shareLogsButton.setRect(0, pos, WIDTH, 18);
-		add(shareLogsButton);
+		//add(shareLogsButton);
 		pos += shareLogsButton.height() + GAP;
 
 		RedButton deleteLogsButton = new RedButton("Delete Logs") {
@@ -120,7 +120,7 @@ public class WndGameInProgress extends Window {
 			}
 		};
 		deleteLogsButton.setRect(0, pos, WIDTH, 18);
-		add(deleteLogsButton);
+		//add(deleteLogsButton);
 		pos += deleteLogsButton.height() + GAP;
 
 		if (info.challenges > 0 || info.spchallenges > 0) GAP -= 2;
