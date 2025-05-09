@@ -1,6 +1,7 @@
 package com.shatteredpixel.shatteredpixeldungeon.items.ror2items;
 
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.Statistics;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Blob;
@@ -60,8 +61,8 @@ public class FrostRelic extends ROR2item{
                     frostRelicEmitters.add(e);
 
                     Char ch = Actor.findChar(i);
-                    if (ch != null && ch != Dungeon.hero){
-                        ch.damage((int)Math.ceil(Dungeon.depth/2f), this);
+                    if (ch != null && ch != Dungeon.hero && ch.alignment != Char.Alignment.ALLY){
+                        ch.damage((int)Math.ceil((Dungeon.depth + Statistics.victoryLapRounds*25)/2f), this);
                         if (!ch.isImmune(Freezing.class)) {
                             Buff.affect(ch, Chill.class, Dungeon.level.water[i] ? 5f : 3f);
                         }

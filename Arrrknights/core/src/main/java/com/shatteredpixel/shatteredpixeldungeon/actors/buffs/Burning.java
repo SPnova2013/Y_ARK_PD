@@ -23,6 +23,7 @@ package com.shatteredpixel.shatteredpixeldungeon.actors.buffs;
 
 import com.shatteredpixel.shatteredpixeldungeon.Badges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.Statistics;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Blob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Fire;
@@ -101,7 +102,7 @@ public class Burning extends Buff implements Hero.Doom {
 		
 		else if (target.isAlive() && !target.isImmune(getClass())) {
 			
-			int damage = Random.NormalIntRange( 1, 3 + Dungeon.depth/4 );
+			int damage = Random.NormalIntRange( 1, 3 + (Dungeon.depth + Statistics.victoryLapRounds*25)/4 );
 			Buff.detach( target, Chill.class);
 
 			if (target instanceof Originiutant) damage = (target.HP/10) + 10;

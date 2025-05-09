@@ -22,6 +22,7 @@
 package com.shatteredpixel.shatteredpixeldungeon.items.bombs;
 
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.Statistics;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Blob;
@@ -83,7 +84,7 @@ public class ArcaneBomb extends Bomb {
 		
 		for (Char ch : affected){
 			// 100%/83%/67% bomb damage based on distance, but pierces armor.
-			int damage = Math.round(Random.NormalIntRange( Dungeon.depth+5, 10 + Dungeon.depth * 2 ));
+			int damage = Math.round(Random.NormalIntRange( (Dungeon.depth + Statistics.victoryLapRounds*25)+5, 10 + (Dungeon.depth + Statistics.victoryLapRounds*25) * 2 ));
 			float multiplier = 1f - (.16667f*Dungeon.level.distance(cell, ch.pos));
 			ch.damage(Math.round(damage*multiplier), this);
 

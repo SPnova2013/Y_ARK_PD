@@ -24,6 +24,7 @@ package com.shatteredpixel.shatteredpixeldungeon.items.bombs;
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.SPDSettings;
+import com.shatteredpixel.shatteredpixeldungeon.Statistics;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
@@ -194,7 +195,9 @@ public class Bomb extends Item {
 					continue;
 				}
 
-				int dmg = Random.NormalIntRange(8 + Dungeon.depth, 16 + Dungeon.depth*2);
+				int dmg = Random.NormalIntRange(
+						8 + (Dungeon.depth + Statistics.victoryLapRounds*25),
+						16 + (Dungeon.depth + Statistics.victoryLapRounds*25)*2);
 
 				IsekaiItem.IsekaiBuff BombBuff = Dungeon.hero.buff( IsekaiItem.IsekaiBuff.class);
 				if (powered && BombBuff != null) {
