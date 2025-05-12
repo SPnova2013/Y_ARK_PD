@@ -32,7 +32,6 @@ import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.AmuletScene;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
-import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndMessage;
 import com.watabou.noosa.Game;
 import com.watabou.utils.Callback;
@@ -56,7 +55,10 @@ public class Amulet extends Item {
         actions.add(AC_END);
         return actions;
     }
-
+    @Override
+    public String status() {
+        return Statistics.victoryLapRounds > 0 ? Integer.toString(Statistics.victoryLapRounds + 1) : "";
+    }
     @Override
     public void execute(Hero hero, String action) {
         GameScene.cancel();
@@ -143,4 +145,12 @@ public class Amulet extends Item {
         return false;
     }
 
+    @Override
+    public String info() {
+        String info = desc();
+        if(Statistics.victoryLapRounds > 0){
+            info += "\n\n" + Messages.get(Amulet.class, "victory_lap_rounds", Integer.toString(Statistics.victoryLapRounds + 1));
+        }
+        return info;
+    }
 }

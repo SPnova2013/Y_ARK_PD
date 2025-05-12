@@ -117,7 +117,7 @@ public class AboutScene extends PixelScene {
 				"https://www.pixiv.net/users/14086167");
 		nam.setSize(colWidth/2f, 0);
 		if (landscape()){
-			nam.setPos(shpx.right(), rogu.top() + (rogu.height() - nam.height())/2f);
+			nam.setPos(rogu.right() + 10, rogu.top() + (rogu.height() - nam.height())/2f);
 		} else {
 			nam.setPos(w/2f - colWidth/2f, rogu.bottom() + 8);
 		}
@@ -129,7 +129,7 @@ public class AboutScene extends PixelScene {
 				"mizq4482",
 				"blog",
 				"https://mizq4482.tistory.com/");
-		mizq.setRect(nam.right(), nam.top(), colWidth/2f, 0);
+		mizq.setRect(nam.right() + 5, nam.top(), colWidth/2f, 0);
 		content.add(mizq);
 
 		addLine(rogu.top() - 2, content);
@@ -144,7 +144,7 @@ public class AboutScene extends PixelScene {
 				"hypergryph.com",
 				"https://ak.hypergryph.com/");
 		if (landscape()){
-			hyper.setRect(shpx.left(), mizq.top() + 8, colWidth, 0);
+			hyper.setRect(shpx.left(), nam.bottom() + 8, colWidth, 0);
 		} else {
 			hyper.setRect(shpx.left(), mizq.bottom() + 8, colWidth, 0);
 		}

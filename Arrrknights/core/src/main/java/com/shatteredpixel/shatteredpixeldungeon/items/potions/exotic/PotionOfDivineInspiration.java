@@ -45,7 +45,7 @@ public class PotionOfDivineInspiration extends ExoticPotion{
                 }
             }
 
-            if (allBoosted){
+            if (allBoosted && Statistics.victoryLapRounds == 0){
                 GLog.w(Messages.get(this, "no_more_points"));
                 return;
             }
@@ -127,17 +127,20 @@ public class PotionOfDivineInspiration extends ExoticPotion{
         private int[] tierBoostedCounts = new int[5];
 
         private static final String BOOSTED_TIERS = "boosted_tiers";
+        private static final String TIER_BOOSTED_COUNTS = "tier_boosted_counts";
 
         @Override
         public void storeInBundle(Bundle bundle) {
             super.storeInBundle(bundle);
             bundle.put(BOOSTED_TIERS, boostedTiers);
+            bundle.put(TIER_BOOSTED_COUNTS, tierBoostedCounts);
         }
 
         @Override
         public void restoreFromBundle(Bundle bundle) {
             super.restoreFromBundle(bundle);
             boostedTiers = bundle.getBooleanArray(BOOSTED_TIERS);
+            tierBoostedCounts = bundle.getIntArray(TIER_BOOSTED_COUNTS);
         }
 
         public void setBoosted( int tier ){

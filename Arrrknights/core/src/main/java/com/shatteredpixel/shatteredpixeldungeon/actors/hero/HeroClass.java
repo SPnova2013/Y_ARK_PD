@@ -247,12 +247,6 @@ package com.shatteredpixel.shatteredpixeldungeon.actors.hero;
 
 			new FlameKatana().chimera(Reflection.newInstance(Flame.class)).chimera(Reflection.newInstance(Sylvestris.class)).chimera(Reflection.newInstance(Blossoming.class)).identify().collect();
 			new BadgeOfCharger().collect();
-
-			new LeatherArmor().collect();
-			new LeatherArmor().upgrade(1).collect();
-			new LeatherArmor().upgrade(3).collect();
-			new LeatherArmor().upgrade(6).collect();
-			new LeatherArmor().upgrade(10).collect();
 		}
 	}
 
