@@ -102,7 +102,9 @@ public class HeroSprite extends CharSprite {
 	public void updateHinaSkin() {
 		TextureFilm film = new TextureFilm(texture, 50, 40);
 		idle = new MovieClip.Animation( 7, true );
-		idle.frames( film, 52, 52, 52, 52, 52, 52, 52, 52, 52, 52, 52, 52, 52, 52, 52, 52, 52, 52, 52, 52, 45, 46, 47, 48, 49, 50, 51, 52);
+		idle.frames( film, 53, 53, 53, 53, 53, 53, 53, 53, 53, 53, 53, 53, 53, 53, 53, 53, 53, 53, 53, 53, 45, 46, 47, 48, 49, 50, 51, 52, 53,
+				53, 53, 53, 53, 53, 53, 53, 53, 53, 53, 53, 53, 53, 53, 53, 53, 53, 53, 54, 55, 56, 57, 58, 59, 60,
+				53, 53, 53, 53, 53, 53, 53, 61, 62, 63);
 		run = new MovieClip.Animation( 20, true );
 		run.frames( film, 1, 2, 3, 4, 5, 6, 7, 8 );
 		die = new MovieClip.Animation( 8, false );
