@@ -21,6 +21,8 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.scenes;
 
+import static com.shatteredpixel.shatteredpixeldungeon.utils.GLog.TAG;
+
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Badges;
 import com.shatteredpixel.shatteredpixeldungeon.Challenges;
@@ -108,17 +110,20 @@ import com.shatteredpixel.shatteredpixeldungeon.windows.WndMessage;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndOptions;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndStory;
 import com.watabou.glwrap.Blending;
+import com.watabou.input.PointerEvent;
 import com.watabou.noosa.Camera;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.Gizmo;
 import com.watabou.noosa.Group;
 import com.watabou.noosa.NoosaScript;
 import com.watabou.noosa.NoosaScriptNoLighting;
+import com.watabou.noosa.PointerArea;
 import com.watabou.noosa.SkinnedBlock;
 import com.watabou.noosa.Visual;
 import com.watabou.noosa.audio.Music;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.noosa.particles.Emitter;
+import com.watabou.utils.DeviceCompat;
 import com.watabou.utils.GameMath;
 import com.watabou.utils.Random;
 
@@ -140,6 +145,9 @@ public class GameScene extends PixelScene {
 	private WallBlockingTilemap wallBlocking;
 	private FogOfWar fog;
 	private HeroSprite hero;
+    private float inactivityTimer;
+	private boolean specialIdleActive;
+	private static final float SPECIAL_IDLE_DELAY = 5f;
 
 	private StatusPane pane;
 	
@@ -327,9 +335,12 @@ public class GameScene extends PixelScene {
 		add( mobs );
 
 		hero = new HeroSprite();
-		hero.place( Dungeon.hero.pos );
+		hero.place(Dungeon.hero.pos);
 		hero.updateArmor();
-		mobs.add( hero );
+		mobs.add(hero);
+
+		inactivityTimer = 0;
+		specialIdleActive = false;
 		
 		for (Mob mob : Dungeon.level.mobs) {
 			addMobSprite( mob );
@@ -430,7 +441,23 @@ public class GameScene extends PixelScene {
 		counter.color( 0x808080, true );
 		counter.camera = uiCamera;
 		counter.show(this, busy.center(), 0f);
-		
+
+		PointerArea idleArea = new PointerArea(0, 0, uiCamera.width, uiCamera.height) {
+			@Override
+			protected void onClick(PointerEvent event) {
+				super.onClick(event);
+				DeviceCompat.log(TAG, "Clicked on idlemask");
+				inactivityTimer = 0;
+				if (specialIdleActive) {
+					hero.cancelSpecialIdle();
+					specialIdleActive = false;
+				}
+			}
+		};
+		idleArea.camera = uiCamera;
+		idleArea.blockLevel = PointerArea.NEVER_BLOCK;
+		add(idleArea);
+
 		switch (InterlevelScene.mode) {
 		case RESURRECT:
 			ScrollOfTeleportation.appear( Dungeon.hero, Dungeon.level.entrance );
@@ -705,6 +732,15 @@ public class GameScene extends PixelScene {
 		}
 
 		super.update();
+
+		if (!specialIdleActive) {
+			inactivityTimer += Game.elapsed;
+			DeviceCompat.log( TAG, "inactivityTimer: " + inactivityTimer );
+			if (inactivityTimer >= SPECIAL_IDLE_DELAY) {
+				specialIdleActive = true;
+				hero.triggerSpecialIdle();
+			}
+		}
 		TomorrowRogueNight.actorLogger.update();
 		if (!Emitter.freezeEmitters) water.offset( 0, -5 * Game.elapsed );
 

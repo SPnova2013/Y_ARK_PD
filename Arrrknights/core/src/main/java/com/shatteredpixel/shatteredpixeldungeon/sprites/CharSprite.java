@@ -66,7 +66,7 @@ import java.nio.Buffer;
 import java.util.HashSet;
 
 public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip.Listener {
-	
+
 	// Color constants for floating text
 	public static final int DEFAULT		= 0xFFFFFF;
 	public static final int POSITIVE	= 0x00FF00;
@@ -116,6 +116,8 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 	protected Animation operate;
 	protected Animation zap;
 	protected Animation die;
+	protected Animation specialIdle;
+	private boolean specialIdleEnabled = false;
 	
 	protected Callback animCallback;
 	
@@ -267,7 +269,27 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 	public void idle() {
 		play(idle);
 	}
-	
+
+	public void setSpecialIdle(Animation anim) {
+		this.specialIdle = anim;
+	}
+
+	public void triggerSpecialIdle() {
+		if (specialIdle == null) return;
+		if (!specialIdleEnabled && curAnim == idle) {
+			specialIdleEnabled = true;
+			play(specialIdle);
+		}
+	}
+
+	public void cancelSpecialIdle() {
+		if (specialIdle == null) return;
+		if (specialIdleEnabled) {
+			specialIdleEnabled = false;
+			idle();
+		}
+	}
+
 	public void move( int from, int to ) {
 		turnTo( from , to );
 
@@ -777,6 +799,10 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 	}
 	@Override
 	public void update() {
+		if (specialIdleEnabled && curAnim == idle) {
+			play(specialIdle);
+		}
+
 		if (paused && ch != null && curAnim != null && !curAnim.looped && !finished){
 			listener.onComplete(curAnim);
 			finished = true;
