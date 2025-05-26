@@ -113,7 +113,6 @@ public class StaffOfMageHand extends Wand {
         //路径推动
         int beamdis = Dungeon.level.distance(Dungeon.hero.pos, bolt.collisionPos);
         wandattack(bolt.collisionPos, beamdis);
-        Dungeon.level.pressCell(bolt.collisionPos);
     }
 
     private void transport( Heap heap ) {
