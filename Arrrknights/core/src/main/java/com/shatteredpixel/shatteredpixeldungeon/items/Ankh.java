@@ -21,7 +21,10 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.items;
 
+import static com.shatteredpixel.shatteredpixeldungeon.Dungeon.hero;
+
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
+import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
@@ -44,10 +47,20 @@ public class Ankh extends Item {
 		//You tell the ankh no, don't revive me, and then it comes back to revive you again in another run.
 		//I'm not sure if that's enthusiasm or passive-aggression.
 		bones = true;
+
+		stackable = true;
 	}
 
 	private boolean blessed = false;
-	
+	@Override
+	public boolean isSimilar( Item item ) {
+		if ( super.isSimilar(item) ){
+			Ankh other = (Ankh) item;
+			if(isBlessed() && other.isBlessed()) return true;
+			else if (!isBlessed() && !other.isBlessed()) return true;
+		}
+		return false;
+	}
 	@Override
 	public boolean isUpgradable() {
 		return false;
@@ -62,7 +75,7 @@ public class Ankh extends Item {
 	public ArrayList<String> actions( Hero hero ) {
 		ArrayList<String> actions = super.actions(hero);
 		DewVial vial = hero.belongings.getItem(DewVial.class);
-		if (vial != null && vial.isFull() && !blessed)
+		if (vial != null /*&& vial.isFull()*/ && !blessed)
 			actions.add( AC_BLESS );
 		return actions;
 	}
@@ -76,9 +89,14 @@ public class Ankh extends Item {
 
 			DewVial vial = hero.belongings.getItem(DewVial.class);
 			if (vial != null){
-				blessed = true;
+				//blessed = true;
+				curItem.detach(hero.belongings.backpack);
+				Ankh blessedAnkh = new Ankh();
+				blessedAnkh.blessed = true;
+				if(blessedAnkh.doPickUp(hero)) GLog.p( Messages.get(this, "bless") );
+				else Dungeon.level.drop( blessedAnkh, hero.pos ).sprite.drop();
 				vial.empty();
-				GLog.p( Messages.get(this, "bless") );
+				//GLog.p( Messages.get(this, "bless") );
 				hero.spend( 1f );
 				hero.busy();
 

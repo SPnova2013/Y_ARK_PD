@@ -25,6 +25,7 @@ import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroClass;
+import com.shatteredpixel.shatteredpixeldungeon.items.armor.PlateArmor;
 import com.watabou.gltextures.SmartTexture;
 import com.watabou.gltextures.TextureCache;
 import com.watabou.noosa.Camera;
@@ -91,8 +92,7 @@ public class HeroSprite extends CharSprite {
 		read = new Animation( 10, false );
 		read.frames( film, 18, 19, 20, 21, 22, 23, 24, 25, 25, 25 );
 
-		specialIdle = new Animation( 7, true );
-		specialIdle.frames( film, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36 );
+		specialIdle = idle.clone();
 
 		if(Dungeon.hero.CharSkin == Hero.HINA) updateHinaSkin();
 
@@ -110,6 +110,7 @@ public class HeroSprite extends CharSprite {
 				53, 53, 53, 53, 53, 53, 53, 61, 62, 63);
 		run = new MovieClip.Animation( 20, true );
 		run.frames( film, 1, 2, 3, 4, 5, 6, 7, 8 );
+		//if(Dungeon.hero.belongings.armor instanceof PlateArmor) run.frames(film, 1);
 		die = new MovieClip.Animation( 8, false );
 		die.frames( film, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39 );
 		attack = new MovieClip.Animation( 25, false );

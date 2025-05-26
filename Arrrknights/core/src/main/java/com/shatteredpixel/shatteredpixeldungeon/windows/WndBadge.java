@@ -26,6 +26,28 @@ import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.effects.BadgeBanner;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.JessiSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.ArchSkinSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.AstesiaSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.FnovaSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.FrankaSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.FrostLeafSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.GraniSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.HinaSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.KayokoSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.LappySprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.LilithSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.MudrockSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.SchwarzSkinSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.SkadiSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.SkinSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.SpecterSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.SussurroSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.TlipocaSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.TomimiSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.WeedySkinSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.talrufightSprite;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
 import com.watabou.noosa.Image;
@@ -119,69 +141,92 @@ public class WndBadge extends Window {
 		}
 	}
 
-	public void ChangeSkin() { Dungeon.hero.CharSkin = 0; }
+	public void ChangeSkin() {
+		Dungeon.hero.CharSkin = 0;
+		Dungeon.hero.CharSkinClass = null;
+	}
 
 	public void ChangeSkin( Badges.Badge badge) {
 		switch (badge) {
 			case SKIN_TALU:
 				Dungeon.hero.CharSkin = Hero.TALULAH;
+				Dungeon.hero.CharSkinClass = new talrufightSprite();
 				break;
 			case SKIN_NOVA:
 				Dungeon.hero.CharSkin = Hero.F_NOVA;
+				Dungeon.hero.CharSkinClass = new FnovaSprite();
 				break;
 			case SKIN_BABOSKADI:
 				Dungeon.hero.CharSkin = Hero.SKADI;
+				Dungeon.hero.CharSkinClass = new SkadiSprite();
 				break;
 			case SKIN_SUSUU:
 				Dungeon.hero.CharSkin = Hero.SSR;
+				Dungeon.hero.CharSkinClass = new SussurroSprite();
 				break;
 			case SKIN_GRN:
 				Dungeon.hero.CharSkin = Hero.GRANI;
+				Dungeon.hero.CharSkinClass = new GraniSprite();
 				break;
 			case SKIN_JESSI:
 				Dungeon.hero.CharSkin = Hero.JESSI;
+				Dungeon.hero.CharSkinClass = new JessiSprite();
 				break;
 			case SKIN_LAPPY:
 				Dungeon.hero.CharSkin = Hero.LAPPY;
+				Dungeon.hero.CharSkinClass = new LappySprite();
 				break;
 			case SKIN_LEAF:
 				Dungeon.hero.CharSkin = Hero.LEAF;
+				Dungeon.hero.CharSkinClass = new FrostLeafSprite();
 				break;
 			case SKIN_MUDROCK:
 				Dungeon.hero.CharSkin = Hero.MUDROCK;
+				Dungeon.hero.CharSkinClass = new MudrockSprite();
 				break;
 			case SKIN_ASTESIA:
 				Dungeon.hero.CharSkin = Hero.AST;
+				Dungeon.hero.CharSkinClass = new AstesiaSprite();
 				break;
 			case SKIN_SPECTER:
 				Dungeon.hero.CharSkin = Hero.SPT;
+				Dungeon.hero.CharSkinClass = new SpecterSprite();
 				break;
 			case SKIN_SCHWARZ:
 				Dungeon.hero.CharSkin = Hero.SCHWARZ;
+				Dungeon.hero.CharSkinClass = new SchwarzSkinSprite();
 				break;
 			case SKIN_ARCH:
 				Dungeon.hero.CharSkin = Hero.ARCH;
+				Dungeon.hero.CharSkinClass = new ArchSkinSprite();
 				break;
 			case SKIN_TOMIMI:
 				Dungeon.hero.CharSkin = Hero.TOMIMI;
+				Dungeon.hero.CharSkinClass = new TomimiSprite();
 				break;
 			case SKIN_FRANKA:
 				Dungeon.hero.CharSkin = Hero.FRANKA;
+				Dungeon.hero.CharSkinClass = new FrankaSprite();
 				break;
 			case SKIN_WEEDY:
 				Dungeon.hero.CharSkin = Hero.WEEDY;
+				Dungeon.hero.CharSkinClass = new WeedySkinSprite();
 				break;
 			case SKIN_LILITH:
 				Dungeon.hero.CharSkin = Hero.LILITH;
+				Dungeon.hero.CharSkinClass = new LilithSprite();
 				break;
 			case SKIN_KAYOKO:
 				Dungeon.hero.CharSkin = Hero.KAYOKO;
+				Dungeon.hero.CharSkinClass = new KayokoSprite();
 				break;
 			case SKIN_HINA:
 				Dungeon.hero.CharSkin = Hero.HINA;
+				Dungeon.hero.CharSkinClass = new HinaSprite();
 				break;
 			case SKIN_TLIPOCA:
 				Dungeon.hero.CharSkin = Hero.TLIPOCA;
+				Dungeon.hero.CharSkinClass = new TlipocaSprite();
 				break;
 		}
 	}

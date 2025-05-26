@@ -1,15 +1,14 @@
 package com.shatteredpixel.shatteredpixeldungeon.sprites.skins;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
-import com.shatteredpixel.shatteredpixeldungeon.sprites.MobSprite;
 import com.watabou.noosa.MovieClip;
 import com.watabou.noosa.TextureFilm;
 
-public class AstesiaSprite extends SkinSprite {
-    public AstesiaSprite() {
+public class KayokoSprite extends SkinSprite {
+    public KayokoSprite() {
         super();
 
-        texture( Assets.Sprites.AST );
+        texture( Assets.Sprites.KAYOKO );
 
         TextureFilm frames = new TextureFilm( texture, 36, 36 );
 

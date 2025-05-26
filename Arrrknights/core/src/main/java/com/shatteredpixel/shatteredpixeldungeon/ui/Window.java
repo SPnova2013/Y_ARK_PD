@@ -49,6 +49,7 @@ public class Window extends Group implements Signal.Listener<KeyEvent> {
 	public static final int WHITE = 0xFFFFFF;
 	public static final int TITLE_COLOR = 0xFFFF44;
 	public static final int ARKPD_COLOR = 0x7EA19E;
+	public static final int Y_ARKPD_COLOR = 0xEE11EE;
 	public static final int SHPX_COLOR = 0x33BB33;
 	
 	public Window() {

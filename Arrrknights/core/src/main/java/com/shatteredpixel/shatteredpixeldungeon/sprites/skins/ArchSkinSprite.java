@@ -5,7 +5,7 @@ import com.shatteredpixel.shatteredpixeldungeon.sprites.MobSprite;
 import com.watabou.noosa.MovieClip;
 import com.watabou.noosa.TextureFilm;
 
-public class ArchSkinSprite extends MobSprite {
+public class ArchSkinSprite extends SkinSprite {
     public ArchSkinSprite() {
         super();
 

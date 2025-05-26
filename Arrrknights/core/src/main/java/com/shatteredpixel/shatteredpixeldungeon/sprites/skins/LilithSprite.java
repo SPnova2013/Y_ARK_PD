@@ -5,7 +5,7 @@ import com.shatteredpixel.shatteredpixeldungeon.sprites.MobSprite;
 import com.watabou.noosa.MovieClip;
 import com.watabou.noosa.TextureFilm;
 
-public class LilithSprite extends MobSprite {
+public class LilithSprite extends SkinSprite {
     public LilithSprite(){
         super();
         texture( Assets.Sprites.LILITH );

@@ -97,7 +97,43 @@ public class AboutScene extends PixelScene {
 		content.add(charlie);
 
 
+		CreditsBlock yarkpd = new CreditsBlock(true, Window.Y_ARKPD_COLOR,
+				"Yesterday's RogueNights",
+				Icons.ARKPD.get(),
+				"Developed by: _R'lyeh Text_\nBased on _Tomorrow's RogueNights_ by Namsek\nand _ARK PD_ by Budding's open source",
+				"",
+				null);
+		if (landscape()){
+			yarkpd.setRect((w - fullWidth)/2f, shpx.bottom() + 8, 120, 0);
+		} else {
+			yarkpd.setRect((w - fullWidth)/2f, charlie.bottom() + 8, 120, 0);
+		}
+		content.add(yarkpd);
 
+		CreditsBlock jinkeloid = new CreditsBlock(false, Window.Y_ARKPD_COLOR,
+				"Code Assistance:",
+				Icons.JINKELOID.get(),
+				"Jinkeloid",
+				"GitHub",
+				"https://github.com/CatAzreal");
+		jinkeloid.setSize(colWidth/2f, 0);
+		if (landscape()){
+			jinkeloid.setPos(yarkpd.right() + 10, yarkpd.top() + (yarkpd.height() - jinkeloid.height())/2f);
+		} else {
+			jinkeloid.setPos(w/2f - colWidth/2f, yarkpd.bottom() + 8);
+		}
+		content.add(jinkeloid);
+
+		CreditsBlock sabai = new CreditsBlock(false, Window.Y_ARKPD_COLOR,
+				"Art Assistance:",
+				Icons.SABAI.get(),
+				"SabaiMomoi",
+				"GitHub",
+				"https://github.com/SabaiMomoi");
+		sabai.setRect(jinkeloid.right() + 5, jinkeloid.top(), colWidth/2f, 0);
+		content.add(sabai);
+
+		addLine(yarkpd.top() - 2, content);
 
 		CreditsBlock rogu = new CreditsBlock(true, Window.ARKPD_COLOR,
 				"Tomorrow's RogueNights",
@@ -105,9 +141,9 @@ public class AboutScene extends PixelScene {
 				"Developed by: _Team Rosemar_\nBased on Shattered Pixel Dungeon's open source",
 				"",
 				null);
-		rogu.setRect((w - fullWidth)/2f, alex.bottom() + 8, 120, 0);
+		if (landscape()) rogu.setRect((w - fullWidth)/2f, yarkpd.bottom() + 8, 120, 0);
+		else rogu.setRect((w - fullWidth)/2f, sabai.bottom() + 8, 120, 0);
 		content.add(rogu);
-
 
 		CreditsBlock nam = new CreditsBlock(false, Window.ARKPD_COLOR,
 				"Hero Art & Design:",
@@ -144,7 +180,7 @@ public class AboutScene extends PixelScene {
 				"hypergryph.com",
 				"https://ak.hypergryph.com/");
 		if (landscape()){
-			hyper.setRect(shpx.left(), nam.bottom() + 8, colWidth, 0);
+			hyper.setRect(shpx.left(), rogu.bottom() + 8, colWidth, 0);
 		} else {
 			hyper.setRect(shpx.left(), mizq.bottom() + 8, colWidth, 0);
 		}

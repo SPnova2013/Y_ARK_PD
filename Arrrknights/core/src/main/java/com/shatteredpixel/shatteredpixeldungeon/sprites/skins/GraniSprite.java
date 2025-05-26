@@ -5,7 +5,7 @@ import com.shatteredpixel.shatteredpixeldungeon.sprites.MobSprite;
 import com.watabou.noosa.MovieClip;
 import com.watabou.noosa.TextureFilm;
 
-public class GraniSprite extends MobSprite {
+public class GraniSprite extends SkinSprite {
     public GraniSprite() {
         super();
 

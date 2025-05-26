@@ -257,6 +257,7 @@ import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.InterlevelScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.HeroSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.SkinSprite;
 import com.shatteredpixel.shatteredpixeldungeon.ui.AttackIndicator;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
 import com.shatteredpixel.shatteredpixeldungeon.ui.QuickSlotButton;
@@ -275,6 +276,7 @@ import com.watabou.utils.Callback;
 import com.watabou.utils.GameMath;
 import com.watabou.utils.PathFinder;
 import com.watabou.utils.Random;
+import com.watabou.utils.Reflection;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -364,6 +366,7 @@ public class Hero extends Char {
     private int SK3num;
 
     public int CharSkin = 0; // 0은 디폴트 스킨.
+    public SkinSprite CharSkinClass = null;
 
     private ArrayList<Mob> visibleEnemies;
 
@@ -446,6 +449,7 @@ public class Hero extends Char {
     private static final String SKL2 = "sk2num";
     private static final String SKL3 = "sk3num";
     private static final String SKIN = "charskin";
+    private static final String SKINCLASS = "charskinclass";
 
     @Override
     public void storeInBundle(Bundle bundle) {
@@ -485,6 +489,7 @@ public class Hero extends Char {
 
         // 스킨 코드 저장
         bundle.put(SKIN, CharSkin);
+        if(CharSkinClass!=null) bundle.put(SKINCLASS, CharSkinClass.getClass());
 
         belongings.storeInBundle(bundle);
     }
@@ -544,6 +549,7 @@ public class Hero extends Char {
 
         // 스킨 코드 불러오기
         CharSkin = bundle.getInt(SKIN);
+        CharSkinClass = (SkinSprite) Reflection.newInstance(bundle.getClass(SKINCLASS));
 
         STR = bundle.getInt(STRENGTH);
 

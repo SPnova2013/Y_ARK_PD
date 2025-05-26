@@ -5,7 +5,7 @@ import com.shatteredpixel.shatteredpixeldungeon.sprites.MobSprite;
 import com.watabou.noosa.MovieClip;
 import com.watabou.noosa.TextureFilm;
 
-public class FrostLeafSprite extends MobSprite {
+public class FrostLeafSprite extends SkinSprite {
     public FrostLeafSprite() {
         super();
 

@@ -5,7 +5,7 @@ import com.shatteredpixel.shatteredpixeldungeon.sprites.MobSprite;
 import com.watabou.noosa.MovieClip;
 import com.watabou.noosa.TextureFilm;
 
-public class TlipocaSprite extends MobSprite {
+public class TlipocaSprite extends SkinSprite {
     public TlipocaSprite(){
         super();
         texture( Assets.Sprites.TLIPOCA );

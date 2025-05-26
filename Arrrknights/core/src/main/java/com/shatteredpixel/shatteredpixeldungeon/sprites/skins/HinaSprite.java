@@ -6,12 +6,13 @@ import com.shatteredpixel.shatteredpixeldungeon.sprites.MobSprite;
 import com.watabou.noosa.MovieClip;
 import com.watabou.noosa.TextureFilm;
 
-public class HinaSprite extends MobSprite {
+public class HinaSprite extends SkinSprite {
 
     private Animation fly;
     private Animation read;
     public HinaSprite() {
         super();
+        allowSpecialIdle = false;
 
         texture( Assets.Sprites.HINA );
 

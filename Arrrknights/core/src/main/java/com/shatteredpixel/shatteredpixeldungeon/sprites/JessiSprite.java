@@ -1,10 +1,12 @@
 package com.shatteredpixel.shatteredpixeldungeon.sprites;
 
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.SkinSprite;
 import com.watabou.noosa.MovieClip;
 import com.watabou.noosa.TextureFilm;
 
-public class JessiSprite extends MobSprite{
+public class JessiSprite extends SkinSprite {
     public JessiSprite() {
         super();
 

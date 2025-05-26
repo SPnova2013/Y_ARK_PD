@@ -33,6 +33,16 @@ public class UnstableTeslaCoil extends ROR2item{
             return false;
         }
     }
+    @Override
+    public boolean doUnequip(Hero hero, boolean collect, boolean single) {
+        if (super.doUnequip(hero, collect, single)){
+            Buff buff = Dungeon.hero.buff(TeslaCoilActive.class);
+            if(buff != null) buff.detach();
+            return true;
+        } else {
+            return false;
+        }
+    }
     public class UnstableTeslaCoilBuff extends ROR2itemBuff{
         @Override
         public boolean act() {

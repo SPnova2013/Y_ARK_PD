@@ -5,7 +5,7 @@ import com.shatteredpixel.shatteredpixeldungeon.sprites.MobSprite;
 import com.watabou.noosa.MovieClip;
 import com.watabou.noosa.TextureFilm;
 
-public class FnovaSprite extends MobSprite {
+public class FnovaSprite extends SkinSprite {
         public FnovaSprite() {
             super();
 

@@ -5,7 +5,7 @@ import com.shatteredpixel.shatteredpixeldungeon.sprites.MobSprite;
 import com.watabou.noosa.MovieClip;
 import com.watabou.noosa.TextureFilm;
 
-public class SussurroSprite extends MobSprite {
+public class SussurroSprite extends SkinSprite {
     public SussurroSprite() {
         super();
 

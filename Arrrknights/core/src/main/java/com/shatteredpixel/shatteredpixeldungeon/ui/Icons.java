@@ -101,6 +101,10 @@ public enum Icons {
 	NAMSEK,
 	MIZQ,
 
+	Y_ARKPD,
+	JINKELOID,
+	SABAI,
+
 	BLAZE,
 	AMIYA,
 	P_RED,
@@ -335,6 +339,19 @@ public enum Icons {
 				break;
 			case HYPER:
 				icon.frame(icon.texture.uvRect(96, 192, 128, 224));
+				icon.scale.set(PixelScene.align(0.49f));
+				break;
+
+			case Y_ARKPD:
+				icon.frame( icon.texture.uvRect( 128, 192, 160, 224 ) );
+				icon.scale.set(PixelScene.align(0.49f));
+				break;
+			case JINKELOID:
+				icon.frame( icon.texture.uvRect( 160, 192, 192, 224 ) );
+				icon.scale.set(PixelScene.align(0.49f));
+				break;
+			case SABAI:
+				icon.frame( icon.texture.uvRect( 192, 192, 224, 224 ) );
 				icon.scale.set(PixelScene.align(0.49f));
 				break;
 
