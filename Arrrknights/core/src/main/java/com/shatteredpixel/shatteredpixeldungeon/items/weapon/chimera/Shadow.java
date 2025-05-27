@@ -10,6 +10,8 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroClass;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroSubClass;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.ChaliceOfBlood;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Firmament;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.ShadowFirmament;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.watabou.utils.Random;
 
@@ -25,6 +27,8 @@ public class Shadow extends Weapon.Chimera {
     private boolean doubleattack = true;
     @Override
     public int proc(Weapon weapon, Char attacker, Char defender, int damage) {
+        //武器为赤霄或影霄时，将连击交由它们自身处理
+        if(weapon instanceof ShadowFirmament || weapon instanceof Firmament) return super.proc(weapon, attacker, defender, damage);
         if (doubleattack) {
             doubleattack = false;
             if (!attacker.attack(defender)) {

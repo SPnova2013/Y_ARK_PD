@@ -35,6 +35,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.YogDzewa;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.ScaleArmor;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.ChaliceOfBlood;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfForce;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.chimera.Shadow;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.watabou.utils.Random;
@@ -48,8 +49,19 @@ public class Firmament extends MeleeWeapon {
 
         tier = 2;
     }
-    private boolean doubleattack = true;
+    private int baseComboCount = 1;
+    private int currentComboCount = 1;
 
+    public int getBaseComboCount() {
+        if (hasChimera(Shadow.class)) return baseComboCount + 2;
+        else return baseComboCount;
+    }
+    public int getCurrentComboCount() {
+        return currentComboCount;
+    }
+    public void setCurrentComboCount(int value) {
+        currentComboCount = value;
+    }
 
     @Override
     public int max(int lvl) {
@@ -68,10 +80,11 @@ public class Firmament extends MeleeWeapon {
                 damage *= 1.15f;
             }}
 
-        if (doubleattack) {
-            doubleattack = false;
+        int curretComboCount = getCurrentComboCount();
+        if (curretComboCount > 0) {
+            setCurrentComboCount(curretComboCount - 1);
             if (!attacker.attack(defender)) {
-                doubleattack = true; }
+                setCurrentComboCount(getBaseComboCount());}
             else {
                 defender.sprite.bloodBurstA( defender.sprite.center(), 4 );
                 defender.sprite.flash();
@@ -83,7 +96,7 @@ public class Firmament extends MeleeWeapon {
                 }
             }
         }
-        else doubleattack = true;
+        else setCurrentComboCount(getBaseComboCount());
 
         return super.proc(attacker, defender, damage);
     }

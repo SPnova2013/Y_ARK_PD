@@ -33,6 +33,8 @@ import com.shatteredpixel.shatteredpixeldungeon.items.BrokenSeal;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.Skill.SkillBook;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfBlastWave;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.chimera.Shadow;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Firmament;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.ShadowFirmament;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.GunWeapon;
@@ -520,8 +522,12 @@ public class Combo extends Buff implements ActionIndicator.Action {
 					break;
 				}
 				else {
-					if (Dungeon.hero.belongings.weapon instanceof Firmament || Dungeon.hero.belongings.weapon instanceof ShadowFirmament)
-						count--;
+					if (Dungeon.hero.belongings.weapon instanceof Firmament
+							|| Dungeon.hero.belongings.weapon instanceof ShadowFirmament) count--;
+					if(((Weapon)Dungeon.hero.belongings.weapon).hasChimera(Shadow.class)) count--;
+					if((Dungeon.hero.belongings.weapon instanceof Firmament
+							|| Dungeon.hero.belongings.weapon instanceof ShadowFirmament)
+							&& ((Weapon)Dungeon.hero.belongings.weapon).hasChimera(Shadow.class)) count--;
 					count--;
 					//fury attacks as many times as you have combo count
 					if (count > 0 && enemy.isAlive() && hero.canAttack(enemy) &&

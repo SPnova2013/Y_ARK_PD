@@ -31,6 +31,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroClass;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroSubClass;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.ChaliceOfBlood;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.chimera.Shadow;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.watabou.utils.Random;
@@ -44,9 +45,19 @@ public class ShadowFirmament extends MeleeWeapon {
 
 		tier = 5;
 	}
+	private int baseComboCount = 1;
+	private int currentComboCount = 1;
 
-	private boolean doubleattack = true;
-
+	public int getBaseComboCount() {
+		if (hasChimera(Shadow.class)) return baseComboCount + 2;
+		else return baseComboCount;
+	}
+	public int getCurrentComboCount() {
+		return currentComboCount;
+	}
+	public void setCurrentComboCount(int value) {
+		currentComboCount = value;
+	}
 
 	@Override
 	public int max(int lvl) {
@@ -56,11 +67,13 @@ public class ShadowFirmament extends MeleeWeapon {
 
 	@Override
 	public int proc(Char attacker, Char defender, int damage) {
-		if (doubleattack) {
-			doubleattack = false;
+		int curretComboCount = getCurrentComboCount();
+
+		if (curretComboCount > 0) {
+			setCurrentComboCount(curretComboCount - 1);
 			if (!attacker.attack(defender)) {
-				doubleattack = true; }
-			else {
+				setCurrentComboCount(getBaseComboCount());
+			} else {
 				defender.sprite.bloodBurstA( defender.sprite.center(), 4 );
 				defender.sprite.flash();
 				if (attacker instanceof Hero && Dungeon.hero.subClassSet.contains(HeroSubClass.GLADIATOR)) {
@@ -70,8 +83,7 @@ public class ShadowFirmament extends MeleeWeapon {
 					Buff.affect(attacker, ChenCombo.class).bounshit(defender);
 				}
 			}
-			}
-		else doubleattack = true;
+		}else setCurrentComboCount(getBaseComboCount());
 
 		if (attacker instanceof Hero) {
 			if (Dungeon.hero.belongings.getItem(ChaliceOfBlood.class) != null) {
