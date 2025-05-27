@@ -68,7 +68,7 @@ public class WndGameInProgress extends Window {
 
 		StringBuilder sb = new StringBuilder();
 		String className = null;
-		if (info.subClass != null){
+		if (info.subClass != null && !info.subClass.isEmpty()){
 			for(HeroSubClass sc : info.subClass){
 				sb.append(sc.title()).append(" ");
 			}

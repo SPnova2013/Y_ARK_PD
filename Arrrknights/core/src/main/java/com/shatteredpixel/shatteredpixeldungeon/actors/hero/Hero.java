@@ -629,12 +629,12 @@ public class Hero extends Char {
 
     public String className() {
         String titles = "";
-		if(subClass!=null){
+		if(subClass!=null && !subClass.isEmpty()){
             for(HeroSubClass sc: subClass){
                 titles += sc.title() + " ";
             }
         }
-        return subClass == null ? heroClass.title() : titles;
+        return (subClass == null || subClass.isEmpty()) ? heroClass.title() : titles;
     }
 
     @Override
