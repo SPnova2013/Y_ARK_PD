@@ -94,7 +94,7 @@ public class HeroSprite extends CharSprite {
 
 		specialIdle = idle.clone();
 
-		if(Dungeon.hero.CharSkin == Hero.HINA) updateHinaSkin();
+		if(Dungeon.hero.CharSkin == Hero.HINA) updateHinaSkin();//除此之外，还需要在镜像卷轴和虹卫秘卷处增加非典型皮肤的适配
 
 		if (Dungeon.hero.isAlive())
 			idle();

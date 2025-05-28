@@ -23,8 +23,10 @@ package com.shatteredpixel.shatteredpixeldungeon.sprites;
 
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.PrismaticImage;
 import com.watabou.noosa.Game;
+import com.watabou.noosa.MovieClip;
 import com.watabou.noosa.TextureFilm;
 
 public class PrismaticSprite extends MobSprite {
@@ -60,7 +62,8 @@ public class PrismaticSprite extends MobSprite {
 
 		attack = new Animation( 15, false );
 		attack.frames( film, 9, 10, 11, 12, 13, 14, 15, 16 );
-		
+
+		if(Dungeon.hero.CharSkin == Hero.HINA) updateHinaSkin();
 		idle();
 	}
 	
@@ -75,5 +78,23 @@ public class PrismaticSprite extends MobSprite {
 					interval > 2 ? Math.max(0, 3-interval): interval-1, 0.5f);
 		}
 	}
-	
+
+	private void updateHinaSkin() {
+		TextureFilm film = new TextureFilm(texture, 50, 40);
+		idle = new MovieClip.Animation( 7, true );
+		idle.frames( film, 53, 53, 53, 53, 53, 53, 53, 53, 53, 53, 53, 53, 53, 53, 53, 53, 53, 53, 53, 53, 45, 46, 47, 48, 49, 50, 51, 52, 53,
+				53, 53, 53, 53, 53, 53, 53, 53, 53, 53, 53, 53, 53, 53, 53, 53, 53, 53, 54, 55, 56, 57, 58, 59, 60,
+				53, 53, 53, 53, 53, 53, 53, 61, 62, 63);
+		run = new MovieClip.Animation( 20, true );
+		run.frames( film, 1, 2, 3, 4, 5, 6, 7, 8 );
+		//if(Dungeon.hero.belongings.armor instanceof PlateArmor) run.frames(film, 1);
+		die = new MovieClip.Animation( 8, false );
+		die.frames( film, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39 );
+		attack = new MovieClip.Animation( 25, false );
+		attack.frames( film, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20 );
+		Sattack = attack.clone();
+		zap = attack.clone();
+		operate = new Animation( 8, false );
+		operate.frames( film, 40, 41, 40, 41 );
+	}
 }
