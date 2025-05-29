@@ -926,10 +926,12 @@ public class Hero extends Char {
             }
             if(correct>0){
                 int diff = wep.max()-wep.min();
-                float originPercent = dmg/(diff*1.0f);
-                dmg = Math.round(wep.min()+diff*correct + (
-                        wep.max() - (wep.min()+Math.round(diff*correct))
-                        )*originPercent);
+                if(diff > 0){
+                    float originPercent = dmg/(diff*1.0f);
+                    dmg = Math.round(wep.min()+diff*correct + (
+                            wep.max() - (wep.min()+Math.round(diff*correct))
+                    )*originPercent);
+                }
             }
             if (!(wep instanceof MissileWeapon)) dmg += RingOfForce.armedDamageBonus(this);
         } else {
