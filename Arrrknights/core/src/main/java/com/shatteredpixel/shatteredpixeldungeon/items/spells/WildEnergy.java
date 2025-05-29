@@ -50,6 +50,7 @@ public class WildEnergy extends TargetedSpell {
 	
 	@Override
 	protected void affectTarget(Ballistica bolt, final Hero hero) {
+		CursedWand.logoutSolid();
 		CursedWand.cursedZap(this, hero, bolt, new Callback() {
 			@Override
 			public void call() {
