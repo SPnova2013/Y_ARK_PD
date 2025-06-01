@@ -16,6 +16,7 @@ import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.KayokoSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.LappySprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.LilithSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.MudrockSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.NeuroSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.SchwarzSkinSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.SkadiSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.SpecterSprite;
@@ -26,12 +27,14 @@ import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.WeedySkinSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.talrufightSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.FnovaSprite;
 
+import java.security.PublicKey;
+
 public class SkinModel extends NPC {
     {
         properties.add(Property.IMMOVABLE);
         properties.add(Property.NPC);
     }
-
+    private final int MAX_SKIN = 20;
     public SkinModel()
     {
         super();
@@ -78,6 +81,7 @@ public class SkinModel extends NPC {
                break;
            case 19: spriteClass= KayokoSprite.class;
                break;
+           case MAX_SKIN : spriteClass= NeuroSprite.class;
 
        }
     }
@@ -110,7 +114,7 @@ public class SkinModel extends NPC {
     public void SkinChange()
     {
         Dungeon.skin_ch++;
-        if (Dungeon.skin_ch > 19) Dungeon.skin_ch = 0;
+        if (Dungeon.skin_ch > MAX_SKIN) Dungeon.skin_ch = 0;
 
         int ppos = this.pos;
         this.destroy();

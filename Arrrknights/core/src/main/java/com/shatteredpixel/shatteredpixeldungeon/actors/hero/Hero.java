@@ -307,6 +307,7 @@ public class Hero extends Char {
     public static final int KAYOKO = 18;
     public static final int HINA = 19;
     public static final int TLIPOCA = 20;
+    public static final int NEURO = 21;
 
     {
         actPriority = HERO_PRIO;

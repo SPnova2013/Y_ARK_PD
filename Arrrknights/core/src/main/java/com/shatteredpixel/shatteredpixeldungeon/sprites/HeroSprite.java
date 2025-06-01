@@ -95,6 +95,7 @@ public class HeroSprite extends CharSprite {
 		specialIdle = idle.clone();
 
 		if(Dungeon.hero.CharSkin == Hero.HINA) updateHinaSkin();//除此之外，还需要在镜像卷轴和虹卫秘卷处增加非典型皮肤的适配
+		if(Dungeon.hero.CharSkin == Hero.NEURO) updateNeuroSkin();
 
 		if (Dungeon.hero.isAlive())
 			idle();
@@ -123,6 +124,29 @@ public class HeroSprite extends CharSprite {
 		fly.frames( film, 42, 43, 44 );
 		read = new Animation( 10, false );
 		read.frames( film, 21, 22, 23, 24, 25, 26, 27, 28 );
+	}
+
+	public void updateNeuroSkin() {
+		TextureFilm film = new TextureFilm(texture, 36, 36);
+		idle = new MovieClip.Animation( 7, true );
+		idle.frames( film, 41);
+		specialIdle = new MovieClip.Animation( 7, false );
+		specialIdle.frames(film, 41, 42, 43, 44, 45, 46);
+		run = new MovieClip.Animation( 20, true );
+		run.frames( film, 1, 2, 3, 4, 5, 6, 7, 8 );
+		//if(Dungeon.hero.belongings.armor instanceof PlateArmor) run.frames(film, 1);
+		die = new MovieClip.Animation( 8, false );
+		die.frames( film, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36 );
+		attack = new MovieClip.Animation( 25, false );
+		attack.frames( film, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19 );
+		Sattack = attack.clone();
+		zap = attack.clone();
+		operate = new Animation( 8, false );
+		operate.frames( film, 37, 38 );
+		fly = new Animation( 8, true );
+		fly.frames( film, 39, 40 );
+		read = new Animation( 10, false );
+		read.frames( film, 20, 21, 22, 23, 24, 25 );
 	}
 	
 	@Override

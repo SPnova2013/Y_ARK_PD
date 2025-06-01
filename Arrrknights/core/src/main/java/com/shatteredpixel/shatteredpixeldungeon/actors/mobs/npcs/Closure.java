@@ -284,7 +284,14 @@ public class Closure extends NPC {
                                 if(!Badges.isUnlocked(Badges.Badge.SKIN_TLIPOCA)) {Badges.validatetlipocaskin();}
                                 sprite.showStatus( CharSprite.POSITIVE, Messages.get(this, "hi"));
                                 break;
-
+                            case 19:
+                                if(!Badges.isUnlocked(Badges.Badge.SKIN_KAYOKO)) {Badges.validatekayokoskin();}
+                                sprite.showStatus( CharSprite.POSITIVE, Messages.get(this, "hi"));
+                                break;
+                            case 20:
+                                if(!Badges.isUnlocked(Badges.Badge.SKIN_NEURO)) {Badges.validateNeuroSkin();}
+                                sprite.showStatus( CharSprite.POSITIVE, Messages.get(this, "hi"));
+                                break;
                         }
                     }
                 }
