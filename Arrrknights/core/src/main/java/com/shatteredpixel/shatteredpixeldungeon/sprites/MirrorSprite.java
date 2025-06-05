@@ -21,10 +21,13 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.sprites;
 
+import static com.shatteredpixel.shatteredpixeldungeon.sprites.HeroSprite.tiers;
+
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.MirrorImage;
+import com.shatteredpixel.shatteredpixeldungeon.items.armor.PlateArmor;
 import com.watabou.noosa.MovieClip;
 import com.watabou.noosa.TextureFilm;
 
@@ -63,6 +66,8 @@ public class MirrorSprite extends MobSprite {
 		attack.frames( film, 9, 10, 11, 12, 13, 14, 15, 16 );
 
 		if(Dungeon.hero.CharSkin == Hero.HINA) updateHinaSkin();
+		if(Dungeon.hero.CharSkin == Hero.NEURO) updateNeuroSkin();
+		if(Dungeon.hero.CharSkin == Hero.WISADEL) updateWisadelSkin();
 		idle();
 	}
 
@@ -83,5 +88,43 @@ public class MirrorSprite extends MobSprite {
 		zap = attack.clone();
 		operate = new Animation( 8, false );
 		operate.frames( film, 40, 41, 40, 41 );
+	}
+	public void updateNeuroSkin() {
+		TextureFilm film = new TextureFilm(texture, 36, 36);
+		idle = new MovieClip.Animation( 7, true );
+		idle.frames( film, 41);
+		specialIdle = new MovieClip.Animation( 7, false );
+		specialIdle.frames(film, 41, 42, 43, 44, 45, 46);
+		run = new MovieClip.Animation( 20, true );
+		run.frames( film, 1, 2, 3, 4, 5, 6, 7, 8 );
+		//if(Dungeon.hero.belongings.armor instanceof PlateArmor) run.frames(film, 1);
+		die = new MovieClip.Animation( 8, false );
+		die.frames( film, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36 );
+		attack = new MovieClip.Animation( 25, false );
+		attack.frames( film, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19 );
+		Sattack = attack.clone();
+		zap = attack.clone();
+		operate = new Animation( 8, false );
+		operate.frames( film, 37, 38 );
+	}
+	public void updateWisadelSkin() {
+		texture(Dungeon.hero.heroClass.spritesheet());
+		TextureFilm film = new TextureFilm(tiers(), Dungeon.hero.tier(), 36, 36);
+		idle = new MovieClip.Animation( 7, true );
+		idle.frames( film, 41, 42, 43, 44, 45, 46, 47, 48);
+		if(Dungeon.hero.belongings.armor instanceof PlateArmor || Dungeon.hero.SK3 != null){
+			idle = new MovieClip.Animation( 7, false );
+			idle.frames( film, 41, 42, 43, 44, 45, 46, 47, 48);
+		}
+		run = new MovieClip.Animation( 20, true );
+		run.frames( film, 1, 2, 3, 4, 5, 6, 7, 8 );
+		die = new MovieClip.Animation( 8, false );
+		die.frames( film, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36 );
+		attack = new MovieClip.Animation( 16, false );
+		attack.frames( film, 9, 10, 11, 12, 13, 14, 15, 16, 17);
+		Sattack = attack.clone();
+		zap = attack.clone();
+		operate = new Animation( 8, false );
+		operate.frames( film, 37, 38, 37, 38 );
 	}
 }

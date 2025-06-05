@@ -48,6 +48,7 @@ import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.SussurroSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.TlipocaSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.TomimiSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.WeedySkinSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.WisadelSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.talrufightSprite;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
@@ -232,6 +233,11 @@ public class WndBadge extends Window {
 			case SKIN_NEURO:
 				Dungeon.hero.CharSkin = Hero.NEURO;
 				Dungeon.hero.CharSkinClass = new NeuroSprite();
+				break;
+			case SKIN_WISADEL:
+				Dungeon.hero.CharSkin = Hero.WISADEL;
+				Dungeon.hero.CharSkinClass = new WisadelSprite();
+				break;
 		}
 	}
 }

@@ -273,6 +273,7 @@ public class Badges {
 		SKIN_TLIPOCA(306,false,true),
 		SKIN_HINA(307,false,true),
 		SKIN_NEURO(308, false, true),
+		SKIN_WISADEL(309, false, true),
 
 		//기타
 		SUPPORT;
@@ -1182,6 +1183,11 @@ public class Badges {
 		displayBadge( badge );
 	}
 
+	public static void validateWisadelSkin(){
+		Badge badge = Badge.SKIN_WISADEL;
+		displayBadge( badge );
+	}
+
 	// 0.3.2버전의 스킨 관련 처리로 인해 추가된 구문입니다. 추후 필요없어질 수 있습니다.
 	public static void allskindestroy() {
 		if (Dungeon.isChallenged(TEST)) {
@@ -1251,6 +1257,9 @@ public class Badges {
 		if(isUnlocked(Badge.SKIN_NEURO)){
 			global.remove(Badge.SKIN_NEURO);
 		}
+		if(isUnlocked(Badge.SKIN_WISADEL)){
+			global.remove(Badge.SKIN_WISADEL);
+		}
 
 		if (Badges.isUnlocked(Badge.SUPPORT)) {
 			Badges.validatetaluskin();
@@ -1272,6 +1281,7 @@ public class Badges {
 			Badges.validatehinaskin();
 			Badges.validatetlipocaskin();
 			Badges.validateNeuroSkin();
+			Badges.validateWisadelSkin();
 		}
 
 		// 배지 파괴 후, 조건에 맞는 배지는 다시 획득합니다.
@@ -1295,6 +1305,7 @@ public class Badges {
 		if(!Badges.isUnlocked(Badge.SKIN_HINA)) { Badges.validatehinaskin();}
 		if(!Badges.isUnlocked(Badge.SKIN_TLIPOCA)) { Badges.validatetlipocaskin();}
 		if(!Badges.isUnlocked(Badge.SKIN_NEURO)) { Badges.validateNeuroSkin();}
+		if(!Badges.isUnlocked(Badge.SKIN_WISADEL)) { Badges.validateWisadelSkin();}
 	}
 
 	//necessary in order to display the happy end badge in the surface scene
@@ -1673,7 +1684,7 @@ public class Badges {
 
 	private static final Badge[][] skinBadgeReplacements = new Badge[][]{
 			{Badge.SKIN_BABOSKADI}, {Badge.SKIN_TALU}, {Badge.SKIN_NOVA}, {Badge.SKIN_SUSUU}, {Badge.SKIN_GRN}, {Badge.SKIN_LAPPY}, {Badge.SKIN_JESSI}, {Badge.SKIN_LEAF},
-			{Badge.SKIN_ASTESIA}, {Badge.SKIN_SPECTER}, {Badge.SKIN_MUDROCK}, {Badge.SKIN_SCHWARZ}, {Badge.SKIN_ARCH}, {Badge.SKIN_TOMIMI}, {Badge.SKIN_FRANKA}, {Badge.SKIN_WEEDY},{Badge.SKIN_LILITH},{Badge.SKIN_KAYOKO},{Badge.SKIN_HINA},{Badge.SKIN_TLIPOCA},{Badge.SKIN_NEURO}
+			{Badge.SKIN_ASTESIA}, {Badge.SKIN_SPECTER}, {Badge.SKIN_MUDROCK}, {Badge.SKIN_SCHWARZ}, {Badge.SKIN_ARCH}, {Badge.SKIN_TOMIMI}, {Badge.SKIN_FRANKA}, {Badge.SKIN_WEEDY},{Badge.SKIN_LILITH},{Badge.SKIN_KAYOKO},{Badge.SKIN_HINA},{Badge.SKIN_TLIPOCA},{Badge.SKIN_NEURO},{Badge.SKIN_WISADEL}
 	};
 	
 	public static List<Badge> filterReplacedBadges( List<Badge> badges ) {

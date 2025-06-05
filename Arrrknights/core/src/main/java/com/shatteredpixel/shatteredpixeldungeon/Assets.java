@@ -552,5 +552,6 @@ public class Assets {
 		public static final String HINA	= "sprites/hina-anime.png";
 		public static final String TLIPOCA	= "sprites/tlipoca-skin.png";
 		public static final String NEURO = "sprites/neuro.png";
+		public static final String WISADEL = "sprites/wisadel.png";
 	}
 }
