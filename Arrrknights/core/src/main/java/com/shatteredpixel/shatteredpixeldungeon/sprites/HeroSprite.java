@@ -85,6 +85,8 @@ public class HeroSprite extends CharSprite {
 		
 		operate = new Animation( 8, false );
 		operate.frames( film, 37, 38, 37, 38 );
+
+		eat = operate.clone();
 		
 		fly = new Animation( 1, true );
 		fly.frames( film, 39, 40 );
@@ -120,6 +122,7 @@ public class HeroSprite extends CharSprite {
 		zap = attack.clone();
 		operate = new Animation( 8, false );
 		operate.frames( film, 40, 41, 40, 41 );
+		eat = operate.clone();
 		fly = new Animation( 8, true );
 		fly.frames( film, 42, 43, 44 );
 		read = new Animation( 10, false );
@@ -130,7 +133,7 @@ public class HeroSprite extends CharSprite {
 		texture(Dungeon.hero.heroClass.spritesheet());
 		TextureFilm film = new TextureFilm(texture, 36, 36);
 		idle = new MovieClip.Animation( 7, false );
-		idle.frames( film, 41, 41, 41 ,41, 41, 41, 41, 41 ,41, 41, 41, 41 ,41, 41, 41, 41 ,41, 41, 41, 41 ,41, 41, 41, 41 ,41, 41, 42, 43, 44, 45, 46);
+		idle.frames( film, 41, 41, 41 ,41, 41, 41, 41, 41 ,41, 41, 41, 41 ,41, 41, 41, 41 ,41, 41, 41, 41 ,41, 41, 41, 41 ,41, 41, 42, 43, 44, 45, 46, 45, 46, 45, 46, 45, 46, 45, 46, 45, 46);
 		specialIdle = new MovieClip.Animation( 7, true );
 		specialIdle.frames(film, 45, 46);
 		run = new MovieClip.Animation( 20, true );
@@ -143,6 +146,8 @@ public class HeroSprite extends CharSprite {
 		zap = attack.clone();
 		operate = new Animation( 8, false );
 		operate.frames( film, 37, 38, 37, 38 );
+		eat = new Animation( 8, false );
+		eat.frames( film, 47, 48, 49, 50, 51, 52, 53);
 		fly = new Animation( 1, true );
 		fly.frames( film, 39, 39, 40, 40 );
 		read = new Animation( 10, false );
@@ -167,6 +172,7 @@ public class HeroSprite extends CharSprite {
 		zap = attack.clone();
 		operate = new Animation( 8, false );
 		operate.frames( film, 37, 38, 37, 38 );
+		eat = operate.clone();
 		fly = new Animation( 1, true );
 		fly.frames( film, 39, 40 );
 		read = new Animation( 10, false );

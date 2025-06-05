@@ -1032,6 +1032,9 @@ public abstract class Char extends Actor {
 	public void onOperateComplete() {
 		next();
 	}
+	public void onEatComplete() {
+		next();
+	}
 	
 	protected final HashSet<Class> resistances = new HashSet<>();
 	

@@ -114,6 +114,7 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 	protected Animation attack;
 	protected Animation Sattack;
 	protected Animation operate;
+	protected Animation eat;
 	protected Animation zap;
 	protected Animation die;
 	protected Animation specialIdle;
@@ -352,6 +353,11 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 	public void operate( int cell ) {
 		turnTo( ch.pos, cell );
 		play( operate );
+	}
+
+	public void eat( int cell ) {
+		turnTo( ch.pos, cell );
+		play( eat );
 	}
 	
 	public void operate( int cell, Callback callback ) {
@@ -1062,6 +1068,9 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 				idle();
 				ch.onOperateComplete();
 				
+			} else if (anim == eat){
+				idle();
+				ch.onEatComplete();
 			}
 			
 		}
