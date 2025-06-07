@@ -24,7 +24,6 @@ package com.shatteredpixel.shatteredpixeldungeon.sprites;
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.ChampionEnemy;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.effects.DarkBlock;
@@ -118,6 +117,7 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 	protected Animation zap;
 	protected Animation die;
 	protected Animation specialIdle;
+	protected Animation specialAfterAttack;
 	private boolean specialIdleEnabled = false;
 	
 	protected Callback animCallback;

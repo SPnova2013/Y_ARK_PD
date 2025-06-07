@@ -96,6 +96,9 @@ public class HeroSprite extends CharSprite {
 
 		specialIdle = idle.clone();
 
+		specialAfterAttack = new Animation( 1, false );
+		specialAfterAttack.frames(attack.frames[attack.frames.length-1]);
+
 		if(Dungeon.hero.CharSkin == Hero.HINA) updateHinaSkin();//除此之外，还需要在镜像卷轴和虹卫秘卷处增加非典型皮肤的适配
 		if(Dungeon.hero.CharSkin == Hero.NEURO) updateNeuroSkin();
 		if(Dungeon.hero.CharSkin == Hero.WISADEL) updateWisadelSkin();
@@ -270,5 +273,33 @@ public class HeroSprite extends CharSprite {
 		avatar.frame( frame );
 
 		return avatar;
+	}
+
+	@Override
+	public void onComplete(Animation anim) {
+		if (anim == attack &&
+				Dungeon.hero.CharSkin != 0 &&
+				Dungeon.hero.CharSkinClass.isAllowSpecialAfterAttack()) {
+
+			// 保存原始回调
+			Callback originalCallback = animCallback;
+
+			// 设置特殊攻击后回调
+			animCallback = new Callback() {
+				@Override
+				public void call() {
+					// 先恢复原始回调
+					animCallback = originalCallback;
+					// 再执行原始攻击完成逻辑
+					HeroSprite.super.onComplete(attack);
+				}
+			};
+
+			// 播放特殊攻击后动画
+			play(specialAfterAttack);
+		} else {
+			// 普通情况直接调用父类处理
+			super.onComplete(anim);
+		}
 	}
 }
