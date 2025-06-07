@@ -28,8 +28,8 @@ import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.GamesInProgress;
 import com.shatteredpixel.shatteredpixeldungeon.SPChallenges;
-import com.shatteredpixel.shatteredpixeldungeon.TomorrowRogueNight;
 import com.shatteredpixel.shatteredpixeldungeon.Statistics;
+import com.shatteredpixel.shatteredpixeldungeon.TomorrowRogueNight;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Alchemy;
@@ -124,6 +124,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.Skill.SK1.Fate;
 import com.shatteredpixel.shatteredpixeldungeon.items.Skill.SK1.FierceGlare;
 import com.shatteredpixel.shatteredpixeldungeon.items.Skill.SK1.FoodPrep;
 import com.shatteredpixel.shatteredpixeldungeon.items.Skill.SK1.Hikari;
+import com.shatteredpixel.shatteredpixeldungeon.items.Skill.SK1.HotBlade;
 import com.shatteredpixel.shatteredpixeldungeon.items.Skill.SK1.InstantFire;
 import com.shatteredpixel.shatteredpixeldungeon.items.Skill.SK1.LiveStart;
 import com.shatteredpixel.shatteredpixeldungeon.items.Skill.SK1.Panorama;
@@ -147,7 +148,6 @@ import com.shatteredpixel.shatteredpixeldungeon.items.Skill.SK2.DeepSeaPredators
 import com.shatteredpixel.shatteredpixeldungeon.items.Skill.SK2.Dreamland;
 import com.shatteredpixel.shatteredpixeldungeon.items.Skill.SK2.EmergencyDefibrillator;
 import com.shatteredpixel.shatteredpixeldungeon.items.Skill.SK2.FlashShield;
-import com.shatteredpixel.shatteredpixeldungeon.items.Skill.SK1.HotBlade;
 import com.shatteredpixel.shatteredpixeldungeon.items.Skill.SK2.Genesis;
 import com.shatteredpixel.shatteredpixeldungeon.items.Skill.SK2.Jackinthebox;
 import com.shatteredpixel.shatteredpixeldungeon.items.Skill.SK2.LandingStrike;
@@ -308,6 +308,7 @@ public class Hero extends Char {
     public static final int TLIPOCA = 20;
     public static final int NEURO = 21;
     public static final int WISADEL = 22;
+    public static final int TENMA = 23;
 
     {
         actPriority = HERO_PRIO;

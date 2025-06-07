@@ -21,8 +21,6 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.actors.hero;
 
- import static com.shatteredpixel.shatteredpixeldungeon.items.Generator.Category.WEP_T5;
-
  import com.shatteredpixel.shatteredpixeldungeon.Assets;
  import com.shatteredpixel.shatteredpixeldungeon.Badges;
  import com.shatteredpixel.shatteredpixeldungeon.Challenges;
@@ -35,15 +33,11 @@ package com.shatteredpixel.shatteredpixeldungeon.actors.hero;
  import com.shatteredpixel.shatteredpixeldungeon.items.Item;
  import com.shatteredpixel.shatteredpixeldungeon.items.MagicPaper;
  import com.shatteredpixel.shatteredpixeldungeon.items.Skill.SK1.BookBountyHunter;
- import com.shatteredpixel.shatteredpixeldungeon.items.Skill.SK1.BookInstantFire;
- import com.shatteredpixel.shatteredpixeldungeon.items.Skill.SK2.BookCollecting;
  import com.shatteredpixel.shatteredpixeldungeon.items.Skill.SK2.BookUnwelcomeGift;
  import com.shatteredpixel.shatteredpixeldungeon.items.Skill.SK3.BookCaerbannogNoSekai;
- import com.shatteredpixel.shatteredpixeldungeon.items.Skill.SK3.BookHighNoon;
  import com.shatteredpixel.shatteredpixeldungeon.items.Skill.SkillBook;
  import com.shatteredpixel.shatteredpixeldungeon.items.TomeOfMastery;
  import com.shatteredpixel.shatteredpixeldungeon.items.armor.ClothArmor;
- import com.shatteredpixel.shatteredpixeldungeon.items.armor.LeatherArmor;
  import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.CloakOfShadows;
  import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.SealOfLight;
  import com.shatteredpixel.shatteredpixeldungeon.items.bags.EquipmentsBag;
@@ -66,10 +60,6 @@ package com.shatteredpixel.shatteredpixeldungeon.actors.hero;
  import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfStrength;
  import com.shatteredpixel.shatteredpixeldungeon.items.potions.exotic.PotionOfCleansing;
  import com.shatteredpixel.shatteredpixeldungeon.items.rings.SP.BadgeOfCharger;
- import com.shatteredpixel.shatteredpixeldungeon.items.ror2items.FrostRelic;
- import com.shatteredpixel.shatteredpixeldungeon.items.ror2items.SymbioticScorpion;
- import com.shatteredpixel.shatteredpixeldungeon.items.ror2items.UnstableTeslaCoil;
- import com.shatteredpixel.shatteredpixeldungeon.items.ror2items.WakeOfVultures;
  import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfIdentify;
  import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfLullaby;
  import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfMagicMapping;
@@ -568,6 +558,7 @@ package com.shatteredpixel.shatteredpixeldungeon.actors.hero;
 				case 20: return Assets.Sprites.TLIPOCA;
 				case 21: return Assets.Sprites.NEURO;
 				case 22: return Assets.Sprites.WISADEL;
+				case 23: return Assets.Sprites.TENMA;
 			}
 		}
 		switch (this) {

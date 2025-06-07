@@ -26,7 +26,6 @@ import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.effects.BadgeBanner;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
-import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.JessiSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.ArchSkinSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.AstesiaSprite;
@@ -42,9 +41,9 @@ import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.MudrockSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.NeuroSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.SchwarzSkinSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.SkadiSprite;
-import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.SkinSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.SpecterSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.SussurroSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.TenmaSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.TlipocaSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.TomimiSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.WeedySkinSprite;
@@ -237,6 +236,10 @@ public class WndBadge extends Window {
 			case SKIN_WISADEL:
 				Dungeon.hero.CharSkin = Hero.WISADEL;
 				Dungeon.hero.CharSkinClass = new WisadelSprite();
+				break;
+			case SKIN_TENMA:
+				Dungeon.hero.CharSkin = Hero.TENMA;
+				Dungeon.hero.CharSkinClass = new TenmaSprite();
 				break;
 		}
 	}

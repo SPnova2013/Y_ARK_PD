@@ -4,38 +4,36 @@ import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
-import com.shatteredpixel.shatteredpixeldungeon.sprites.WeedySprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.JessiSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.ArchSkinSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.AstesiaSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.FnovaSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.FrankaSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.FrostLeafSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.GraniSprite;
-import com.shatteredpixel.shatteredpixeldungeon.sprites.JessiSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.HinaSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.KayokoSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.LappySprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.LilithSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.MudrockSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.NeuroSprite;
-import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.WisadelSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.SchwarzSkinSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.SkadiSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.SpecterSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.SussurroSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.TenmaSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.TlipocaSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.TomimiSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.WeedySkinSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.WisadelSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.talrufightSprite;
-import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.FnovaSprite;
-
-import java.security.PublicKey;
 
 public class SkinModel extends NPC {
     {
         properties.add(Property.IMMOVABLE);
         properties.add(Property.NPC);
     }
-    private final int MAX_SKIN = 21;
+    private final int MAX_SKIN = 22;
     public SkinModel()
     {
         super();
@@ -84,7 +82,9 @@ public class SkinModel extends NPC {
                break;
            case 20 : spriteClass= NeuroSprite.class;
                break;
-           case MAX_SKIN: spriteClass = WisadelSprite.class;
+           case 21: spriteClass = WisadelSprite.class;
+           break;
+           case MAX_SKIN: spriteClass = TenmaSprite.class;
            break;
        }
     }
