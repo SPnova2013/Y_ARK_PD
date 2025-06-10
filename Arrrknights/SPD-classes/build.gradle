@@ -10,4 +10,5 @@ dependencies {
 
     //noinspection GradleDependency , later JSON versions cause crashes on old versions of android
     implementation "org.json:json:20170516"
+    implementation 'com.google.firebase:firebase-crashlytics-buildtools:3.0.4'
 }

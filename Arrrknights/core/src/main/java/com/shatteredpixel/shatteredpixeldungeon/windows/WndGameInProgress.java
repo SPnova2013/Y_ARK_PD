@@ -24,6 +24,7 @@ package com.shatteredpixel.shatteredpixeldungeon.windows;
 import static com.shatteredpixel.shatteredpixeldungeon.TomorrowRogueNight.logList;
 
 import com.badlogic.gdx.files.FileHandle;
+import com.google.firebase.crashlytics.buildtools.reloc.org.apache.commons.codec.binary.Base64;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.GamesInProgress;
 import com.shatteredpixel.shatteredpixeldungeon.TomorrowRogueNight;
@@ -39,6 +40,7 @@ import com.shatteredpixel.shatteredpixeldungeon.ui.Icons;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RedButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
+import com.sun.org.apache.bcel.internal.generic.FADD;
 import com.sun.org.apache.bcel.internal.generic.FSUB;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.ui.Button;
@@ -47,6 +49,7 @@ import com.watabou.utils.DeviceCompat;
 import com.watabou.utils.FileUtils;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -55,11 +58,15 @@ import java.util.Locale;
 public class WndGameInProgress extends Window {
 	
 	private static final int WIDTH    = 120;
+	public static final String SEP = "::SPD::";
+	//todo: turns out that encoding with base64 has many complications, one thing being that java's base64 require api 26(Android 8+)
+	//todo: the current base64 is an auto-suggestion from Android Studio, which I can't seem to make it work in a short period of time, I trust you can handle the rest, GL!
+	private static final boolean ENCODE_SAVE = false;
 	
 	private int GAP	  = 6;
 	
 	private float pos;
-	
+
 	public WndGameInProgress(final int slot){
 		//logger info must be initialized for share/clear function to access
 		TomorrowRogueNight.initializeLoggers(slot);
@@ -236,8 +243,48 @@ public class WndGameInProgress extends Window {
 		erase.icon(Icons.get(Icons.CLOSE));
 		erase.setRect(WIDTH/2 + 1, pos, WIDTH/2 - 1, 20);
 		add(erase);
-		
-		resize(WIDTH, (int)cont.bottom()+1);
+
+		pos += erase.height() + GAP;
+		RedButton exportBtn = new RedButton("Copy Save") {
+			@Override protected void onClick() {
+
+				try {
+					StringBuilder sb = new StringBuilder();
+
+					// main file
+					Bundle main = FileUtils.bundleFromFile(GamesInProgress.gameFile(slot));
+					String mainJson = FileUtils.bundleToString(main, ENCODE_SAVE);
+					sb.append("G=").append(
+							Base64.encodeBase64String(mainJson.getBytes(StandardCharsets.UTF_8)));
+
+					// depth files
+					for (int d = 1; d <= info.maxDepth; d++) {
+						String path = GamesInProgress.depthFile(slot, d);
+						if (!FileUtils.fileExists(path)) continue;
+
+						Bundle depth = FileUtils.bundleFromFile(path);
+						String depthJson = FileUtils.bundleToString(depth, ENCODE_SAVE);
+
+						sb.append(SEP)
+								.append("D").append(d).append("=")
+								.append(Base64.encodeBase64String(
+										depthJson.getBytes(StandardCharsets.UTF_8)));
+					}
+
+					com.badlogic.gdx.Gdx.app.getClipboard().setContents(sb.toString());
+					Game.scene().add(new WndMessage("Save copied to clipboard."));
+
+				} catch (Exception e) {
+					Game.scene().add(new WndMessage("Failed to copy save."));
+				}
+			}
+		};
+		exportBtn.setRect(0, pos, WIDTH, 18);
+		add(exportBtn);
+
+		// todo: don't forget to restore this resize line if you want to revert the inProgress window, have fun!
+//		resize(WIDTH, (int)cont.bottom()+1);
+		resize(WIDTH, (int)exportBtn.bottom()+1);
 	}
 
 	private void shareSlotLogs(int slot) {

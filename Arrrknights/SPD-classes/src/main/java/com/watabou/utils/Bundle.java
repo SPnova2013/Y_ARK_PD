@@ -21,6 +21,7 @@
 
 package com.watabou.utils;
 
+import com.google.firebase.crashlytics.buildtools.reloc.org.apache.commons.codec.binary.Base64;
 import com.watabou.noosa.Game;
 
 import org.json.JSONArray;
@@ -93,6 +94,7 @@ public class Bundle {
 	}
 
 	public Class getClass( String key ) {
+		DeviceCompat.log( "Bundle", "get Class:" + key );
 		String clName =  getString(key).replace("class ", "");
 		if (!clName.equals("")){
 			if (aliases.containsKey( clName )) {
@@ -455,7 +457,7 @@ public class Bundle {
 			if (json instanceof JSONArray){
 				json = new JSONObject().put( DEFAULT_KEY, json );
 			}
-
+			DeviceCompat.log("Bundle", "jsonvalue: " + json.toString());
 			return new Bundle( (JSONObject) json );
 		} catch (Exception e) {
 			Game.reportException(e);
@@ -482,9 +484,36 @@ public class Bundle {
 			return false;
 		}
 	}
-	
+
+	public static Bundle readFromString(String data) throws IOException {
+		try {
+			Object json = new JSONTokener(data).nextValue();
+			if (json instanceof JSONArray) {
+				json = new JSONObject().put(DEFAULT_KEY, json);
+			}
+			DeviceCompat.log("Bundle", "jsonvalue: " + json.toString());
+			return new Bundle((JSONObject) json);
+		} catch (Exception e) {
+			Game.reportException(e);
+			throw new IOException(e);
+		}
+	}
+
+	public static String writeToString(Bundle b, boolean decode) {
+		if (!decode) return b.toString();
+
+		try (java.io.ByteArrayOutputStream baos = new java.io.ByteArrayOutputStream()) {
+			Bundle.write(b, baos, true);
+			byte[] data = baos.toByteArray();
+			return Base64.encodeBase64String(data);
+		} catch (Exception e) {
+			Game.reportException(e);
+			return "";
+		}
+	}
+
 	public static void addAlias( Class<?> cl, String alias ) {
 		aliases.put( alias, cl.getName() );
 	}
-	
+
 }
