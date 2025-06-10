@@ -59,6 +59,7 @@ import com.shatteredpixel.shatteredpixeldungeon.effects.Pushing;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Surprise;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Wound;
+import com.shatteredpixel.shatteredpixeldungeon.effects.coversprite.BoundaryOfDeathCover;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.ShadowParticle;
 import com.shatteredpixel.shatteredpixeldungeon.items.AnnihilationGear;
 import com.shatteredpixel.shatteredpixeldungeon.items.Generator;
@@ -92,6 +93,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Echeveria;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.FlameKatana;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.ImageoverForm;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MagesStaff;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.SakuraSword;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.WarJournalist;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.MissileWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.darts.Dart;
@@ -977,15 +979,19 @@ public abstract class Mob extends Char {
 		if (cause == Dungeon.hero && Dungeon.hero.belongings.weapon instanceof FlameKatana) {
 			((FlameKatana) Dungeon.hero.belongings.weapon).GetKillPoint();
 		}
+		if (cause == Dungeon.hero && Dungeon.hero.CharSkin == Hero.TENMA
+                && Dungeon.hero.belongings.weapon instanceof SakuraSword && ((SakuraSword)Dungeon.hero.belongings.weapon).isExMode()) {
+			BoundaryOfDeathCover bodCover = new BoundaryOfDeathCover();
+			bodCover.centerAndPlay(pos);
+		}
 		if (cause == Dungeon.hero && Dungeon.hero.belongings.weapon!=null && ((Weapon)Dungeon.hero.belongings.weapon).hasChimera(Flame.class)) {
 			Flame f = (Flame)(((Weapon) Dungeon.hero.belongings.weapon).theChi(Flame.class));
 			f.GetKillPoint();
 		}
 
-		if (
-				cause == Dungeon.hero && Dungeon.hero.belongings.weapon!=null &&
-						((Dungeon.hero.belongings.weapon instanceof BladeDemon ||
-								((Weapon) Dungeon.hero.belongings.weapon).hasChimera(Demon.class)))
+		if (cause == Dungeon.hero && Dungeon.hero.belongings.weapon!=null &&
+				((Dungeon.hero.belongings.weapon instanceof BladeDemon ||
+						((Weapon) Dungeon.hero.belongings.weapon).hasChimera(Demon.class)))
 		) {
 			if (((Weapon) Dungeon.hero.belongings.weapon).hasChimera(Demon.class) || ((BladeDemon) Dungeon.hero.belongings.weapon).isSwiching()) {
 				int Heal = Random.IntRange(1,3+Dungeon.hero.belongings.weapon.buffedLvl());

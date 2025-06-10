@@ -26,6 +26,7 @@ import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroClass;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.PlateArmor;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.SakuraSword;
 import com.watabou.gltextures.SmartTexture;
 import com.watabou.gltextures.TextureCache;
 import com.watabou.noosa.Camera;
@@ -46,6 +47,7 @@ public class HeroSprite extends CharSprite {
 	
 	private Animation fly;
 	private Animation read;
+	private Animation BoD;
 
 	public HeroSprite() {
 		super();
@@ -98,6 +100,7 @@ public class HeroSprite extends CharSprite {
 
 		specialAfterAttack = new Animation( 1, false );
 		specialAfterAttack.frames(attack.frames[attack.frames.length-1]);
+		BoD = specialAfterAttack.clone();
 
 		if(Dungeon.hero.CharSkin == Hero.HINA) updateHinaSkin();//除此之外，还需要在镜像卷轴和虹卫秘卷处增加非典型皮肤的适配
 		if(Dungeon.hero.CharSkin == Hero.NEURO) updateNeuroSkin();
@@ -204,6 +207,9 @@ public class HeroSprite extends CharSprite {
 
 		specialAfterAttack = new MovieClip.Animation( 16, false );
 		specialAfterAttack.frames( film, 49, 50, 51, 52, 53);
+
+		BoD = new MovieClip.Animation( 1, false );
+		BoD.frames( film, 54, 55);
 	}
 	@Override
 	public void place( int p ) {
@@ -232,6 +238,10 @@ public class HeroSprite extends CharSprite {
 	public void jump( int from, int to, Callback callback ) {
 		super.jump( from, to, callback );
 		play( fly );
+	}
+
+	public void BoD() {
+		play( BoD );
 	}
 
 	public void read() {
@@ -305,25 +315,32 @@ public class HeroSprite extends CharSprite {
 				Dungeon.hero.CharSkin != 0 &&
 				Dungeon.hero.CharSkinClass.isAllowSpecialAfterAttack()) {
 
-			// 保存原始回调
-			Callback originalCallback = animCallback;
+			super.onComplete(anim);
+			playSpecialAfterAttack();
 
-			// 设置特殊攻击后回调
-			animCallback = new Callback() {
-				@Override
-				public void call() {
-					// 先恢复原始回调
-					animCallback = originalCallback;
-					// 再执行原始攻击完成逻辑
-					HeroSprite.super.onComplete(attack);
-				}
-			};
-
-			// 播放特殊攻击后动画
-			play(specialAfterAttack);
 		} else {
-			// 普通情况直接调用父类处理
 			super.onComplete(anim);
 		}
+	}
+	private void playSpecialAfterAttack() {
+		final Callback originalCallback = animCallback;
+		super.isMoving = true;
+		animCallback = new Callback() {
+			@Override
+			public void call() {
+				animCallback = originalCallback;
+				synchronized (HeroSprite.this) {
+					isMoving = false;
+					HeroSprite.this.notify();
+				}
+				idle();
+			}
+		};
+		if(Dungeon.hero.getEnemy() != null
+				&& !Dungeon.hero.getEnemy().isAlive()
+				&& Dungeon.hero.CharSkin == Hero.TENMA
+				&& Dungeon.hero.belongings.weapon instanceof SakuraSword
+				&& (((SakuraSword)Dungeon.hero.belongings.weapon).isExMode() || ((SakuraSword)Dungeon.hero.belongings.weapon).charge == 0)) play(BoD);
+		else play(specialAfterAttack);
 	}
 }

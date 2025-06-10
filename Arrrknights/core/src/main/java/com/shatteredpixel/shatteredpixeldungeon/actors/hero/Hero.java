@@ -343,6 +343,7 @@ public class Hero extends Char {
     public HeroAction lastAction = null;
 
     private Char enemy;
+    public Char getEnemy(){return enemy;}
 
     public boolean resting = false;
 
