@@ -25,6 +25,7 @@ import com.badlogic.gdx.Files;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.GdxRuntimeException;
+import com.google.firebase.crashlytics.buildtools.reloc.org.apache.commons.codec.binary.Base64;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -73,7 +74,7 @@ public class FileUtils {
 		FileHandle file = getFileHandle( name );
 		return file.exists() && !file.isDirectory();
 	}
-	
+
 	public static boolean deleteFile( String name ){
 		return getFileHandle( name ).delete();
 	}
@@ -131,4 +132,7 @@ public class FileUtils {
 		output.close();
 	}
 
+	public static String bundleToString(Bundle b, boolean decode){
+		return Bundle.writeToString(b, decode);
+	}
 }

@@ -183,4 +183,8 @@ public class GamesInProgress {
 			return (int)Math.signum( rScore - lScore );
 		}
 	};
+
+	public static void refreshAll() {
+		slotStates.clear();
+	}
 }

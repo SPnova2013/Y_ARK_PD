@@ -21,8 +21,12 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.scenes;
 
+import static com.shatteredpixel.shatteredpixeldungeon.windows.WndGameInProgress.SEP;
+
+import com.google.firebase.crashlytics.buildtools.reloc.org.apache.commons.codec.binary.Base64;
 import com.shatteredpixel.shatteredpixeldungeon.Badges;
 import com.shatteredpixel.shatteredpixeldungeon.Chrome;
+import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.GamesInProgress;
 import com.shatteredpixel.shatteredpixeldungeon.TomorrowRogueNight;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroSubClass;
@@ -31,22 +35,33 @@ import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Archs;
 import com.shatteredpixel.shatteredpixeldungeon.ui.ExitButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Icons;
+import com.shatteredpixel.shatteredpixeldungeon.ui.RedButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndGameInProgress;
+import com.shatteredpixel.shatteredpixeldungeon.windows.WndMessage;
 import com.watabou.noosa.BitmapText;
 import com.watabou.noosa.Camera;
+import com.watabou.noosa.Game;
 import com.watabou.noosa.Image;
 import com.watabou.noosa.NinePatch;
 import com.watabou.noosa.ui.Button;
+import com.watabou.utils.Bundle;
+import com.watabou.utils.FileUtils;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 public class StartScene extends PixelScene {
 	
 	private static final int SLOT_WIDTH = 120;
 	private static final int SLOT_HEIGHT = 30;
-	
+
+	public static void EnsureRefresh(StartScene scene) {
+		if (GamesInProgress.checkAll().isEmpty()) {
+			scene.refreshSlots();
+		}
+	}
 	@Override
 	public void create() {
 		super.create();
@@ -102,6 +117,10 @@ public class StartScene extends PixelScene {
 			yPos += SLOT_HEIGHT + slotGap;
 			align(newGame);
 			add(newGame);
+			ImportButton importBtn = new ImportButton("Import", 6, this);
+			importBtn.setRect((w - SLOT_WIDTH)/2f, yPos, SLOT_WIDTH, SLOT_HEIGHT);
+			align(importBtn);
+			add(importBtn);
 		}
 		
 		GamesInProgress.curSlot = 0;
@@ -317,5 +336,69 @@ public class StartScene extends PixelScene {
 				TomorrowRogueNight.scene().add( new WndGameInProgress(slot));
 			}
 		}
+	}
+
+	private class ImportButton extends RedButton {
+		StartScene scene;
+
+		public ImportButton(String label, int size, StartScene sScene) {
+			super(label, size);
+			scene = sScene;
+		}
+		@Override protected void onClick() {
+			String clip = com.badlogic.gdx.Gdx.app.getClipboard().getContents();
+			if (clip == null || clip.trim().isEmpty()) {
+				Game.scene().add(new WndMessage("Invalid save string."));
+			} else {
+				tryImport(clip);
+			}
+		}
+		private void tryImport(String src) {
+
+			try {
+				String[] parts = src.trim()
+						.split(java.util.regex.Pattern.quote(SEP));
+
+				if (parts.length == 0) throw new IllegalArgumentException();
+
+				int slot = GamesInProgress.firstEmpty();
+				if (slot == -1) {
+					Game.scene().add(new WndMessage("No empty slot."));
+					return;
+				}
+				// make sure slot folder exists
+				FileUtils.getFileHandle(GamesInProgress.gameFolder(slot)).mkdirs();
+
+				for (String p : parts) {
+					int cut = p.indexOf('=');
+					if (cut <= 0) continue;
+
+					String tag   = p.substring(0, cut);
+					String b64   = p.substring(cut + 1);
+					String json  = new String(Base64.decodeBase64(b64), StandardCharsets.UTF_8);
+					Bundle bund  = Bundle.readFromString(json);
+
+					if ("G".equals(tag)) {
+						FileUtils.bundleToFile(GamesInProgress.gameFile(slot), bund);
+					} else if (tag.startsWith("D")) {
+						int depth = Integer.parseInt(tag.substring(1));
+						FileUtils.bundleToFile(
+								GamesInProgress.depthFile(slot, depth), bund);
+					}
+				}
+
+				GamesInProgress.refreshAll();
+				StartScene.EnsureRefresh(scene);
+
+			} catch (Exception e) {
+				Game.scene().add(new WndMessage("Invalid save string."));
+			}
+		}
+	}
+
+	public void refreshSlots() {
+		GamesInProgress.refreshAll();
+		clear();
+		create();
 	}
 }
