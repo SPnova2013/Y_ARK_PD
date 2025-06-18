@@ -245,7 +245,7 @@ public class WndGameInProgress extends Window {
 		add(erase);
 
 		pos += erase.height() + GAP;
-		RedButton exportBtn = new RedButton("Copy Save") {
+		RedButton exportBtn = new RedButton(Messages.get(WndGameInProgress.class, "copy_save")) {
 			@Override protected void onClick() {
 
 				try {
@@ -279,12 +279,10 @@ public class WndGameInProgress extends Window {
 				}
 			}
 		};
-		exportBtn.setRect(0, pos, WIDTH, 18);
+		exportBtn.setRect(2*WIDTH/3f, 0, WIDTH/3f, 8);
 		add(exportBtn);
 
-		// todo: don't forget to restore this resize line if you want to revert the inProgress window, have fun!
-//		resize(WIDTH, (int)cont.bottom()+1);
-		resize(WIDTH, (int)exportBtn.bottom()+1);
+		resize(WIDTH, (int)cont.bottom()+1);
 	}
 
 	private void shareSlotLogs(int slot) {

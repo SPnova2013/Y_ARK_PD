@@ -117,7 +117,7 @@ public class StartScene extends PixelScene {
 			yPos += SLOT_HEIGHT + slotGap;
 			align(newGame);
 			add(newGame);
-			ImportButton importBtn = new ImportButton("Import", 6, this);
+			ImportButton importBtn = new ImportButton(Messages.get(StartScene.class, "import"), 6, this);
 			importBtn.setRect((w - SLOT_WIDTH)/2f, yPos, SLOT_WIDTH, SLOT_HEIGHT);
 			align(importBtn);
 			add(importBtn);
