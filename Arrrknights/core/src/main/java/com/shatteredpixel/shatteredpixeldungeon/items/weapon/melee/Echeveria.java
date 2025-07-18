@@ -216,7 +216,7 @@ public class Echeveria extends MeleeWeapon{
 
     public static class PinkdogDrone extends Mob {
         {
-            HP = 20;
+            HT = HP = 20;
             defenseSkill = 5;
 
             spriteClass = Glow_dronSprite.class;
@@ -251,7 +251,7 @@ public class Echeveria extends MeleeWeapon{
 
         @Override
         protected boolean act() {
-            if (AttackCount >= 6) { die(this); return true;}
+            if (AttackCount > 6) { die(this); return true;}
 
             HP -= 2;
             if (HP < 1) {
