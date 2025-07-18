@@ -21,6 +21,8 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.actors.mobs;
 
+import static com.shatteredpixel.shatteredpixeldungeon.levels.Level.setVictoryLapBonus;
+
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Badges;
 import com.shatteredpixel.shatteredpixeldungeon.Challenges;
@@ -1507,6 +1509,7 @@ public abstract class Mob extends Char {
 				Dungeon.level.occupyCell(child);
 
 				GameScene.add( child );
+				if(Statistics.victoryLapRounds>0) setVictoryLapBonus(child);
 				if (sprite.visible) {
 					Actor.addDelayed( new Pushing( child, pos, child.pos ), -1 );
 				}

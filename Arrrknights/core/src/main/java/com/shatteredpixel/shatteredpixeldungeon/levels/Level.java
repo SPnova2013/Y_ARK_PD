@@ -1469,7 +1469,7 @@ public abstract class Level implements Bundlable {
 				return "";
 		}
 	}
-	private void setVictoryLapBonus(Mob m){
+	public static void setVictoryLapBonus(Mob m){
 		int rounds = Statistics.victoryLapRounds;
 		m.addHTandHP(m.hthpInc);
 		m.addDamageMax(m.damageMaxInc);
