@@ -21,6 +21,8 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.levels.rooms.special;
 
+import static com.shatteredpixel.shatteredpixeldungeon.levels.Level.setVictoryLapBonus;
+
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.Statistics;
@@ -50,6 +52,7 @@ public class DemonSpawnerRoom extends SpecialRoom {
 
 		DemonSpawner spawner = new DemonSpawner();
 		spawner.pos = cx + cy * level.width();
+		if(Statistics.victoryLapRounds>0) setVictoryLapBonus(spawner);
 		level.mobs.add( spawner );
 
 		CustomFloor vis = new CustomFloor();

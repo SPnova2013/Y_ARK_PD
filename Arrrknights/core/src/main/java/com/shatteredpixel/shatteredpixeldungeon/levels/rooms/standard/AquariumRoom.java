@@ -21,6 +21,9 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.levels.rooms.standard;
 
+import static com.shatteredpixel.shatteredpixeldungeon.levels.Level.setVictoryLapBonus;
+
+import com.shatteredpixel.shatteredpixeldungeon.Statistics;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Hex;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Piranha;
@@ -57,6 +60,7 @@ public class AquariumRoom extends StandardRoom {
 		
 		for (int i=0; i < numFish; i++) {
 			Piranha piranha = new Piranha();
+			if(Statistics.victoryLapRounds>0) setVictoryLapBonus(piranha);
 			do {
 				piranha.pos = level.pointToCell(random(3));
 			} while (level.map[piranha.pos] != Terrain.WATER|| level.findMob( piranha.pos ) != null);
