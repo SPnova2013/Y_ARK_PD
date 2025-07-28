@@ -457,7 +457,7 @@ public class Bundle {
 			if (json instanceof JSONArray){
 				json = new JSONObject().put( DEFAULT_KEY, json );
 			}
-			DeviceCompat.log("Bundle", "jsonvalue: " + json.toString());
+			DeviceCompat.log("Bundle-self-read", "jsonvalue: " + json.toString());
 			return new Bundle( (JSONObject) json );
 		} catch (Exception e) {
 			Game.reportException(e);
@@ -491,7 +491,7 @@ public class Bundle {
 			if (json instanceof JSONArray) {
 				json = new JSONObject().put(DEFAULT_KEY, json);
 			}
-			DeviceCompat.log("Bundle", "jsonvalue: " + json.toString());
+			DeviceCompat.log("Bundle from string", "jsonvalue: " + json.toString());
 			return new Bundle((JSONObject) json);
 		} catch (Exception e) {
 			Game.reportException(e);

@@ -38,6 +38,7 @@ import com.shatteredpixel.shatteredpixeldungeon.ui.Icons;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RedButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
+import com.shatteredpixel.shatteredpixeldungeon.utils.JsonCompress;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndGameInProgress;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndMessage;
 import com.watabou.noosa.BitmapText;
@@ -354,7 +355,6 @@ public class StartScene extends PixelScene {
 			}
 		}
 		private void tryImport(String src) {
-
 			try {
 				String[] parts = src.trim()
 						.split(java.util.regex.Pattern.quote(SEP));
@@ -376,14 +376,14 @@ public class StartScene extends PixelScene {
 					String tag   = p.substring(0, cut);
 					String b64   = p.substring(cut + 1);
 					String json  = new String(Base64.decodeBase64(b64), StandardCharsets.UTF_8);
-					Bundle bund  = Bundle.readFromString(json);
+					Bundle bundle  = Bundle.readFromString(JsonCompress.decompressJson(json));
 
 					if ("G".equals(tag)) {
-						FileUtils.bundleToFile(GamesInProgress.gameFile(slot), bund);
+						FileUtils.bundleToFile(GamesInProgress.gameFile(slot), bundle);
 					} else if (tag.startsWith("D")) {
 						int depth = Integer.parseInt(tag.substring(1));
 						FileUtils.bundleToFile(
-								GamesInProgress.depthFile(slot, depth), bund);
+								GamesInProgress.depthFile(slot, depth), bundle);
 					}
 				}
 

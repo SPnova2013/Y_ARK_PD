@@ -40,6 +40,7 @@ import com.shatteredpixel.shatteredpixeldungeon.ui.Icons;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RedButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
+import com.shatteredpixel.shatteredpixeldungeon.utils.JsonCompress;
 import com.sun.org.apache.bcel.internal.generic.FADD;
 import com.sun.org.apache.bcel.internal.generic.FSUB;
 import com.watabou.noosa.Game;
@@ -51,6 +52,7 @@ import com.watabou.utils.FileUtils;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -253,8 +255,9 @@ public class WndGameInProgress extends Window {
 
 					// main file
 					Bundle main = FileUtils.bundleFromFile(GamesInProgress.gameFile(slot));
-					String mainJson = FileUtils.bundleToString(main, ENCODE_SAVE);
+					String mainJson = JsonCompress.compressJson(FileUtils.bundleToString(main, ENCODE_SAVE));
 					sb.append("G=").append(
+//							mainJson);
 							Base64.encodeBase64String(mainJson.getBytes(StandardCharsets.UTF_8)));
 
 					// depth files
@@ -263,12 +266,12 @@ public class WndGameInProgress extends Window {
 						if (!FileUtils.fileExists(path)) continue;
 
 						Bundle depth = FileUtils.bundleFromFile(path);
-						String depthJson = FileUtils.bundleToString(depth, ENCODE_SAVE);
+						String depthJson = JsonCompress.compressJson(FileUtils.bundleToString(depth, ENCODE_SAVE));
 
 						sb.append(SEP)
 								.append("D").append(d).append("=")
-								.append(Base64.encodeBase64String(
-										depthJson.getBytes(StandardCharsets.UTF_8)));
+//								.append(depthJson);
+								.append(Base64.encodeBase64String(depthJson.getBytes(StandardCharsets.UTF_8)));
 					}
 
 					com.badlogic.gdx.Gdx.app.getClipboard().setContents(sb.toString());
