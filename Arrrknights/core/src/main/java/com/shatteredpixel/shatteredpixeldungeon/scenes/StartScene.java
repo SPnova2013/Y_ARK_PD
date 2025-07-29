@@ -39,6 +39,7 @@ import com.shatteredpixel.shatteredpixeldungeon.ui.RedButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
 import com.shatteredpixel.shatteredpixeldungeon.utils.JsonCompress;
+import com.shatteredpixel.shatteredpixeldungeon.utils.SaveImportUtil;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndGameInProgress;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndMessage;
 import com.watabou.noosa.BitmapText;
@@ -58,6 +59,8 @@ public class StartScene extends PixelScene {
 	private static final int SLOT_WIDTH = 120;
 	private static final int SLOT_HEIGHT = 30;
 
+	public static StartScene Instance;
+
 	public static void EnsureRefresh(StartScene scene) {
 		if (GamesInProgress.checkAll().isEmpty()) {
 			scene.refreshSlots();
@@ -65,6 +68,7 @@ public class StartScene extends PixelScene {
 	}
 	@Override
 	public void create() {
+		Instance = this;
 		super.create();
 		
 		Badges.loadGlobal();
@@ -340,59 +344,18 @@ public class StartScene extends PixelScene {
 	}
 
 	private class ImportButton extends RedButton {
-		StartScene scene;
 
-		public ImportButton(String label, int size, StartScene sScene) {
+		private final StartScene scene;
+
+		ImportButton(String label, int size, StartScene sScene) {
 			super(label, size);
-			scene = sScene;
+			this.scene = sScene;
 		}
-		@Override protected void onClick() {
-			String clip = com.badlogic.gdx.Gdx.app.getClipboard().getContents();
-			if (clip == null || clip.trim().isEmpty()) {
-				Game.scene().add(new WndMessage("存档字串无效"));
-			} else {
-				tryImport(clip);
-			}
-		}
-		private void tryImport(String src) {
-			try {
-				String[] parts = src.trim()
-						.split(java.util.regex.Pattern.quote(SEP));
 
-				if (parts.length == 0) throw new IllegalArgumentException();
-
-				int slot = GamesInProgress.firstEmpty();
-				if (slot == -1) {
-					Game.scene().add(new WndMessage("没有空白存档"));
-					return;
-				}
-				// make sure slot folder exists
-				FileUtils.getFileHandle(GamesInProgress.gameFolder(slot)).mkdirs();
-
-				for (String p : parts) {
-					int cut = p.indexOf('=');
-					if (cut <= 0) continue;
-
-					String tag   = p.substring(0, cut);
-					String b64   = p.substring(cut + 1);
-					String json  = new String(Base64.decodeBase64(b64), StandardCharsets.UTF_8);
-					Bundle bundle  = Bundle.readFromString(JsonCompress.decompressJson(json));
-
-					if ("G".equals(tag)) {
-						FileUtils.bundleToFile(GamesInProgress.gameFile(slot), bundle);
-					} else if (tag.startsWith("D")) {
-						int depth = Integer.parseInt(tag.substring(1));
-						FileUtils.bundleToFile(
-								GamesInProgress.depthFile(slot, depth), bundle);
-					}
-				}
-
-				GamesInProgress.refreshAll();
-				StartScene.EnsureRefresh(scene);
-
-			} catch (Exception e) {
-				Game.scene().add(new WndMessage("存档字串无效"));
-			}
+		@Override
+		protected void onClick() {
+			// one‑liner – no more local tryImport()
+			SaveImportUtil.tryImportFromClipboard(scene);
 		}
 	}
 

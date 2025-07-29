@@ -44,6 +44,25 @@
 			android:screenOrientation="nosensor"
 			android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize">
 		</activity>
+		<activity
+			android:name="com.shatteredpixel.shatteredpixeldungeon.android.SaveImportActivity"
+			android:exported="true">
+			<intent-filter android:label="Open save file">
+				<action android:name="android.intent.action.VIEW"/>
+				<category android:name="android.intent.category.DEFAULT"/>
+				<category android:name="android.intent.category.BROWSABLE"/>
+
+				<data android:scheme="content"/>
+				<data android:mimeType="text/plain"/>
+				<data android:scheme="file"/>
+    			<data android:pathPattern=".*\\.txt"/>
+
+				<action android:name="android.intent.action.SEND"/>
+				<data android:scheme="content"/>
+    			<data android:mimeType="text/plain"/>
+			</intent-filter>
+		</activity>
+
 		<provider
 			android:name="androidx.core.content.FileProvider"
 			android:authorities="${applicationId}.provider"

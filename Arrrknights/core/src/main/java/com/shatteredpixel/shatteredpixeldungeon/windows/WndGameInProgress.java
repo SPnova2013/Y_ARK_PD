@@ -41,8 +41,6 @@ import com.shatteredpixel.shatteredpixeldungeon.ui.RedButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
 import com.shatteredpixel.shatteredpixeldungeon.utils.JsonCompress;
-import com.sun.org.apache.bcel.internal.generic.FADD;
-import com.sun.org.apache.bcel.internal.generic.FSUB;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.ui.Button;
 import com.watabou.utils.Bundle;
