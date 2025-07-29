@@ -349,7 +349,7 @@ public class StartScene extends PixelScene {
 		@Override protected void onClick() {
 			String clip = com.badlogic.gdx.Gdx.app.getClipboard().getContents();
 			if (clip == null || clip.trim().isEmpty()) {
-				Game.scene().add(new WndMessage("Invalid save string."));
+				Game.scene().add(new WndMessage("存档字串无效"));
 			} else {
 				tryImport(clip);
 			}
@@ -363,7 +363,7 @@ public class StartScene extends PixelScene {
 
 				int slot = GamesInProgress.firstEmpty();
 				if (slot == -1) {
-					Game.scene().add(new WndMessage("No empty slot."));
+					Game.scene().add(new WndMessage("没有空白存档"));
 					return;
 				}
 				// make sure slot folder exists
@@ -391,7 +391,7 @@ public class StartScene extends PixelScene {
 				StartScene.EnsureRefresh(scene);
 
 			} catch (Exception e) {
-				Game.scene().add(new WndMessage("Invalid save string."));
+				Game.scene().add(new WndMessage("存档字串无效"));
 			}
 		}
 	}

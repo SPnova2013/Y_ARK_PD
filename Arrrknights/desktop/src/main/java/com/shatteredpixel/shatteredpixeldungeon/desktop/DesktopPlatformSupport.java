@@ -256,6 +256,8 @@ public class DesktopPlatformSupport extends PlatformSupport {
 	public void clearText(String text) {}
 	@Override
 	public void shareText(String text) {}
+	@Override
+	public void shareTextContent(String content, String outputFileName) {}
 
 	@Override
 	public void shareZipFiles(List<String> files, String outputFile) {

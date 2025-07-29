@@ -273,12 +273,12 @@ public class WndGameInProgress extends Window {
 //								.append(depthJson);
 								.append(Base64.encodeBase64String(depthJson.getBytes(StandardCharsets.UTF_8)));
 					}
-
-					com.badlogic.gdx.Gdx.app.getClipboard().setContents(sb.toString());
-					Game.scene().add(new WndMessage("Save copied to clipboard."));
+					Game.platform.shareTextContent(sb.toString(), "save"+slot+"_depth"+info.maxDepth+".txt");
+//					com.badlogic.gdx.Gdx.app.getClipboard().setContents(sb.toString());
+					Game.scene().add(new WndMessage("存档导出成功"));
 
 				} catch (Exception e) {
-					Game.scene().add(new WndMessage("Failed to copy save."));
+					Game.scene().add(new WndMessage("存档导出失败:"+e));
 				}
 			}
 		};

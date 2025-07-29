@@ -65,5 +65,6 @@ public abstract class PlatformSupport {
 	public abstract String[] splitforTextBlock( String text, boolean multiline );
 	public abstract void clearText(String text);
 	public abstract void shareText(String text);
+	public abstract void shareTextContent(String content, String outputFileName);
 	public abstract void shareZipFiles(List<String> files, String outputFile);
 }

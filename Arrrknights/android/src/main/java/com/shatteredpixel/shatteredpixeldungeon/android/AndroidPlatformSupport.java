@@ -65,6 +65,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -527,6 +528,41 @@ public class AndroidPlatformSupport extends PlatformSupport {
 		context.startActivity(Intent.createChooser(shareIntent, "Share File"));
 	}
 
+	@Override
+	public void shareTextContent(String content, String outputFileName) {
+		FileHandle outputHandle = FileUtils.getFileHandle(outputFileName);
+		if (outputHandle.exists() && !outputHandle.delete()) {
+			DeviceCompat.log(TAG, "Failed to delete existing text file");
+			return;
+		}
+
+		File outputFile = outputHandle.file();
+		// 3) write our string as UTF‑8 bytes
+		try (FileOutputStream fos = new FileOutputStream(outputFile)) {
+			fos.write(content.getBytes(StandardCharsets.UTF_8));
+		} catch (IOException e) {
+			DeviceCompat.log(TAG, "Failed to write text file" + e.getMessage());
+			return;
+		}
+
+		// 4) share via the same provider authority
+		Context context = ((AndroidApplication)Gdx.app).getContext();
+		Uri contentUri = FileProvider.getUriForFile(
+				context,
+				context.getApplicationContext().getPackageName() + ".provider",
+				outputFile
+		);
+
+		Intent shareIntent = new Intent(Intent.ACTION_SEND)
+				.setType("text/plain")
+				.putExtra(Intent.EXTRA_STREAM, contentUri)
+				.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+		context.startActivity(
+				Intent.createChooser(shareIntent, "Share Text File")
+		);
+	}
+	@Override
 	public void shareZipFiles(List<String> fileNames, String outputFileName) {
 		FileHandle outputHandle = FileUtils.getFileHandle(outputFileName);
 		if (outputHandle.exists() && !outputHandle.delete()) {
