@@ -5,8 +5,6 @@ import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.watabou.noosa.Image;
 
-import java.security.PublicKey;
-
 public class DictSpriteSheet {
     public static Image createImage(int sheet){
         if(sheet<10000) {
@@ -67,7 +65,7 @@ public class DictSpriteSheet {
             case BANDIT:
                 return new Image(Assets.Sprites.GHOST1, 0, 13, 12, 13);
             case SKELETON:
-                return new Image(Assets.Sprites.BOMBTAIL, 0, 0, 12, 15);
+                return new Image(Assets.Sprites.BOMBTAILG, 0, 0, 12, 15);
             case DM100:
                 return new Image(Assets.Sprites.A_MASTER1, 0, 0, 16, 14);
             case GUARD:

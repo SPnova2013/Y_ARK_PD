@@ -344,10 +344,13 @@ public class Assets {
 		public static final String SPITTER		= "sprites/spitter.png";
 		public static final String INFANTRY	= "sprites/Infantry.png";
 		public static final String RIOTER	= "sprites/rioter.png";
+		public static final String COCKTAILTHROWER	= "sprites/cocktail_thrower.png";
 		public static final String CROSSBOWMAN	= "sprites/crossbowman.png";
 		public static final String SHILDED	= "sprites/Shielded.png";
 		public static final String SHILDED_L	= "sprites/ShieldedLeader.png";
+		public static final String SHIELDED_GUARD	= "sprites/shielded_guard.png";
 		public static final String HAUND		= "sprites/haund.png";
+		public static final String RODENT		= "sprites/rodent.png";
 		public static final String GLOOMPINCER		= "sprites/gloompincer.png";
 		public static final String DIFENDER		= "sprites/difender.png";
 		public static final String YOMA	= "sprites/yoma.png";
@@ -365,7 +368,8 @@ public class Assets {
 		public static final String MEPHISTO		= "sprites/mephisto.png";
 		public static final String A_MASTER2	= "sprites/arts_master2.png";
 
-		public static final String BOMBTAIL	= "sprites/bombtail.png";
+		public static final String BOMBTAILG = "sprites/bombtail_g.png";
+		public static final String BOMBTAIL = "sprites/bombtail.png";
 		public static final String RIVENGER	= "sprites/rivenger.png";
 		public static final String AVENGER	= "sprites/avenger.png";
 		public static final String THIEF	= "sprites/thief.png";
@@ -397,6 +401,7 @@ public class Assets {
 		public static final String VISION_WARDS    = "sprites/visionwards.png";
 		public static final String GUARDIAN	= "sprites/guardian.png";
 		public static final String SCOUT	= "sprites/scout.png";
+		public static final String GUERRILLA_HERALD	= "sprites/guerrilla_herald.png";
 		public static final String GHOUL	= "sprites/ghoul.png";
 		public static final String RIPPER	= "sprites/ripper.png";
 		public static final String SPAWNER	= "sprites/spawner.png";
@@ -515,6 +520,7 @@ public class Assets {
 		public static final String KAZE = "sprites/kazemaru.png";
 		public static final String FANATIC	= "sprites/fanatic.png";
 		public static final String AIRBORNE	= "sprites/airborne.png";
+		public static final String URSUS_CROSSBOWMAN	= "sprites/ursus_crossbowman.png";
 		public static final String URSUS_INFANTRI	= "sprites/Ursus_Infantri.png";
 		public static final String SARKAZ_SWARDMAN	= "sprites/Sarkaz_Swordsman.png";
 		public static final String SARKAZ_SNIPER	= "sprites/Sarkaz_Sniper.png";

@@ -5,11 +5,12 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Bleeding;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.MysteryMeat;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.HaundSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.RodentSprite;
 import com.watabou.utils.Random;
 
 public class Rodent extends Hound{
     {
-        spriteClass = HaundSprite.class;
+        spriteClass = RodentSprite.class;
 
         HP = HT = 15;
         damageMax = 6;

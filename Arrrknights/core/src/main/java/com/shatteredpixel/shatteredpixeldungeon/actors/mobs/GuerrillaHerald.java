@@ -14,13 +14,14 @@ import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfRage;
 import com.shatteredpixel.shatteredpixeldungeon.levels.builders.FigureEightBuilder;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.GuerrillaHeraldSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ScoutSprite;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.noosa.audio.Sample;
 
 public class GuerrillaHerald extends Mob{
     {
-        spriteClass = ScoutSprite.class;
+        spriteClass = GuerrillaHeraldSprite.class;
 
         HP = HT = 1;
         drMax = 0;
