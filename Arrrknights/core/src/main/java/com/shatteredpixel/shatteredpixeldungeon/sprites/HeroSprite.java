@@ -106,6 +106,7 @@ public class HeroSprite extends CharSprite {
 		if(Dungeon.hero.CharSkin == Hero.NEURO) updateNeuroSkin();
 		if(Dungeon.hero.CharSkin == Hero.WISADEL) updateWisadelSkin();
 		if(Dungeon.hero.CharSkin == Hero.TENMA) updateTenmaSkin();
+		if(Dungeon.hero.CharSkin == Hero.ES) updateEsSkin();
 
 		if (Dungeon.hero.isAlive())
 			idle();
@@ -211,6 +212,28 @@ public class HeroSprite extends CharSprite {
 		BoD = new MovieClip.Animation( 1, false );
 		BoD.frames( film, 54, 55);
 	}
+
+	public void updateEsSkin() {
+		TextureFilm film = new TextureFilm(texture, 80, 50);
+		idle = new MovieClip.Animation( 5, true );
+		idle.frames( film, 61,62,63,64,61,62,63,64,61,62,63,64,61,62,63,64,61,62,63,64,65,65,65,65);
+		run = new MovieClip.Animation( 20, true );
+		run.frames( film, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 );
+		die = new MovieClip.Animation( 8, false );
+		die.frames( film,  50, 51, 52, 53, 54, 55, 56);
+		attack = new MovieClip.Animation( 18, false );
+		attack.frames( film, 11, 12, 13, 14, 15, 16, 17, 18 );
+		Sattack = attack.clone();
+		zap = attack.clone();
+		operate = new Animation( 8, false );
+		operate.frames( film,  57, 58);
+		eat = operate.clone();
+		fly = new Animation( 8, true );
+		fly.frames( film,  59, 60);
+		read = new Animation( 15, false );
+		read.frames( film,  19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49);
+	}
+
 	@Override
 	public void place( int p ) {
 		super.place( p );

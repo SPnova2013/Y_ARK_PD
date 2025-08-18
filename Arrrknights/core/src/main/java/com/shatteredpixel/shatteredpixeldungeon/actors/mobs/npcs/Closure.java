@@ -300,6 +300,10 @@ public class Closure extends NPC {
                                 if(!Badges.isUnlocked(Badges.Badge.SKIN_TENMA)) {Badges.validateTenmaSkin();}
                                 sprite.showStatus( CharSprite.POSITIVE, Messages.get(this, "hi"));
                                 break;
+                            case 23:
+                                if(!Badges.isUnlocked(Badges.Badge.SKIN_ES)) {Badges.validateEsSkin();}
+                                sprite.showStatus( CharSprite.POSITIVE, Messages.get(this, "hi"));
+                                break;
                         }
                     }
                 }

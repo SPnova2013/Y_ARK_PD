@@ -7,6 +7,7 @@ import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.JessiSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.ArchSkinSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.AstesiaSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.EsSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.FnovaSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.FrankaSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.FrostLeafSprite;
@@ -33,7 +34,7 @@ public class SkinModel extends NPC {
         properties.add(Property.IMMOVABLE);
         properties.add(Property.NPC);
     }
-    private final int MAX_SKIN = 22;
+    private final int MAX_SKIN = 23;
     public SkinModel()
     {
         super();
@@ -84,8 +85,10 @@ public class SkinModel extends NPC {
                break;
            case 21: spriteClass = WisadelSprite.class;
            break;
-           case MAX_SKIN: spriteClass = TenmaSprite.class;
+           case 22: spriteClass = TenmaSprite.class;
            break;
+           case MAX_SKIN: spriteClass = EsSprite.class;
+               break;
        }
     }
 

@@ -274,6 +274,7 @@ public class Badges {
 		SKIN_NEURO(308, false, true),
 		SKIN_WISADEL(309, false, true),
 		SKIN_TENMA(310, false, true),
+		SKIN_ES(311, false, true),
 
 		//기타
 		SUPPORT;
@@ -1191,6 +1192,10 @@ public class Badges {
 		Badge badge = Badge.SKIN_TENMA;
 		displayBadge( badge );
 	}
+	public static void validateEsSkin(){
+		Badge badge = Badge.SKIN_ES;
+		displayBadge( badge );
+	}
 
 	// 0.3.2버전의 스킨 관련 처리로 인해 추가된 구문입니다. 추후 필요없어질 수 있습니다.
 	public static void allskindestroy() {
@@ -1267,6 +1272,9 @@ public class Badges {
 		if(isUnlocked(Badge.SKIN_TENMA)){
 			global.remove(Badge.SKIN_TENMA);
 		}
+		if(isUnlocked(Badge.SKIN_ES)){
+			global.remove(Badge.SKIN_ES);
+		}
 
 		if (Badges.isUnlocked(Badge.SUPPORT)) {
 			Badges.validatetaluskin();
@@ -1315,6 +1323,7 @@ public class Badges {
 		if(!Badges.isUnlocked(Badge.SKIN_NEURO)) { Badges.validateNeuroSkin();}
 		if(!Badges.isUnlocked(Badge.SKIN_WISADEL)) { Badges.validateWisadelSkin();}
 		if(!Badges.isUnlocked(Badge.SKIN_TENMA)) { Badges.validateTenmaSkin();}
+		if(!Badges.isUnlocked(Badge.SKIN_ES)) { Badges.validateEsSkin();}
 	}
 
 	//necessary in order to display the happy end badge in the surface scene
@@ -1695,7 +1704,7 @@ public class Badges {
 			{Badge.SKIN_BABOSKADI}, {Badge.SKIN_TALU}, {Badge.SKIN_NOVA}, {Badge.SKIN_SUSUU}, {Badge.SKIN_GRN}, {Badge.SKIN_LAPPY}, {Badge.SKIN_JESSI}, {Badge.SKIN_LEAF},
 			{Badge.SKIN_ASTESIA}, {Badge.SKIN_SPECTER}, {Badge.SKIN_MUDROCK}, {Badge.SKIN_SCHWARZ}, {Badge.SKIN_ARCH}, {Badge.SKIN_TOMIMI}, {Badge.SKIN_FRANKA},
 			{Badge.SKIN_WEEDY},{Badge.SKIN_LILITH},{Badge.SKIN_KAYOKO},{Badge.SKIN_HINA},{Badge.SKIN_TLIPOCA},{Badge.SKIN_NEURO},{Badge.SKIN_WISADEL},
-			{Badge.SKIN_TENMA}
+			{Badge.SKIN_TENMA},{Badge.SKIN_ES}
 	};
 	
 	public static List<Badge> filterReplacedBadges( List<Badge> badges ) {

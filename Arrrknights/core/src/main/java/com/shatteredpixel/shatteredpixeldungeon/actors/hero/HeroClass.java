@@ -559,6 +559,7 @@ package com.shatteredpixel.shatteredpixeldungeon.actors.hero;
 				case 21: return Assets.Sprites.NEURO;
 				case 22: return Assets.Sprites.WISADEL;
 				case 23: return Assets.Sprites.TENMA;
+				case 24: return Assets.Sprites.ES;
 			}
 		}
 		switch (this) {

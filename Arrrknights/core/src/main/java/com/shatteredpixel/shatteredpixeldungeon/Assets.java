@@ -560,6 +560,7 @@ public class Assets {
 		public static final String NEURO = "sprites/neuro.png";
 		public static final String WISADEL = "sprites/wisadel.png";
 		public static final String TENMA = "sprites/tenma.png";
+		public static final String ES = "sprites/es.png";
 
 		//cover sprites
 		public static final String EX42COVER	= "sprites/ex42cover.png";
