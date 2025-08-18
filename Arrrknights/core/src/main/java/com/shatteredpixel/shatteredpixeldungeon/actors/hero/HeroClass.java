@@ -98,6 +98,7 @@ package com.shatteredpixel.shatteredpixeldungeon.actors.hero;
  import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.FreshInspiration;
  import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Gloves;
  import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MagesStaff;
+ import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Murakumo;
  import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.NEARL_AXE;
  import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Violin;
  import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.WornShortsword;
@@ -237,6 +238,7 @@ package com.shatteredpixel.shatteredpixeldungeon.actors.hero;
 
 			new FlameKatana().chimera(Reflection.newInstance(Flame.class)).chimera(Reflection.newInstance(Sylvestris.class)).chimera(Reflection.newInstance(Blossoming.class)).identify().collect();
 			new BadgeOfCharger().collect();
+			new Murakumo().identify().collect();
 		}
 	}
 

@@ -359,6 +359,7 @@ public class ItemSpriteSheet {
 	public static final int ECHEVERIA       = WEP_TIER5+19;
 	public static final int DONKEY_SWORD       = WEP_TIER5+20;
 	public static final int FLAMMETTA       = WEP_TIER5+21;
+	public static final int MURAKUMO        = WEP_TIER5+22;
 
 	static{
 		assignItemRect(GREATSWORD,  16, 16);

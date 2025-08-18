@@ -260,7 +260,9 @@ public class HeroSprite extends CharSprite {
 	@Override
 	public void jump( int from, int to, Callback callback ) {
 		super.jump( from, to, callback );
-		play( fly );
+		if (Dungeon.hero != null && Dungeon.hero.CharSkin == Hero.ES) {
+			play(attack);
+		} else play( fly );
 	}
 
 	public void BoD() {
