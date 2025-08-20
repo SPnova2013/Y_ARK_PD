@@ -51,6 +51,8 @@ public class Statistics {
 	public static boolean completedWithNoKilling = false;
 	public static boolean ver0_3_2firstrun = false;
 	public static int victoryLapRounds;
+
+	public static boolean frostNovaMap = false;
 	
 	public static boolean amuletObtained = false;
 
@@ -76,6 +78,7 @@ public class Statistics {
 		duration	= 0;
 		prevFloorMoves = 0;
 		victoryLapRounds = 0;
+		frostNovaMap = false;
 
 		qualifiedForNoKilling = false;
 		
@@ -102,6 +105,7 @@ public class Statistics {
 	private static final String DURATION	= "duration";
 	private static final String PREVFLOORMOVES = "prevfloormoves";
 	private static final String VICTORYLAPROUNDS = "victorylaprounds";
+	private static final String FROSTNOVAMAP = "frostNovaMap";
 
 	private static final String NO_KILLING_QUALIFIED	= "qualifiedForNoKilling";
 	
@@ -129,6 +133,7 @@ public class Statistics {
 		bundle.put( DURATION,	duration );
 		bundle.put( PREVFLOORMOVES, prevFloorMoves);
 		bundle.put( VICTORYLAPROUNDS, victoryLapRounds);
+		bundle.put ( FROSTNOVAMAP, frostNovaMap);
 		bundle.put(NO_KILLING_QUALIFIED, qualifiedForNoKilling);
 		
 		bundle.put( AMULET,		amuletObtained );
@@ -156,6 +161,7 @@ public class Statistics {
 		duration		= bundle.getFloat( DURATION );
 		prevFloorMoves	= bundle.getInt(PREVFLOORMOVES);
 		victoryLapRounds= bundle.getInt(VICTORYLAPROUNDS);
+		frostNovaMap = bundle.getBoolean(FROSTNOVAMAP);
 
 		qualifiedForNoKilling = bundle.getBoolean( NO_KILLING_QUALIFIED );
 		

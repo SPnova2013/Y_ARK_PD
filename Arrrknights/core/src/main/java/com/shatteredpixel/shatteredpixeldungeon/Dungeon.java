@@ -59,6 +59,7 @@ import com.shatteredpixel.shatteredpixeldungeon.journal.Notes;
 import com.shatteredpixel.shatteredpixeldungeon.levels.CavesLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.CityLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.DeadEndLevel;
+import com.shatteredpixel.shatteredpixeldungeon.levels.FrostNovaLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.GavialBossLevel1;
 import com.shatteredpixel.shatteredpixeldungeon.levels.GavialBossLevel2;
 import com.shatteredpixel.shatteredpixeldungeon.levels.GavialLevel;
@@ -391,10 +392,12 @@ public class Dungeon {
 			level = new NewPrisonBossLevel();
 			break;
 		case 11:
+			if(Statistics.victoryLapRounds>0) Statistics.frostNovaMap = true/*Random.Int(2) != 0*/;
 		case 12:
 		case 13:
 		case 14:
-			level = new CavesLevel();
+			if (Statistics.frostNovaMap) level = new FrostNovaLevel();
+			else level = new CavesLevel();
 			break;
 		case 15:
 			level = new NewCavesBossLevel();
