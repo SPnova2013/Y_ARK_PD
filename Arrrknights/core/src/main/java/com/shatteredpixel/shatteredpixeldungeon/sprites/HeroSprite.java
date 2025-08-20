@@ -48,6 +48,7 @@ public class HeroSprite extends CharSprite {
 	private Animation fly;
 	private Animation read;
 	private Animation BoD;
+	private Animation Gawain;
 
 	public HeroSprite() {
 		super();
@@ -101,6 +102,7 @@ public class HeroSprite extends CharSprite {
 		specialAfterAttack = new Animation( 1, false );
 		specialAfterAttack.frames(attack.frames[attack.frames.length-1]);
 		BoD = specialAfterAttack.clone();
+		Gawain = attack.clone();
 
 		if(Dungeon.hero.CharSkin == Hero.HINA) updateHinaSkin();//除此之外，还需要在镜像卷轴和虹卫秘卷处增加非典型皮肤的适配
 		if(Dungeon.hero.CharSkin == Hero.NEURO) updateNeuroSkin();
@@ -232,6 +234,9 @@ public class HeroSprite extends CharSprite {
 		fly.frames( film,  59, 60);
 		read = new Animation( 15, false );
 		read.frames( film,  19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49);
+
+		Gawain = new Animation(30, false);
+		Gawain.frames(film, 66,67,68,69,70,71,72,73,74,75,76,77,78,79,80);
 	}
 
 	@Override
@@ -261,7 +266,15 @@ public class HeroSprite extends CharSprite {
 	public void jump( int from, int to, Callback callback ) {
 		super.jump( from, to, callback );
 		if (Dungeon.hero != null && Dungeon.hero.CharSkin == Hero.ES) {
-			play(attack);
+			play(Gawain);
+		} else play( fly );
+	}
+
+	@Override
+	public void jump( int from, int to, Callback callback, float height, float duration ) {
+		super.jump(from, to, callback, height, duration);
+		if (Dungeon.hero != null && Dungeon.hero.CharSkin == Hero.ES) {
+			play(Gawain);
 		} else play( fly );
 	}
 

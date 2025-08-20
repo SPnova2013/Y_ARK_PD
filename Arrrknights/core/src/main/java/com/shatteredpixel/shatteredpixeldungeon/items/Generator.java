@@ -244,6 +244,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.KazemaruWeapo
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.KollamSword;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.LoneJourney;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MinosFury;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Murakumo;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.NaginataAndFan;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Niansword;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.PatriotSpear;
@@ -572,6 +573,7 @@ public class Generator {
                     LoneJourney.class,//3
                     Echeveria.class,//3
                     Suffering.class,//3
+                    Murakumo.class,//3
                     CatGun.class,
                     ImageoverForm.class,
                     KollamSword.class,
@@ -580,7 +582,7 @@ public class Generator {
                     PatriotSpear.class,
                     SakuraSword.class
             };
-            WEP_T5.probs = new float[]{4, 3, 3, 4, 4, 4, 4, 3, 3, 4, 4, 4, 3, 3, 3, 3, 0, 0, 0, 0, 0, 0, 0};//56
+            WEP_T5.probs = new float[]{4, 3, 3, 4, 4, 4, 4, 3, 3, 4, 4, 4, 3, 3, 3, 3, 3, 0, 0, 0, 0, 0, 0, 0};//59
 
             //see Generator.randomArmor
             ARMOR.classes = new Class<?>[]{

@@ -565,5 +565,6 @@ public class Assets {
 		//cover sprites
 		public static final String EX42COVER	= "sprites/ex42cover.png";
 		public static final String BODCOVER	= "sprites/boundary-of-death.png";
+		public static final String GAWAINCOVER	= "sprites/gawaincover.png";
 	}
 }

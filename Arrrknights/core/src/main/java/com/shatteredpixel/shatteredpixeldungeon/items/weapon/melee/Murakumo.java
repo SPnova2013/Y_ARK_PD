@@ -10,6 +10,8 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Burning;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Invisibility;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
+import com.shatteredpixel.shatteredpixeldungeon.effects.coversprite.EX42Cover;
+import com.shatteredpixel.shatteredpixeldungeon.effects.coversprite.GawainCover;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.CellSelector;
@@ -89,14 +91,18 @@ public class Murakumo extends MeleeWeapon{
                             mob.damage(damage, hero);
                         }
                     }
+                    if(hero.CharSkin == Hero.ES){
+                        GawainCover gawainCover = new GawainCover();
+                        gawainCover.centerAndPlay(dest);
+                    }
 
-                    Camera.main.shake(2, 0.5f);
+                    Camera.main.shake(2, 0.6f);
 
                     Invisibility.dispel();
                     hero.spendAndNext(hero.attackDelay());
 
                 }
-            });
+            }, 0.5f, 0.3f);
         }
 
         @Override
