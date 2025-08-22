@@ -28,6 +28,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.ExplodeSlug_A;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Fanatic;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.FireCore;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.FloatingSeaDrifter;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Frostfang;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.GiantMushroom;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Gloompincer;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.GuerrillaHerald;
@@ -54,6 +55,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.MutantSpider;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Originiutant;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Piersailor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Raider;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Razorfrost;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.ReunionDefender;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Guard;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
@@ -236,7 +238,9 @@ public class MobPlacer extends Generators {
             case 6: return DataPack.PIRANHA.ordinal() - DataPack.ACIDIC.ordinal() - 1;
             case 7: return DataPack.FIRECORE.ordinal() - DataPack.PIRANHA.ordinal() - 1;
             case 8: return DataPack.T_SHAMAN.ordinal() - DataPack.FIRECORE.ordinal() - 1;
-            case 9: default: return DataPack.REAPER.ordinal() - DataPack.T_SHAMAN.ordinal() - 1;
+            case 9: return DataPack.REAPER.ordinal() - DataPack.T_SHAMAN.ordinal() - 1;
+            case 10: return DataPack.RAZORFROST.ordinal() - DataPack.REAPER.ordinal() - 1;
+            default: return 0;
         }
     }
     private int dataThreshold(int tier){
@@ -259,6 +263,8 @@ public class MobPlacer extends Generators {
                 return DataPack.FIRECORE.ordinal()+1;
             case 9:
                 return DataPack.T_SHAMAN.ordinal()+1;
+            case 10:
+                return DataPack.REAPER.ordinal()+1;
         }
     }
 
@@ -303,8 +309,8 @@ public class MobPlacer extends Generators {
                 @Override
                 public void onClick(){
                     mobTier--;
-                    if(mobTier < 1 || mobTier>9){
-                        mobTier = 9;
+                    if(mobTier < 1 || mobTier>10){
+                        mobTier = 10;
                     }
                     mobIndex = Math.min(mobIndex, maxMobIndex(mobTier));
                     refreshImage();
@@ -318,7 +324,7 @@ public class MobPlacer extends Generators {
                 @Override
                 public void onClick(){
                     mobTier++;
-                    if(mobTier < 1 || mobTier > 9){
+                    if(mobTier < 1 || mobTier > 10){
                         mobTier = 1;
                     }
                     mobIndex = Math.min(mobIndex, maxMobIndex(mobTier));
@@ -382,7 +388,7 @@ public class MobPlacer extends Generators {
         private void updateSelectedMob(){
             int selected = mobTier;
             StringBuilder sb = new StringBuilder();
-            for(int i=1;i<=9;++i){
+            for(int i=1;i<=10;++i){
                 sb.append((i==selected? "* ":"- "));
             }
             selectedPage.text(sb.toString());
@@ -600,7 +606,9 @@ public class MobPlacer extends Generators {
 
         RUNNER(SeaRunner.class,-24),
         DRIFTER(FloatingSeaDrifter.class,-35),
-        REAPER(SeaReaper.class,-36);
+        REAPER(SeaReaper.class,-36),
+        FROSTFANG(Frostfang.class, -51),
+        RAZORFROST(Razorfrost.class, -52);
         //CAPSULE(SeaCapsule.class,-37),
         //OCTO(Sea_Octo.class,-38),
         //LEAF(SeaLeef.class,-39),

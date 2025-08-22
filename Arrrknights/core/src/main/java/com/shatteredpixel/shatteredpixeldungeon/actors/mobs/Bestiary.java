@@ -100,11 +100,16 @@ public class Bestiary {
 				
 			// Caves
 			case 11:
-				//3x bat, 1x brute, 1x shaman
-				return new ArrayList<>(Arrays.asList(
-						Bat.class, Bat.class, Bat.class,
-						Brute.class,
-						Shaman.random()));
+				if (Statistics.frostNovaMap) {
+					return new ArrayList<>(Arrays.asList(
+							Frostfang.class));
+				}else {
+					//3x bat, 1x brute, 1x shaman
+					return new ArrayList<>(Arrays.asList(
+							Bat.class, Bat.class, Bat.class,
+							Brute.class,
+							Shaman.random()));
+				}
 			case 12:
 				//2x bat, 2x brute, 1x shaman, 1x spinner
 				return new ArrayList<>(Arrays.asList(
@@ -403,6 +408,9 @@ public class Bestiary {
 				}
 				else if (cl == TiacauhRitualist.class) {
 					cl = TiacauhShaman.class;
+				}
+				else if (cl == Frostfang.class){
+					cl = Razorfrost.class;
 				}
 				rotation.set(i, cl);
 			}

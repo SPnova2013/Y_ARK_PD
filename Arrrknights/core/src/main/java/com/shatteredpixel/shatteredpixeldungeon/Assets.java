@@ -479,6 +479,10 @@ public class Assets {
 		public static final String SEA_PREDATOR	= "sprites/sea_predator.png";
 		public static final String SEA_BRANDGUIDER	= "sprites/sea_brandguider.png";
 
+		//替换图：霜星
+		public static final String FROSTFANG		= "sprites/frostfang.png";
+		public static final String RAZORFROST		= "sprites/razorfrost.png";
+
 
 
 
