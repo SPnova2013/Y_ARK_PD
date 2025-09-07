@@ -109,6 +109,10 @@ public class HeroSprite extends CharSprite {
 		if(Dungeon.hero.CharSkin == Hero.WISADEL) updateWisadelSkin();
 		if(Dungeon.hero.CharSkin == Hero.TENMA) updateTenmaSkin();
 		if(Dungeon.hero.CharSkin == Hero.ES) updateEsSkin();
+		if(Dungeon.hero.CharSkin == Hero.NEURO_ANGEL) updateNeuroAngelSkin();
+		if(Dungeon.hero.CharSkin == Hero.NEURO_CAT) updateNeuroCatSkin();
+		if(Dungeon.hero.CharSkin == Hero.NEURO_JOKER) updateNeuroJokerSkin();
+		if(Dungeon.hero.CharSkin == Hero.NEURO_WITCH) updateNeuroWitchSkin();
 
 		if (Dungeon.hero.isAlive())
 			idle();
@@ -214,7 +218,6 @@ public class HeroSprite extends CharSprite {
 		BoD = new MovieClip.Animation( 1, false );
 		BoD.frames( film, 54, 55);
 	}
-
 	public void updateEsSkin() {
 		TextureFilm film = new TextureFilm(texture, 80, 50);
 		idle = new MovieClip.Animation( 5, true );
@@ -237,6 +240,97 @@ public class HeroSprite extends CharSprite {
 
 		Gawain = new Animation(30, false);
 		Gawain.frames(film, 66,67,68,69,70,71,72,73,74,75,76,77,78,79,80);
+	}
+
+	public void updateNeuroAngelSkin() {
+		texture(Dungeon.hero.heroClass.spritesheet());
+		TextureFilm film = new TextureFilm(texture, 36, 36);
+		idle = new MovieClip.Animation( 7, false );
+		idle.frames( film, 0);
+		run = new MovieClip.Animation( 20, true );
+		run.frames( film, 25,26,27,28,29,30,31,32 );
+		die = new MovieClip.Animation( 8, false );
+		die.frames( film, 33,34,35,36,37,38,39,40,41,42,43);
+		attack = new MovieClip.Animation( 25, false );
+		attack.frames( film, 44,45,46,47,48,49,50,51,52);
+		Sattack = attack.clone();
+		zap = attack.clone();
+		operate = new Animation( 8, false );
+		operate.frames( film, 10,11,12,13,14,15,16,17);
+		eat = new Animation( 8, false );
+		eat.frames( film, 18,19,20,21,22,23,24);
+		fly = new Animation( 1, true );
+		fly.frames( film, 8,9 );
+		read = new Animation( 10, false );
+		read.frames( film, 0,1,2,3,4,5,6,7);
+	}
+	public void updateNeuroCatSkin() {
+		texture(Dungeon.hero.heroClass.spritesheet());
+		TextureFilm film = new TextureFilm(texture, 36, 36);
+		idle = new MovieClip.Animation( 7, false );
+		idle.frames( film, 0, 0, 0 ,0, 0, 0, 0, 0 ,0, 0, 0, 0 ,0, 0, 0, 0 ,0, 0, 0, 0 ,0, 0, 0, 0 ,0, 0, 1, 2, 3, 4, 5, 6, 7, 6, 7,6,7,6,7);
+		specialIdle = new MovieClip.Animation( 7, true );
+		specialIdle.frames(film, 6, 7);
+		run = new MovieClip.Animation( 20, true );
+		run.frames( film, 25,26,27,28,29,30,31,32 );
+		die = new MovieClip.Animation( 8, false );
+		die.frames( film, 33,34,35,36,37,38,39,40,41,42,43);
+		attack = new MovieClip.Animation( 25, false );
+		attack.frames( film, 44,45,46,47,48,49,50,51,52);
+		Sattack = attack.clone();
+		zap = attack.clone();
+		operate = new Animation( 8, false );
+		operate.frames( film, 10,11,12,13,14,15,16,17);
+		eat = new Animation( 8, false );
+		eat.frames( film, 18,19,20,21,22,23,24);
+		fly = new Animation( 1, true );
+		fly.frames( film, 8,9 );
+		read = new Animation( 10, false );
+		read = operate.clone();
+	}
+	public void updateNeuroJokerSkin() {
+		texture(Dungeon.hero.heroClass.spritesheet());
+		TextureFilm film = new TextureFilm(texture, 36, 36);
+		idle = new MovieClip.Animation( 7, false );
+		idle.frames( film, 0);
+		run = new MovieClip.Animation( 20, true );
+		run.frames( film, 25,26,27,28,29,30,31,32 );
+		die = new MovieClip.Animation( 8, false );
+		die.frames( film, 33,34,35,36,37,38,39,40,41,42,43);
+		attack = new MovieClip.Animation( 25, false );
+		attack.frames( film, 44,45,46,47,48,49,50,51,52);
+		Sattack = attack.clone();
+		zap = attack.clone();
+		operate = new Animation( 8, false );
+		operate.frames( film, 10,11,12,13,14,15,16,17);
+		eat = new Animation( 8, false );
+		eat.frames( film, 18,19,20,21,22,23,24);
+		fly = new Animation( 1, true );
+		fly.frames( film, 8,9 );
+		read = new Animation( 10, false );
+		read.frames( film, 0,1,2,3,4,5,6,7);
+	}
+	public void updateNeuroWitchSkin() {
+		texture(Dungeon.hero.heroClass.spritesheet());
+		TextureFilm film = new TextureFilm(texture, 36, 36);
+		idle = new MovieClip.Animation( 7, false );
+		idle.frames( film, 0);
+		run = new MovieClip.Animation( 20, true );
+		run.frames( film, 25,26,27,28,29,30,31,32 );
+		die = new MovieClip.Animation( 8, false );
+		die.frames( film, 33,34,35,36,37,38,39,40,41,42,43);
+		attack = new MovieClip.Animation( 25, false );
+		attack.frames( film, 44,45,46,47,48,49,50,51,52);
+		Sattack = attack.clone();
+		zap = attack.clone();
+		operate = new Animation( 8, false );
+		operate.frames( film, 10,11,12,13,14,15,16,17);
+		eat = new Animation( 8, false );
+		eat.frames( film, 18,19,20,21,22,23,24);
+		fly = new Animation( 1, true );
+		fly.frames( film, 8,9 );
+		read = new Animation( 10, false );
+		read.frames( film, 0,1,2,3,4,5,6,7);
 	}
 
 	@Override

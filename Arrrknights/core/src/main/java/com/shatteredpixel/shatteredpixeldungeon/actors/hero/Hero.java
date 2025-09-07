@@ -310,6 +310,10 @@ public class Hero extends Char {
     public static final int WISADEL = 22;
     public static final int TENMA = 23;
     public static final int ES = 24;
+    public static final int NEURO_ANGEL = 25;
+    public static final int NEURO_CAT = 26;
+    public static final int NEURO_JOKER = 27;
+    public static final int NEURO_WITCH = 28;
 
     {
         actPriority = HERO_PRIO;

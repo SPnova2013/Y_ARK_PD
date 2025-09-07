@@ -39,7 +39,11 @@ import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.KayokoSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.LappySprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.LilithSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.MudrockSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.NeuroAngelSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.NeuroCatSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.NeuroJokerSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.NeuroSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.NeuroWitchSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.SchwarzSkinSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.SkadiSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.SpecterSprite;
@@ -245,6 +249,23 @@ public class WndBadge extends Window {
 			case SKIN_ES:
 				Dungeon.hero.CharSkin = Hero.ES;
 				Dungeon.hero.CharSkinClass = new EsSprite();
+				break;
+
+			case SKIN_NEURO_ANGEL:
+				Dungeon.hero.CharSkin = Hero.NEURO_ANGEL;
+				Dungeon.hero.CharSkinClass = new NeuroAngelSprite();
+				break;
+			case SKIN_NEURO_CAT:
+				Dungeon.hero.CharSkin = Hero.NEURO_CAT;
+				Dungeon.hero.CharSkinClass = new NeuroCatSprite();
+				break;
+			case SKIN_NEURO_JOKER:
+				Dungeon.hero.CharSkin = Hero.NEURO_JOKER;
+				Dungeon.hero.CharSkinClass = new NeuroJokerSprite();
+				break;
+			case SKIN_NEURO_WITCH:
+				Dungeon.hero.CharSkin = Hero.NEURO_WITCH;
+				Dungeon.hero.CharSkinClass = new NeuroWitchSprite();
 				break;
 		}
 	}

@@ -69,6 +69,10 @@ public class MirrorSprite extends MobSprite {
 		if(Dungeon.hero.CharSkin == Hero.NEURO) updateNeuroSkin();
 		if(Dungeon.hero.CharSkin == Hero.WISADEL) updateWisadelSkin();
 		if(Dungeon.hero.CharSkin == Hero.ES) updateEsSkin();
+		if(Dungeon.hero.CharSkin == Hero.NEURO_ANGEL) updateNeuroAngelSkin();
+		if(Dungeon.hero.CharSkin == Hero.NEURO_CAT) updateNeuroCatSkin();
+		if(Dungeon.hero.CharSkin == Hero.NEURO_JOKER) updateNeuroJokerSkin();
+		if(Dungeon.hero.CharSkin == Hero.NEURO_WITCH) updateNeuroWitchSkin();
 		idle();
 	}
 
@@ -143,5 +147,70 @@ public class MirrorSprite extends MobSprite {
 		operate = new Animation( 8, false );
 		operate.frames( film,  57, 58);
 		eat = operate.clone();
+	}
+
+	public void updateNeuroAngelSkin() {
+		TextureFilm film = new TextureFilm(texture, 36, 36);
+		idle = new MovieClip.Animation( 7, true );
+		idle.frames( film, 0);
+		run = new MovieClip.Animation( 20, true );
+		run.frames( film, 1, 2, 3, 4, 5, 6, 7, 8 );
+		//if(Dungeon.hero.belongings.armor instanceof PlateArmor) run.frames(film, 1);
+		die = new MovieClip.Animation( 8, false );
+		die.frames( film, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36 );
+		attack = new MovieClip.Animation( 25, false );
+		attack.frames( film, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19 );
+		Sattack = attack.clone();
+		zap = attack.clone();
+		operate = new Animation( 8, false );
+		operate.frames( film, 37, 38 );
+	}
+	public void updateNeuroCatSkin() {
+		TextureFilm film = new TextureFilm(texture, 36, 36);
+		idle = new MovieClip.Animation( 7, true );
+		idle.frames( film, 0);
+		run = new MovieClip.Animation( 20, true );
+		run.frames( film, 1, 2, 3, 4, 5, 6, 7, 8 );
+		//if(Dungeon.hero.belongings.armor instanceof PlateArmor) run.frames(film, 1);
+		die = new MovieClip.Animation( 8, false );
+		die.frames( film, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36 );
+		attack = new MovieClip.Animation( 25, false );
+		attack.frames( film, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19 );
+		Sattack = attack.clone();
+		zap = attack.clone();
+		operate = new Animation( 8, false );
+		operate.frames( film, 37, 38 );
+	}
+	public void updateNeuroJokerSkin() {
+		TextureFilm film = new TextureFilm(texture, 36, 36);
+		idle = new MovieClip.Animation( 7, true );
+		idle.frames( film, 0);
+		run = new MovieClip.Animation( 20, true );
+		run.frames( film, 1, 2, 3, 4, 5, 6, 7, 8 );
+		//if(Dungeon.hero.belongings.armor instanceof PlateArmor) run.frames(film, 1);
+		die = new MovieClip.Animation( 8, false );
+		die.frames( film, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36 );
+		attack = new MovieClip.Animation( 25, false );
+		attack.frames( film, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19 );
+		Sattack = attack.clone();
+		zap = attack.clone();
+		operate = new Animation( 8, false );
+		operate.frames( film, 37, 38 );
+	}
+	public void updateNeuroWitchSkin() {
+		TextureFilm film = new TextureFilm(texture, 36, 36);
+		idle = new MovieClip.Animation( 7, true );
+		idle.frames( film, 0);
+		run = new MovieClip.Animation( 20, true );
+		run.frames( film, 1, 2, 3, 4, 5, 6, 7, 8 );
+		//if(Dungeon.hero.belongings.armor instanceof PlateArmor) run.frames(film, 1);
+		die = new MovieClip.Animation( 8, false );
+		die.frames( film, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36 );
+		attack = new MovieClip.Animation( 25, false );
+		attack.frames( film, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19 );
+		Sattack = attack.clone();
+		zap = attack.clone();
+		operate = new Animation( 8, false );
+		operate.frames( film, 37, 38 );
 	}
 }

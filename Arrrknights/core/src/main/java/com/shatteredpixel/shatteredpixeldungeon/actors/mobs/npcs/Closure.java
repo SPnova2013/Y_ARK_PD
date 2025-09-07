@@ -304,6 +304,22 @@ public class Closure extends NPC {
                                 if(!Badges.isUnlocked(Badges.Badge.SKIN_ES)) {Badges.validateEsSkin();}
                                 sprite.showStatus( CharSprite.POSITIVE, Messages.get(this, "hi"));
                                 break;
+                            case 24:
+                                if(!Badges.isUnlocked(Badges.Badge.SKIN_NEURO_ANGEL)) {Badges.validateNeuroAngelSkin();}
+                                sprite.showStatus( CharSprite.POSITIVE, Messages.get(this, "hi"));
+                                break;
+                            case 25:
+                                if(!Badges.isUnlocked(Badges.Badge.SKIN_NEURO_CAT)) {Badges.validateNeuroCatSkin();}
+                                sprite.showStatus( CharSprite.POSITIVE, Messages.get(this, "hi"));
+                                break;
+                            case 26:
+                                if(!Badges.isUnlocked(Badges.Badge.SKIN_NEURO_JOKER)) {Badges.validateNeuroJokerSkin();}
+                                sprite.showStatus( CharSprite.POSITIVE, Messages.get(this, "hi"));
+                                break;
+                            case 27:
+                                if(!Badges.isUnlocked(Badges.Badge.SKIN_NEURO_WITCH)) {Badges.validateNeuroWitchSkin();}
+                                sprite.showStatus( CharSprite.POSITIVE, Messages.get(this, "hi"));
+                                break;
                         }
                     }
                 }

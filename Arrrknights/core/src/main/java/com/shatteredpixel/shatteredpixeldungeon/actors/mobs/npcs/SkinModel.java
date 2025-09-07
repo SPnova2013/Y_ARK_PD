@@ -17,7 +17,11 @@ import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.KayokoSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.LappySprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.LilithSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.MudrockSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.NeuroAngelSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.NeuroCatSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.NeuroJokerSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.NeuroSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.NeuroWitchSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.SchwarzSkinSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.SkadiSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.SpecterSprite;
@@ -34,7 +38,7 @@ public class SkinModel extends NPC {
         properties.add(Property.IMMOVABLE);
         properties.add(Property.NPC);
     }
-    private final int MAX_SKIN = 23;
+    private final int MAX_SKIN = 27;
     public SkinModel()
     {
         super();
@@ -87,7 +91,15 @@ public class SkinModel extends NPC {
            break;
            case 22: spriteClass = TenmaSprite.class;
            break;
-           case MAX_SKIN: spriteClass = EsSprite.class;
+           case 23: spriteClass = EsSprite.class;
+               break;
+           case 24 : spriteClass= NeuroAngelSprite.class;
+               break;
+           case 25 : spriteClass= NeuroCatSprite.class;
+               break;
+           case 26 : spriteClass= NeuroJokerSprite.class;
+               break;
+           case MAX_SKIN: spriteClass = NeuroWitchSprite.class;
                break;
        }
     }
