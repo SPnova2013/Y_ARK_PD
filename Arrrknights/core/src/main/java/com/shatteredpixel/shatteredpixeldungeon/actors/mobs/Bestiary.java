@@ -102,7 +102,8 @@ public class Bestiary {
 			case 11:
 				if (Statistics.frostNovaMap) {
 					return new ArrayList<>(Arrays.asList(
-							Frostfang.class));
+							Frostfang.class,
+							YetiOperative.class));
 				}else {
 					//3x bat, 1x brute, 1x shaman
 					return new ArrayList<>(Arrays.asList(

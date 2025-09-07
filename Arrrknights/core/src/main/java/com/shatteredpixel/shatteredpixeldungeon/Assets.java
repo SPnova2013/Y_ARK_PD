@@ -482,6 +482,7 @@ public class Assets {
 		//替换图：霜星
 		public static final String FROSTFANG		= "sprites/frostfang.png";
 		public static final String RAZORFROST		= "sprites/razorfrost.png";
+		public static final String YETIOPERATIVE	= "sprites/yetioperative.png";
 
 
 

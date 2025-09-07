@@ -4,39 +4,33 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.ChampionEnemy;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Chill;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Frost;
-import com.shatteredpixel.shatteredpixeldungeon.items.food.MysteryMeat;
-import com.shatteredpixel.shatteredpixeldungeon.sprites.FrostfangSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.YetiOperativeSprite;
 
-public class Frostfang extends Mob{
+public class YetiOperative extends Mob{
     {
-        spriteClass = FrostfangSprite.class;
+        spriteClass = YetiOperativeSprite.class;
 
-        HP = HT = 30;
-        damageMax = 15;
-        damageMaxIncRate = 30;
-        damageMaxInc = damageMaxIncRate*rounds;
+        HP = HT = 40;
+        damageMax = 10;
+        damageMin = 5;
         drMax = 5;
         drMin = 0;
-        attackSkill = 15;
+        attackSkill = 20;
         defenseSkill = 15;
-        baseSpeed = 2f;
 
-        EXP = 7;
-        maxLvl = 15;
-
-        loot = new MysteryMeat();
-        lootChance = 0.167f;
+        EXP = 8;
+        maxLvl = 16;
 
         immunities.add(Chill.class);
         immunities.add(Frost.class);
         immunities.add(ChampionEnemy.R2Blazing.class);
         immunities.add(ChampionEnemy.Blazing.class);
-        properties.add(Property.INFECTED);
     }
+
     @Override
     public int attackProc(Char enemy, int damage) {
         if(enemy.buff(Frost.class) != null){
-            damage *= 1.3;
+            damage *= 1.5;
         }
         return super.attackProc(enemy, damage);
     }

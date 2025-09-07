@@ -104,6 +104,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.UrsusCrossbowman;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Warlock;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.WaveCaster;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Wraith;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.YetiOperative;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.miniboss.BloodMagister;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.miniboss.Centurion;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.miniboss.EmperorPursuer;
@@ -239,7 +240,7 @@ public class MobPlacer extends Generators {
             case 7: return DataPack.FIRECORE.ordinal() - DataPack.PIRANHA.ordinal() - 1;
             case 8: return DataPack.T_SHAMAN.ordinal() - DataPack.FIRECORE.ordinal() - 1;
             case 9: return DataPack.REAPER.ordinal() - DataPack.T_SHAMAN.ordinal() - 1;
-            case 10: return DataPack.RAZORFROST.ordinal() - DataPack.REAPER.ordinal() - 1;
+            case 10: return DataPack.YETIOPERATIVE.ordinal() - DataPack.REAPER.ordinal() - 1;
             default: return 0;
         }
     }
@@ -608,7 +609,8 @@ public class MobPlacer extends Generators {
         DRIFTER(FloatingSeaDrifter.class,-35),
         REAPER(SeaReaper.class,-36),
         FROSTFANG(Frostfang.class, -51),
-        RAZORFROST(Razorfrost.class, -52);
+        RAZORFROST(Razorfrost.class, -52),
+        YETIOPERATIVE(YetiOperative.class, -53);
         //CAPSULE(SeaCapsule.class,-37),
         //OCTO(Sea_Octo.class,-38),
         //LEAF(SeaLeef.class,-39),
