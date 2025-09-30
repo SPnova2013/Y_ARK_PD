@@ -22,7 +22,7 @@ allprojects {
         appVersionCode = 250907
         appVersionName = 'Y-0.4.5-EX9-250907'
 
-        appJavaCompatibility = JavaVersion.VERSION_1_8
+        appJavaCompatibility = JavaVersion.VERSION_11
 
         appAndroidCompileSDK = 33
         appAndroidMinSDK = 19   //隔壁是9
