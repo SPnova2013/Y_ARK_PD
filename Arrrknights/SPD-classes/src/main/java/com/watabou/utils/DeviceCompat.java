@@ -67,6 +67,10 @@ public class DeviceCompat {
 		Gdx.app.log( tag, message );
 	}
 
+	public static void log( String message){
+		Gdx.app.log( "Log", message );
+	}
+
 	public static RectF getSafeInsets(){
 		RectF result = new RectF();
 		result.left =   Gdx.graphics.getSafeInsetLeft();

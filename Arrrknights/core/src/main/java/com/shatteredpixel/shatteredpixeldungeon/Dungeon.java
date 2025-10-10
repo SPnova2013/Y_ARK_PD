@@ -90,12 +90,14 @@ import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
 import com.shatteredpixel.shatteredpixeldungeon.ui.QuickSlotButton;
+import com.shatteredpixel.shatteredpixeldungeon.utils.AutoSaveManager;
 import com.shatteredpixel.shatteredpixeldungeon.utils.BArray;
 import com.shatteredpixel.shatteredpixeldungeon.utils.DungeonSeed;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.noosa.Game;
 import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
+import com.watabou.utils.DeviceCompat;
 import com.watabou.utils.FileUtils;
 import com.watabou.utils.PathFinder;
 import com.watabou.utils.Random;
@@ -525,8 +527,11 @@ public class Dungeon {
 	public static boolean bossLevel( int depth ) {
 		return depth == 5 || depth == 10 || depth == 15 || depth == 20 || depth == 25 || depth == 35 || depth == 40;
 	}
-	
-	public static void switchLevel( final Level level, int pos ) {
+
+	public static void switchLevel( final Level level, int pos){
+		switchLevel(level, pos, false);
+	}
+	public static void switchLevel( final Level level, int pos, boolean changeLevel) {
 		
 		if (pos == -2){
 			pos = level.exit;
@@ -567,6 +572,7 @@ public class Dungeon {
 		observe();
 		try {
 			saveAll();
+			if (changeLevel) AutoSaveManager.saveOnLevelEnter();
 		} catch (IOException e) {
 			TomorrowRogueNight.reportException(e);
 			/*This only catches IO errors. Yes, this means things can go wrong, and they can go wrong catastrophically.
@@ -679,6 +685,8 @@ public class Dungeon {
 	public static void saveGame(int save ) {
 		try {
 			Bundle bundle = new Bundle();
+			//log position of hero
+			DeviceCompat.log("Saving game for slot " + save + " hero pos: " + hero.pos);
 			version = Game.versionCode;
 			bundle.put( VERSION, version );
 			bundle.put( SEED, seed );

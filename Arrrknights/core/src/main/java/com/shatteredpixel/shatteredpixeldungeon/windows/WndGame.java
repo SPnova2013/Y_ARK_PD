@@ -187,6 +187,14 @@ public class WndGame extends Window {
 				}
 		);
 
+		addButton( new RedButton("Load AutoSave") {
+			@Override
+			protected void onClick() {
+				hide();
+				GameScene.show(new WndAutoSaves());
+			}
+		} );
+
 		// Cancel
 		addButton( new RedButton( Messages.get(this, "return") ) {
 			@Override

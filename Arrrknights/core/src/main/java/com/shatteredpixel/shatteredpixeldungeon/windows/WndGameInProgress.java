@@ -31,6 +31,7 @@ import com.shatteredpixel.shatteredpixeldungeon.TomorrowRogueNight;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroSubClass;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
+import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.InterlevelScene;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.StartScene;
@@ -40,6 +41,7 @@ import com.shatteredpixel.shatteredpixeldungeon.ui.Icons;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RedButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
+import com.shatteredpixel.shatteredpixeldungeon.utils.AutoSaveManager;
 import com.shatteredpixel.shatteredpixeldungeon.utils.JsonCompress;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.ui.Button;
@@ -227,6 +229,7 @@ public class WndGameInProgress extends Window {
 					protected void onSelect( int index ) {
 						if (index == 0) {
 							FileUtils.deleteDir(GamesInProgress.gameFolder(slot));
+							AutoSaveManager.deleteAllForSlot(slot);
 							deleteSlotLogs(slot);
 							GamesInProgress.setUnknown(slot);
 							TomorrowRogueNight.switchNoFade(StartScene.class);
@@ -282,6 +285,14 @@ public class WndGameInProgress extends Window {
 		};
 		exportBtn.setRect(2*WIDTH/3f, 0, WIDTH/3f, 8);
 		add(exportBtn);
+
+		RedButton loadAutosave = new RedButton("读取自动存档") {
+			@Override protected void onClick() {
+				Game.scene().add(new WndAutoSaves(slot));
+			}
+		};
+		loadAutosave.setRect(2*WIDTH/3f, 20, WIDTH/3f, 8);
+		add(loadAutosave);
 
 		resize(WIDTH, (int)cont.bottom()+1);
 	}

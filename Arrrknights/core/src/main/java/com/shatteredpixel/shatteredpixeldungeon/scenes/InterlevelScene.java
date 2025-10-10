@@ -48,6 +48,7 @@ import com.shatteredpixel.shatteredpixeldungeon.ui.Icons;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
 import com.shatteredpixel.shatteredpixeldungeon.ui.StyledButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
+import com.shatteredpixel.shatteredpixeldungeon.utils.AutoSaveManager;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndError;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndStory;
 import com.watabou.gltextures.TextureCache;
@@ -112,6 +113,7 @@ public class InterlevelScene extends PixelScene {
 			default:
 				loadingDepth = Dungeon.depth;
 				scrollSpeed = 0;
+				Actor.resetTurnCounter();//at start of the game actor's turn counter need to be manually reset
 				break;
 			case CONTINUE:
 				loadingDepth = GamesInProgress.check(GamesInProgress.curSlot).depth;
@@ -262,12 +264,14 @@ public class InterlevelScene extends PixelScene {
 
 						switch (mode) {
 							case DESCEND:
+								AutoSaveManager.saveOnLevelExit();
 								descend();
 								break;
 							case DESCEND_27:
 								descend_27();
 								break;
 							case ASCEND:
+								AutoSaveManager.saveOnLevelExit();
 								ascend();
 								break;
 							case ASCEND_27:
@@ -376,7 +380,6 @@ public class InterlevelScene extends PixelScene {
 	}
 
 	private void descend() throws IOException {
-
 		if (Dungeon.hero == null) {
 			Mob.clearHeldAllies();
 			Dungeon.init();
@@ -397,7 +400,7 @@ public class InterlevelScene extends PixelScene {
 			Dungeon.depth++;
 			level = Dungeon.loadLevel( GamesInProgress.curSlot );
 		}
-		Dungeon.switchLevel( level, level.entrance );
+		Dungeon.switchLevel( level, level.entrance, true );
 	}
 
 	private void descend_27() throws IOException {
@@ -424,7 +427,7 @@ public class InterlevelScene extends PixelScene {
 			Dungeon.depth++;
 			level = Dungeon.loadLevel( GamesInProgress.curSlot );
 		}
-		Dungeon.switchLevel( level, level.fallCell( fallIntoPit ));
+		Dungeon.switchLevel( level, level.fallCell( fallIntoPit ), true);
 	}
 	
 	private void ascend() throws IOException {
@@ -434,7 +437,7 @@ public class InterlevelScene extends PixelScene {
 		Dungeon.saveAll();
 		Dungeon.depth--;
 		Level level = Dungeon.loadLevel( GamesInProgress.curSlot );
-		Dungeon.switchLevel( level, level.exit );
+		Dungeon.switchLevel( level, level.exit, true );
 	}
 
 	private void ascend_27() throws IOException {

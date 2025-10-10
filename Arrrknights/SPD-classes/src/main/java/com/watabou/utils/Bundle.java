@@ -502,6 +502,7 @@ public class Bundle {
 	public static String writeToString(Bundle b, boolean decode) {
 		if (!decode) return b.toString();
 
+		//not effective, use Base64 for now
 		try (java.io.ByteArrayOutputStream baos = new java.io.ByteArrayOutputStream()) {
 			Bundle.write(b, baos, true);
 			byte[] data = baos.toByteArray();

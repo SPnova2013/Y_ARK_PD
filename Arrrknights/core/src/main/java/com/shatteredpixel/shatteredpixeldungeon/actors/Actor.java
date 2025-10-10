@@ -28,10 +28,11 @@ import com.shatteredpixel.shatteredpixeldungeon.TomorrowRogueNight;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Blob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
-import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
+import com.shatteredpixel.shatteredpixeldungeon.utils.AutoSaveManager;
 import com.watabou.noosa.Game;
 import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
+import com.watabou.utils.DeviceCompat;
 import com.watabou.utils.SparseArray;
 
 import java.io.BufferedReader;
@@ -118,6 +119,7 @@ public abstract class Actor implements Bundlable {
 	public void storeInBundle( Bundle bundle ) {
 		bundle.put( TIME, time );
 		bundle.put( ID, id );
+		Actor.storeTurnState(bundle);
 	}
 
 	@Override
@@ -129,6 +131,7 @@ public abstract class Actor implements Bundlable {
 		} else {
 			id = nextID++;
 		}
+		Actor.restoreTurnState(bundle);
 	}
 
 
@@ -260,6 +263,7 @@ public abstract class Actor implements Bundlable {
 
 				now = current.time;
 				Actor acting = current;
+				updateTurnCounter();
 
 				if (acting instanceof Char && ((Char) acting).sprite != null) {
 					// If it's character's turn to act, but its sprite
@@ -282,6 +286,15 @@ public abstract class Actor implements Bundlable {
 					current = null;
 				} else {
 					doNext = acting.act();
+					// Turn-based autosave
+					try {
+						if (Dungeon.hero != null && Dungeon.hero.isAlive()
+								&& (totalTurns - lastTurnSavedAbs) >= AUTOSAVE_TURN_INTERVAL) {
+							lastTurnSavedAbs = totalTurns;
+							com.badlogic.gdx.Gdx.app.postRunnable(AutoSaveManager::saveTurnBased);
+						}
+					} catch (Throwable ignored) {}
+
 					if (doNext && (Dungeon.hero == null || !Dungeon.hero.isAlive())) {
 						doNext = false;
 						current = null;
@@ -374,5 +387,48 @@ public abstract class Actor implements Bundlable {
 	}
 
 	public static synchronized HashSet<Char> chars() { return new HashSet<>(chars); }
+
+	//Turn counting
+	private static long totalTurns = 0;
+	private static int  lastWholeSeen = 0;
+	private static long lastTurnSavedAbs = 0;
+
+	private static final int AUTOSAVE_TURN_INTERVAL = 10;
+
+	private static final String TOTAL_TURNS_KEY       = "total_turns";
+	private static final String LAST_WHOLE_SEEN_KEY   = "last_whole_seen";
+	private static final String LAST_TURN_SAVED_ABS   = "last_turn_saved_abs";
+
+	public static long totalTurns() { return totalTurns; }
+
+	public static void resetTurnCounter() {
+		totalTurns = 0;
+		lastWholeSeen = 0;
+		lastTurnSavedAbs = 0;
+	}
+
+	private static void updateTurnCounter() {
+		int whole = (int)Math.floor(now);
+		if (whole > lastWholeSeen) {
+			totalTurns += (whole - lastWholeSeen);
+			lastWholeSeen = whole;
+		}
+	}
+
+	public static void storeTurnState(Bundle b) {
+		b.put(TOTAL_TURNS_KEY, totalTurns);
+		b.put(LAST_WHOLE_SEEN_KEY, lastWholeSeen);
+		b.put(LAST_TURN_SAVED_ABS, lastTurnSavedAbs);
+	}
+
+	public static void restoreTurnState(Bundle b) {
+		DeviceCompat.log("Restoring turn state: " +
+				" totalTurns=" + b.getLong(TOTAL_TURNS_KEY) +
+				" lastWholeSeen=" + b.getInt(LAST_WHOLE_SEEN_KEY) +
+				" lastTurnSavedAbs=" + b.getLong(LAST_TURN_SAVED_ABS));
+		totalTurns = b.getLong(TOTAL_TURNS_KEY);
+		lastWholeSeen = b.getInt(LAST_WHOLE_SEEN_KEY);
+		lastTurnSavedAbs = b.getLong(LAST_TURN_SAVED_ABS);
+	}
 
 }

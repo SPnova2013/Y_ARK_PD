@@ -498,6 +498,7 @@ public class Hero extends Char {
         // 스킨 코드 저장
         bundle.put(SKIN, CharSkin);
         if(CharSkinClass!=null) bundle.put(SKINCLASS, CharSkinClass.getClass());
+        else bundle.put(SKINCLASS, "");
 
         belongings.storeInBundle(bundle);
     }
@@ -557,7 +558,8 @@ public class Hero extends Char {
 
         // 스킨 코드 불러오기
         CharSkin = bundle.getInt(SKIN);
-        CharSkinClass = (SkinSprite) Reflection.newInstance(bundle.getClass(SKINCLASS));
+        // 一小则代码笑话，skinclass在bundle保存中会检测空，但作者读取时不查，所以每次读档只要没皮肤必然报一次bundle错误
+        if (!bundle.getString(SKINCLASS).isEmpty()) CharSkinClass = (SkinSprite) Reflection.newInstance(bundle.getClass(SKINCLASS));
 
         STR = bundle.getInt(STRENGTH);
 
