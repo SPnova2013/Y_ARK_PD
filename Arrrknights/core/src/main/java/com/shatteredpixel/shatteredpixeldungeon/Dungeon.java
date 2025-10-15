@@ -394,7 +394,7 @@ public class Dungeon {
 			level = new NewPrisonBossLevel();
 			break;
 		case 11:
-			if(Statistics.victoryLapRounds>0) Statistics.frostNovaMap = true/*Random.Int(2) != 0*/;
+			if(Statistics.victoryLapRounds>0) Statistics.frostNovaMap = false/*Random.Int(2) != 0*/;
 		case 12:
 		case 13:
 		case 14:

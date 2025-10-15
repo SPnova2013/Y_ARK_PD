@@ -58,6 +58,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroSubClass;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Bestiary;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.DemonSpawner;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.GiantMushroom;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.GuerrillaHerald;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mimic;
@@ -84,6 +85,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfTransmutat
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfUpgrade;
 import com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfEnchantment;
 import com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfIntuition;
+import com.shatteredpixel.shatteredpixeldungeon.items.testtool.MobPlacer;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.SP.StaffOfMayer;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.SSP.StaffOfVision;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfRegrowth;
@@ -535,10 +537,10 @@ public abstract class Level implements Bundlable {
 		}
 
 		Mob m = Reflection.newInstance(mobsToSpawn.remove(0));
-		if (!(m instanceof Originiutant) && !(m instanceof GiantMushroom)){
+		if (!(m instanceof Originiutant) && !(m instanceof GiantMushroom) && !(m instanceof DemonSpawner)){
 			ChampionEnemy.rollForChampion(m);
 		}
-		if (!(m instanceof Originiutant) && !(m instanceof GiantMushroom)){
+		if (!(m instanceof Originiutant) && !(m instanceof GiantMushroom) && !(m instanceof DemonSpawner)){
 			ChampionEnemy.rollForHonor(m);
 		}
 		if(m!=null && Statistics.victoryLapRounds>0) setVictoryLapBonus(m);
