@@ -187,7 +187,7 @@ public class WndGame extends Window {
 				}
 		);
 
-		addButton( new RedButton("Load AutoSave") {
+		addButton( new RedButton(Messages.get(this, "load_autosave")) {
 			@Override
 			protected void onClick() {
 				hide();

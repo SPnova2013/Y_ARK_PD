@@ -65,16 +65,16 @@ public class WndAutoSaves extends Window {
         add(left);
         left.setRect(0, y > 0 ? y + 2 : 0, WIDTH - 44 - 2, ROW_H);
 
-        RedButton export = new RedButton("导出") {
+        RedButton export = new RedButton(Messages.get(this, "export")) {
             @Override protected void onClick() {
                 if (!info.present) return;
                 String payload = AutoSaveManager.exportSlotAsString(runSlot, slot);
                 if (payload == null || payload.isEmpty()) {
-                    Game.scene().add(new WndMessage("存档导出失败"));
+                    Game.scene().add(new WndMessage(Messages.get(WndAutoSaves.class, "export_fail")));
                     return;
                 }
                 Game.platform.shareTextContent(payload, "autosave_slot" + runSlot + ".txt");
-                Game.scene().add(new WndMessage("存档导出成功"));
+                Game.scene().add(new WndMessage(Messages.get(WndAutoSaves.class, "export_success")));
             }
         };
         export.enable(info.present);
