@@ -164,6 +164,7 @@ public class AmuletScene extends PixelScene {
 		Dungeon.acequest = -1;
 		Blacksmith.Quest.reset();
 		Imp.Quest.reset();
+		Statistics.spawnersAlive = 0;
 		Generator.fullReset();
 		Dungeon.LimitedDrops.victoryLapReset();//重置升级、力量、敌人掉落的治疗、装备等
 		BeaconOfReturning bor = Dungeon.hero.belongings.getItem(BeaconOfReturning.class);
