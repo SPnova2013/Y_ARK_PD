@@ -51,7 +51,11 @@ public class RingOfElements extends Ring {
 			return Messages.get(this, "typical_stats", new DecimalFormat("#.##").format(17.5f));
 		}
 	}
-	
+	@Override
+	public String upgradeStat1(int level){
+		if (cursed && cursedKnown) level = Math.min(-1, level-3);
+		return new DecimalFormat("#.##").format(100f * (1f - Math.pow(0.825f, level+1))) + "%";
+	}
 	@Override
 	protected RingBuff buff( ) {
 		return new Resistance();

@@ -75,6 +75,7 @@ import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Callback;
 import com.watabou.utils.Random;
 
+import java.text.DecimalFormat;
 import java.util.HashMap;
 
 public class WandOfCorruption extends Wand {
@@ -121,7 +122,17 @@ public class WandOfCorruption extends Wand {
 		MAJOR_DEBUFFS.put(Frost.class,          0f);
 		MAJOR_DEBUFFS.put(Doom.class,           0f);
 	}
-	
+
+	@Override
+	public String upgradeStat1(int level) {
+		return new DecimalFormat("#.##").format(3f + level/2f);
+	}
+
+	@Override
+	public String upgradeStat2(int level) {
+		return Integer.toString(6 + 3*level);
+	}
+
 	@Override
 	protected void onZap(Ballistica bolt) {
 		Char ch = Actor.findChar(bolt.collisionPos);

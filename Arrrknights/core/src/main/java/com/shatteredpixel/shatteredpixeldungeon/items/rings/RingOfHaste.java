@@ -40,7 +40,12 @@ public class RingOfHaste extends Ring {
 			return Messages.get(this, "typical_stats", new DecimalFormat("#.##").format(20f));
 		}
 	}
-	
+
+	@Override
+	public String upgradeStat1(int level){
+		if (cursed && cursedKnown) level = Math.min(-1, level-3);
+		return new DecimalFormat("#.##").format(100f * (Math.pow(1.2f, level+1)-1f)) + "%";
+	}
 	@Override
 	protected RingBuff buff( ) {
 		return new Haste();

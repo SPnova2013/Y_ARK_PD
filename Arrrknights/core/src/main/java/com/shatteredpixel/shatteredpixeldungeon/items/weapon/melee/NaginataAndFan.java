@@ -5,7 +5,6 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Amok;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Charm;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Drowsy;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Hallucination;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Hex;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Oblivion;
@@ -20,9 +19,7 @@ import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.watabou.utils.Random;
 
-import java.nio.file.AccessMode;
-
-public class NaginataAndFan extends MeleeWeapon{
+public class NaginataAndFan extends MeleeWeapon implements MeleeWeapon.BlockingWeapon {
     {
         image = ItemSpriteSheet.NAGINATA_AND_FAN;
         hitSound = Assets.Sounds.HIT_SPEAR;
@@ -38,8 +35,17 @@ public class NaginataAndFan extends MeleeWeapon{
     }
     @Override
     public int defenseFactor( Char owner ) {
-        return 6+buffedLvl();    //6 extra defence, plus 1 per level;
+        return DRMax();
     }
+
+    public int DRMax(){
+        return DRMax(buffedLvl());
+    }
+
+    public int DRMax(int lvl){
+        return 2 + lvl;
+    }
+
     @Override
     public int proc(Char attacker, Char defender, int damage) {
         switch(Random.Int(11)){
@@ -84,9 +90,9 @@ public class NaginataAndFan extends MeleeWeapon{
     }
     public String statsInfo(){
         if (isIdentified()){
-            return Messages.get(this, "stats_desc", 6+buffedLvl());
+            return Messages.get(this, "stats_desc", 2+buffedLvl());
         } else {
-            return Messages.get(this, "typical_stats_desc", 6);
+            return Messages.get(this, "typical_stats_desc", 2);
         }
     }
 }

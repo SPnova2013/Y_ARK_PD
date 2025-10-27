@@ -186,7 +186,18 @@ public class Ring extends KindofMisc {
 	protected String statsInfo(){
 		return "";
 	}
-	
+
+	public String upgradeStat1(int level){
+		return null;
+	}
+
+	public String upgradeStat2(int level){
+		return null;
+	}
+
+	public String upgradeStat3(int level){
+		return null;
+	}
 	@Override
 	public Item upgrade() {
 		super.upgrade();

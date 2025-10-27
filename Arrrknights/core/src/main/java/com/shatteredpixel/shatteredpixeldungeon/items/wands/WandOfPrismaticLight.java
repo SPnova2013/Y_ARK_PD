@@ -47,8 +47,9 @@ import com.shatteredpixel.shatteredpixeldungeon.tiles.DungeonTilemap;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Callback;
 import com.watabou.utils.PathFinder;
-import com.watabou.utils.PointF;
 import com.watabou.utils.Random;
+
+import java.text.DecimalFormat;
 
 public class WandOfPrismaticLight extends DamageWand {
 
@@ -65,7 +66,19 @@ public class WandOfPrismaticLight extends DamageWand {
 	public int max(int lvl){
 		return 5+3*lvl + RingOfAmplified.DamageBonus(Dungeon.hero) * 3;
 	}
+	@Override
+	public String upgradeStat2(int level) {
+		return new DecimalFormat("#").format(100*(1-(3/(float)(5+level)))) + "%";
+	}
 
+	@Override
+	public String upgradeStat3(int level) {
+		if (Dungeon.isChallenged(Challenges.DARKNESS)){
+			return Integer.toString(2 + level);
+		} else {
+			return Integer.toString(10 + 5*level);
+		}
+	}
 	@Override
 	protected void onZap(Ballistica beam) {
 		affectMap(beam);

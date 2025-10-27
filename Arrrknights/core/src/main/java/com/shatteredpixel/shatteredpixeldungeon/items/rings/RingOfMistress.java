@@ -18,7 +18,11 @@ public class RingOfMistress extends Ring{
             return Messages.get(this, "typical_stats", new DecimalFormat("#.##").format(15f));
         }
     }
-
+    @Override
+    public String upgradeStat1(int level){
+        if (cursed && cursedKnown) level = Math.min(-1, level-3);
+        return new DecimalFormat("#.##").format(100f * (Math.pow(1.15f, level+1)-1f)) + "%";
+    }
     @Override
     protected RingBuff buff( ) {
         return new WeaponChargeUp();

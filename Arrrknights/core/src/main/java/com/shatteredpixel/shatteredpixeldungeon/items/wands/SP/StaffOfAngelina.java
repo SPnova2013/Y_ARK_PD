@@ -28,7 +28,6 @@ import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Callback;
-import com.watabou.utils.PointF;
 import com.watabou.utils.Random;
 
 public class StaffOfAngelina extends Wand {
@@ -37,6 +36,16 @@ public class StaffOfAngelina extends Wand {
         image = ItemSpriteSheet.WAND_TRANSFUSION;
 
         collisionProperties = Ballistica.PROJECTILE;
+    }
+
+    @Override
+    public String upgradeStat1(int level) {
+        int selfDMG = Dungeon.hero != null ? Math.round(Dungeon.hero.HT*0.05f): 1;
+        return Integer.toString(selfDMG + 3*level);
+    }
+    @Override
+    public String upgradeStat2(int level) {
+        return (3+level/2) + "-" + (6+level * 2);
     }
 
     private boolean freeCharge = false;

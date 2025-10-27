@@ -83,7 +83,11 @@ public class RingOfWealth extends Ring {
 		triesToDrop = bundle.getFloat(TRIES_TO_DROP);
 		dropsToRare = bundle.getInt(DROPS_TO_RARE);
 	}
-
+	@Override
+	public String upgradeStat1(int level){
+		if (cursed && cursedKnown) level = Math.min(-1, level-3);
+		return new DecimalFormat("#.##").format(100f * (Math.pow(1.2f, level+1)-1f)) + "%";
+	}
 	@Override
 	protected RingBuff buff( ) {
 		return new Wealth();

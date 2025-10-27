@@ -32,7 +32,6 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Burning;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Cripple;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Paralysis;
 import com.shatteredpixel.shatteredpixeldungeon.effects.MagicMissile;
-import com.shatteredpixel.shatteredpixeldungeon.items.StaffKit;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfAmplified;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.SP.StaffOfSkyfire;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.enchantments.Blazing;
@@ -44,7 +43,6 @@ import com.shatteredpixel.shatteredpixeldungeon.mechanics.ConeAOE;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
-import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Callback;
 import com.watabou.utils.PathFinder;
@@ -68,7 +66,20 @@ public class WandOfFireblast extends DamageWand {
 	public int max(int lvl){
 		return (6+2*lvl + RingOfAmplified.DamageBonus(Dungeon.hero) * 2) * chargesPerCast();
 	}
+	@Override
+	public String upgradeStat1(int level) {
+		return (1+level) + "-" + (2+2*level);
+	}
 
+	@Override
+	public String upgradeStat2(int level) {
+		return (2+2*level) + "-" + 2*(4+2*level);
+	}
+
+	@Override
+	public String upgradeStat3(int level) {
+		return (3+3*level) + "-" + 3*(6+2*level);
+	}
 	ConeAOE cone;
 
 	@Override

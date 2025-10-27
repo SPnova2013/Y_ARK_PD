@@ -45,7 +45,6 @@ import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Callback;
-import com.watabou.utils.ColorMath;
 import com.watabou.utils.PathFinder;
 import com.watabou.utils.Random;
 
@@ -64,7 +63,20 @@ public class WandOfLivingEarth extends DamageWand {
 	public int max(int lvl) {
 		return 6 + 2*lvl + RingOfAmplified.DamageBonus(Dungeon.hero) * 2;
 	}
-	
+
+	@Override
+	public String upgradeStat2(int level) {
+		return Integer.toString(16 + 8*level);
+	}
+	@Override
+	public String upgradeStat3(int level) {
+		if (Dungeon.isChallenged(Challenges.NO_ARMOR)){
+			return level + "-" + (2+level);
+		} else {
+			return level + "-" + (3+(3*level));
+		}
+	}
+
 	@Override
 	protected void onZap(Ballistica bolt) {
 		Char ch = Actor.findChar(bolt.collisionPos);

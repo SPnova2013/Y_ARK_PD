@@ -25,11 +25,10 @@ import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.CustomeSet;
-import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.TalismanOfForesight;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 
-public class RoundShield extends MeleeWeapon {
+public class RoundShield extends MeleeWeapon implements MeleeWeapon.BlockingWeapon {
 
 	{
 		image = ItemSpriteSheet.ROUND_SHIELD;
@@ -48,9 +47,17 @@ public class RoundShield extends MeleeWeapon {
 
 	@Override
 	public int defenseFactor( Char owner ) {
-		return 4+2*buffedLvl();     //4 extra defence, plus 2 per level;
+		return DRMax();
 	}
 
+	public int DRMax(){
+		return DRMax(buffedLvl());
+	}
+
+	@Override
+	public int DRMax(int lvl) {
+		return  4 + 2 * lvl;
+	}
 	@Override
 	public String desc() {
 		String info = Messages.get(this, "desc");
@@ -68,4 +75,5 @@ public class RoundShield extends MeleeWeapon {
 			return Messages.get(this, "typical_stats_desc", 4);
 		}
 	}
+
 }

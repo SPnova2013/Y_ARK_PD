@@ -26,7 +26,10 @@ public class StaffOfPodenco extends Wand {
     public ItemSprite.Glowing glowing() {
         return COL;
     }
-
+    @Override
+    public String upgradeStat1(int level) {
+        return Integer.toString(2 + level);
+    }
     @Override
     protected void onZap( Ballistica bolt ) {
 
@@ -58,7 +61,7 @@ public class StaffOfPodenco extends Wand {
 
     }
 
-    protected int initialCharges() {
+    public int initialCharges() {
         return 2;
     }
 }

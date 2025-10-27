@@ -61,7 +61,10 @@ public abstract class DamageWand extends Wand{
 		}
 		return dmg;
 	}
-
+	@Override
+	public String upgradeStat1(int level) {
+		return min(level) + "-" + max(level);
+	}
 	@Override
 	public String statsDesc() {
 		if (levelKnown)

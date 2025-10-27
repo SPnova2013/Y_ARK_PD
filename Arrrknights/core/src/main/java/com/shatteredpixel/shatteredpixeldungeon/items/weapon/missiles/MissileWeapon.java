@@ -312,8 +312,10 @@ abstract public class MissileWeapon extends Weapon {
 		parent = null;
 		super.onThrow(cell);
 	}
-	
-	protected float durabilityPerUse(){
+	public final float durabilityPerUse(){
+		return durabilityPerUse(level());
+	}
+	public float durabilityPerUse(int level){
 		float usages = baseUses * (float)(Math.pow(3, level()));
 
 		if (holster) {

@@ -48,9 +48,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.TalismanOfForesi
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.Bag;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.MagicalHolster;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfEnergy;
-import com.shatteredpixel.shatteredpixeldungeon.items.ror2items.LightFluxPauldron;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfRecharging;
-import com.shatteredpixel.shatteredpixeldungeon.items.wands.SP.StaffOfSkyfire;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.SSP.StaffOfConcept;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MagesStaff;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
@@ -270,6 +268,18 @@ public abstract class Wand extends Item {
 	public String statsDesc(){
 		return Messages.get(this, "stats_desc");
 	}
+
+	public String upgradeStat1(int level){
+		return null;
+	}
+
+	public String upgradeStat2(int level){
+		return null;
+	}
+
+	public String upgradeStat3(int level){
+		return null;
+	}
 	
 	@Override
 	public boolean isIdentified() {
@@ -338,7 +348,7 @@ public abstract class Wand extends Item {
 		curCharges = Math.min( curCharges, maxCharges );
 	}
 	
-	protected int initialCharges() {
+	public int initialCharges() {
 		return 2;
 	}
 

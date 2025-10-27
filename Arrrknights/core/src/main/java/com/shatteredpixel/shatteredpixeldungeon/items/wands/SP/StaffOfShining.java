@@ -1,7 +1,6 @@
 package com.shatteredpixel.shatteredpixeldungeon.items.wands.SP;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
-import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
@@ -9,7 +8,6 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Barrier;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Blindness;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Cripple;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Light;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Beam;
 import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
@@ -28,8 +26,9 @@ import com.shatteredpixel.shatteredpixeldungeon.tiles.DungeonTilemap;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Callback;
 import com.watabou.utils.PathFinder;
-import com.watabou.utils.PointF;
 import com.watabou.utils.Random;
+
+import java.text.DecimalFormat;
 
 public class StaffOfShining extends DamageWand {
     private static ItemSprite.Glowing COL = new ItemSprite.Glowing( 0xFFFFFF );
@@ -45,6 +44,11 @@ public class StaffOfShining extends DamageWand {
 
     public int max(int lvl){
         return 3 +2*lvl+ RingOfAmplified.DamageBonus(Dungeon.hero) * 2;
+    }
+
+    @Override
+    public String upgradeStat2(int level) {
+        return new DecimalFormat("#").format(100*(1-(3/(float)(5+level)))) + "%";
     }
 
     @Override

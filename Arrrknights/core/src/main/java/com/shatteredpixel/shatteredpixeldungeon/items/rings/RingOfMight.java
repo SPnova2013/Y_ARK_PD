@@ -82,7 +82,17 @@ public class RingOfMight extends Ring {
 			return Messages.get(this, "typical_stats", 1, new DecimalFormat("#.##").format(4.5f));
 		}
 	}
+	@Override
+	public String upgradeStat1(int level) {
+		if (cursed && cursedKnown) level = Math.min(-1, level-3);
+		return Integer.toString(level+1);
+	}
 
+	@Override
+	public String upgradeStat2(int level) {
+		if (cursed && cursedKnown) level = Math.min(-1, level-3);
+		return new DecimalFormat("#.##").format(100f * (Math.pow(1.045, level+1)-1f)) + "%";
+	}
 	@Override
 	protected RingBuff buff( ) {
 		return new Might();

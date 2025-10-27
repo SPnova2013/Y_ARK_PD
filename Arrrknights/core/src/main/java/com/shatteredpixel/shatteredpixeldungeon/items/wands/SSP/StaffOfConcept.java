@@ -56,7 +56,7 @@ public class StaffOfConcept extends Wand {
             }
         }
     }
-    protected int initialCharges() {
+    public int initialCharges() {
         return 4;
     }
     @Override

@@ -81,7 +81,30 @@ public class RingOfForce extends Ring {
 				lvl*(tier+1)    //level scaling
 		));
 	}
+	@Override
+	public String upgradeStat1(int level) {
+		if (cursed && cursedKnown) level = Math.min(-1, level-3);
+		float tier = tier(Dungeon.hero != null ? Dungeon.hero.STR() : 10);
+		return min(level+1, tier) + "-" + max(level+1, tier);
+	}
 
+	@Override
+	public String upgradeStat2(int level) {
+		if (cursed && cursedKnown) level = Math.min(-1, level-3);
+		return Integer.toString(level+1);
+	}
+
+	/*@Override
+	public String upgradeStat3(int level) {
+		if (cursed && cursedKnown) level = Math.min(-1, level-3);
+		if (Dungeon.hero != null && Dungeon.hero.heroClass == HeroClass.DUELIST){
+			float tier = tier(Dungeon.hero != null ? Dungeon.hero.STR() : 10);
+			int bonus = Math.round(3+tier+(level*((4+2*tier)/8f)));
+			return (min(level+1, tier) + bonus) + "-" + (max(level+1, tier) + bonus);
+		} else {
+			return null;
+		}
+	}*/
 	@Override
 	public String statsInfo() {
 		float tier = tier(Dungeon.hero.STR());

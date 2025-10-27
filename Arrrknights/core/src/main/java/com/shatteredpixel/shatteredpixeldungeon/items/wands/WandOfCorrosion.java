@@ -42,9 +42,10 @@ import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Callback;
-import com.watabou.utils.ColorMath;
 import com.watabou.utils.PathFinder;
 import com.watabou.utils.Random;
+
+import java.text.DecimalFormat;
 
 public class WandOfCorrosion extends Wand {
 
@@ -52,6 +53,16 @@ public class WandOfCorrosion extends Wand {
 		image = ItemSpriteSheet.WAND_CORROSION;
 
 		collisionProperties = Ballistica.STOP_TARGET | Ballistica.STOP_SOLID;
+	}
+
+	@Override
+	public String upgradeStat1(int level) {
+		return Integer.toString(level+2);
+	}
+
+	@Override
+	public String upgradeStat2(int level) {
+		return new DecimalFormat("#.##x").format(1+.2f*level);
 	}
 
 	@Override

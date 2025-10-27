@@ -7,7 +7,6 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Cripple;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Hallucination;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Silence;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.SP.StaffOfPodenco;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MagesStaff;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
@@ -18,6 +17,11 @@ import com.watabou.utils.Random;
 public class WandOfHallucination extends Wand {
     {
         image = ItemSpriteSheet.WAND_PODENCO;
+    }
+
+    @Override
+    public String upgradeStat1(int level) {
+        return Integer.toString(4 + level);
     }
 
     @Override
@@ -48,7 +52,7 @@ public class WandOfHallucination extends Wand {
 
     }
 
-    protected int initialCharges() {
+    public int initialCharges() {
         return 2;
     }
     @Override

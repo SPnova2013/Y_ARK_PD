@@ -27,8 +27,10 @@ import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.SPDSettings;
 import com.shatteredpixel.shatteredpixeldungeon.TomorrowRogueNight;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.IllegalFormatException;
 import java.util.Locale;
@@ -44,11 +46,14 @@ public class Messages {
 
 	private static ArrayList<I18NBundle> bundles;
 	private static Languages lang;
+	private static Locale locale;
 
 	public static Languages lang(){
 		return lang;
 	}
-
+	public static Locale locale(){
+		return locale;
+	}
 
 
 	/**
@@ -68,6 +73,7 @@ public class Messages {
 	};
 
 	static{
+		formatters = new HashMap<>();
 		setup(SPDSettings.language());
 	}
 
@@ -79,6 +85,7 @@ public class Messages {
 		Messages.lang = lang;
 		Locale locale = new Locale(lang.code());
 
+		formatters.clear();
 		for (String file : prop_files) {
 			bundles.add(I18NBundle.createBundle(Gdx.files.internal(file), locale));
 		}
@@ -148,6 +155,14 @@ public class Messages {
 			return format;
 		}
 	}
+
+	private static HashMap<String, DecimalFormat> formatters;
+	/*public static String decimalFormat( String format, double number ){
+		if (!formatters.containsKey(format)){
+			formatters.put(format, new DecimalFormat(format, DecimalFormatSymbols.getInstance(locale())));
+		}
+		return formatters.get(format).format(number);
+	}*/
 
 	public static String capitalize( String str ){
 		if (str.length() == 0)  return str;

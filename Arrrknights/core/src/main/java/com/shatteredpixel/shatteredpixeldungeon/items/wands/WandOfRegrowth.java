@@ -49,10 +49,10 @@ import com.shatteredpixel.shatteredpixeldungeon.sprites.LotusSprite;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Callback;
-import com.watabou.utils.ColorMath;
 import com.watabou.utils.PathFinder;
 import com.watabou.utils.Random;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -69,6 +69,20 @@ public class WandOfRegrowth extends Wand {
 
 	ConeAOE cone;
 	int target;
+
+	@Override
+	public String upgradeStat1(int level) {
+		return new DecimalFormat("#.##").format(3 + (2+level)/3f);
+	}
+
+	@Override
+	public String upgradeStat2(int level) {
+		if (level >= 10){
+			return "∞";
+		} else {
+			return Integer.toString(chargeLimit(Dungeon.hero.lvl, level));
+		}
+	}
 
 	@Override
 	public boolean tryToZap(Hero owner, int target) {
@@ -193,15 +207,19 @@ public class WandOfRegrowth extends Wand {
 		}
 
 	}
-	
+
 	private int chargeLimit( int heroLvl ){
-		if (level() >= 10){
+		return chargeLimit(  heroLvl, level() );
+	}
+
+	private int chargeLimit( int heroLvl, int wndLvl ){
+		if (wndLvl >= 10){
 			return Integer.MAX_VALUE;
 		} else {
-			//8 charges at base, plus:
-			//2/3.33/5/7/10/14/20/30/50/110/infinite charges per hero level, based on wand level
-			float lvl = buffedLvl();
-			return Math.round(8 + heroLvl * (2+lvl) * (1f + (lvl/(10 - lvl))));
+			//20 charges at base, plus:
+			//2/3.1/4.2/5.5/6.8/8.4/10.4/13.2/18.0/30.8/inf. charges per hero level, at wand level:
+			//0/1  /2  /3  /4  /5  /6   /7   /8   /9   /10
+			return Math.round(20 + heroLvl * (2+wndLvl) * (1f + (wndLvl/(50 - 5*wndLvl))));
 		}
 	}
 

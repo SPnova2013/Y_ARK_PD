@@ -60,6 +60,10 @@ public class MeleeWeapon extends Weapon {
 						(Maccessories*(int)Math.round(Dungeon.hero.pointsInTalent(Talent.PROFICIENCY)*0.8f)) : 0);
 	}
 
+	public interface BlockingWeapon {
+		int DRMax(int lvl);
+	}
+
 	public int STRReq(int lvl){
 		int strreq=STRReq(tier, lvl);//change from budding
 		if (Dungeon.hero.hasTalent(Talent.CHAINSAW_EXTEND) && isEquipped( Dungeon.hero )) {

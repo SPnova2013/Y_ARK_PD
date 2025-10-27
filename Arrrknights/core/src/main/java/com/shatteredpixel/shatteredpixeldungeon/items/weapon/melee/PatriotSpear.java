@@ -5,14 +5,13 @@ import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.PlateArmor;
-import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfElements;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfMight;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfTenacity;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 
-public class PatriotSpear extends MeleeWeapon {
+public class PatriotSpear extends MeleeWeapon implements MeleeWeapon.BlockingWeapon {
     {
         image = ItemSpriteSheet.REQUIEM;
         hitSound = Assets.Sounds.HIT_SPEAR;
@@ -51,7 +50,15 @@ public class PatriotSpear extends MeleeWeapon {
 
     @Override
     public int defenseFactor( Char owner ) {
-        return 3+2*buffedLvl();     //4 extra defence, plus 2 per level;
+        return DRMax();
+    }
+
+    public int DRMax(){
+        return DRMax(buffedLvl());
+    }
+
+    public int DRMax(int lvl){
+        return 3 + 2 * lvl;
     }
 
     public String statsInfo(){

@@ -20,7 +20,16 @@ public class RingOfAssassin extends Ring {
                     new DecimalFormat("#.##").format(6f));
         }
     }
-
+    @Override
+    public String upgradeStat1(int level){
+        if (cursed && cursedKnown) level = Math.min(-1, level-3);
+        return new DecimalFormat("#.##").format(100f * (Math.pow(1.06f, level+1)-1f)) + "%";
+    }
+    @Override
+    public String upgradeStat2(int level){
+        if (cursed && cursedKnown) level = Math.min(-1, level-3);
+        return new DecimalFormat("#.##").format(100f * (0.02f * level+1)) + "%";
+    }
     @Override
     protected Ring.RingBuff buff( ) {
         return new Suprise();

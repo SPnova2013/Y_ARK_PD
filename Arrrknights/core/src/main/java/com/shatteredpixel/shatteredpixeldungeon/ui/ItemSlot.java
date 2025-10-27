@@ -42,6 +42,7 @@ public class ItemSlot extends Button {
 	public static final int FADED       = 0x999999;
 	public static final int WARNING		= 0xFF8800;
 	public static final int ENHANCED	= 0x3399FF;
+	public static final int CURSE_INFUSED	= 0x8800FF;
 	
 	private static final float ENABLED	= 1.0f;
 	private static final float DISABLED	= 0.3f;

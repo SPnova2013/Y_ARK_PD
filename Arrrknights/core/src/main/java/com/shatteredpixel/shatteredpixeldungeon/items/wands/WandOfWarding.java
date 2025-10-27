@@ -24,7 +24,6 @@ import com.watabou.noosa.Game;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Callback;
-import com.watabou.utils.PointF;
 import com.watabou.utils.Random;
 
 public class WandOfWarding extends Wand {
@@ -40,7 +39,16 @@ public class WandOfWarding extends Wand {
 	}
 
 	private boolean wardAvailable = true;
-	
+
+	@Override
+	public String upgradeStat1(int level) {
+		return 2+level + "-" + (8+4*level);
+	}
+	@Override
+	public String upgradeStat2(int level) {
+		return Integer.toString(level+2);
+	}
+
 	@Override
 	public boolean tryToZap(Hero owner, int target) {
 		

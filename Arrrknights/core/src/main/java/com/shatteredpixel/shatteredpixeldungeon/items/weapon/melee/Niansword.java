@@ -5,7 +5,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 
-public class Niansword extends MeleeWeapon {
+public class Niansword extends MeleeWeapon implements MeleeWeapon.BlockingWeapon {
     {
         image = ItemSpriteSheet.NIANSWORD;
         hitSound = Assets.Sounds.HIT_RINGOUT;
@@ -28,7 +28,15 @@ public class Niansword extends MeleeWeapon {
 
     @Override
     public int defenseFactor( Char owner ) {
-        return 2+buffedLvl();    // 0 + 0.
+        return DRMax();
+    }
+
+    public int DRMax(){
+        return DRMax(buffedLvl());
+    }
+
+    public int DRMax(int lvl){
+        return 2 + lvl;
     }
 
     public String statsInfo(){

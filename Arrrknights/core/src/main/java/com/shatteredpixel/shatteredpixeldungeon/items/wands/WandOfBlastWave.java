@@ -47,7 +47,6 @@ import com.watabou.noosa.Image;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Callback;
 import com.watabou.utils.PathFinder;
-import com.watabou.utils.PointF;
 import com.watabou.utils.Random;
 
 public class WandOfBlastWave extends DamageWand {
@@ -64,6 +63,11 @@ public class WandOfBlastWave extends DamageWand {
 
 	public int max(int lvl){
 		return 3+3*lvl + RingOfAmplified.DamageBonus(Dungeon.hero) * 3;
+	}
+
+	@Override
+	public String upgradeStat2(int level) {
+		return Integer.toString(3 + level);
 	}
 
 	@Override

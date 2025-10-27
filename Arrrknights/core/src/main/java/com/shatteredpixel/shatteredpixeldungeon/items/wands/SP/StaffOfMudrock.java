@@ -12,10 +12,8 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.NPC;
 import com.shatteredpixel.shatteredpixeldungeon.effects.MagicMissile;
-import com.shatteredpixel.shatteredpixeldungeon.items.armor.Armor;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfAmplified;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.DamageWand;
-import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfLivingEarth;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MagesStaff;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
@@ -27,7 +25,6 @@ import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Callback;
-import com.watabou.utils.ColorMath;
 import com.watabou.utils.PathFinder;
 import com.watabou.utils.Random;
 
@@ -45,6 +42,19 @@ public class StaffOfMudrock extends DamageWand {
     @Override
     public int max(int lvl) {
         return 4 + lvl+ RingOfAmplified.DamageBonus(Dungeon.hero);
+    }
+
+    @Override
+    public String upgradeStat2(int level) {
+        return Integer.toString(22 + 9*level);
+    }
+    @Override
+    public String upgradeStat3(int level) {
+        if (Dungeon.isChallenged(Challenges.NO_ARMOR)){
+            return level + "-" + (4+level);
+        } else {
+            return 2+level + "-" + (5+(3*level));
+        }
     }
 
     @Override
