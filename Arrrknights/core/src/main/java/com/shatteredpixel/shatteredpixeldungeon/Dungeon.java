@@ -680,6 +680,7 @@ public class Dungeon {
 	private static final String BUY_RING = "buyRingbox";
 	private static final String TOTAL_TURNS = "total_turns";
 	private static final String LAST_AUTOSAVE_TURN = "last_saved_abs";
+	private static final String LAST_COUNTED_TURN = "last_counted_turn";
 
 	public static void saveGame(int save ) {
 		try {
@@ -730,7 +731,7 @@ public class Dungeon {
 
 			bundle.put(TOTAL_TURNS, totalTurns);
 			bundle.put(LAST_AUTOSAVE_TURN, lastAutoSaveTurn);
-
+			bundle.put(LAST_COUNTED_TURN, lastCountedTurn);
 
 			for (int d : droppedItems.keyArray()) {
 				bundle.put(Messages.format(DROPPED, d), droppedItems.get(d));
@@ -952,6 +953,9 @@ public class Dungeon {
 
 		if (bundle.contains(LAST_AUTOSAVE_TURN)) lastAutoSaveTurn = bundle.getLong(LAST_AUTOSAVE_TURN);
 		else lastAutoSaveTurn = 0;
+
+		if (bundle.contains(LAST_COUNTED_TURN)) lastCountedTurn = bundle.getLong(LAST_COUNTED_TURN);
+		else lastCountedTurn = 0;
 	}
 	
 	public static Level loadLevel( int save ) throws IOException {
@@ -1200,7 +1204,7 @@ public class Dungeon {
 	}
 
 	//Turn counting
-	public static float lastCountedTurn = 0;//do not save this one, as actor turn resets on load
+	public static float lastCountedTurn = 0; //The last counted turn need to be tracked the same way as actor.now(), they both affected by Actor.FixTime()
 	private static float totalTurns = 0;
 	private static float lastAutoSaveTurn = 0;
 
