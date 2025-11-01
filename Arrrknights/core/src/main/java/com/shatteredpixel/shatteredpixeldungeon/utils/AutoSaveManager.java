@@ -146,7 +146,7 @@ public final class AutoSaveManager {
                 Bundle meta = new Bundle();
                 meta.put("slot", runSlot);
                 meta.put("depth", Dungeon.depth);
-                meta.put("turn", (int) Math.floor(Actor.totalTurns()));
+                meta.put("turn", (int) Math.floor(Dungeon.totalTurns()));
                 meta.put("ts", System.currentTimeMillis());
                 FileUtils.bundleToFile(dir + META_FILE, meta);
             } catch (Exception e) {
@@ -186,7 +186,7 @@ public final class AutoSaveManager {
             info.tsMillis = meta.getLong("ts");
         } catch (Exception e) {
             info.depth = Math.max(1, Dungeon.depth);
-            info.turn = (int) Math.floor(Actor.totalTurns());
+            info.turn = (int) Math.floor(Dungeon.totalTurns());
             info.tsMillis = lastMod(dirFor(runSlot, s) + GAME_FILE);
         }
         return info;

@@ -83,10 +83,12 @@ public class StatusPane extends Component {
 	
 	private BitmapText version;
 
+	private BitmapText turnCounter;
+
 	@Override
 	protected void createChildren() {
 
-		bg = new NinePatch( Assets.Interfaces.STATUS, 0, 0, 128, 36, 85, 0, 45, 0 );
+		bg = new NinePatch( Assets.Interfaces.STATUS, 0, 0, 128, 41, 85, 0, 45, 0 );
 		add( bg );
 
 		add( new Button(){
@@ -154,6 +156,10 @@ public class StatusPane extends Component {
 
 		add( pickedUp = new Toolbar.PickedUpItem());
 
+		turnCounter = new BitmapText(PixelScene.pixelFont);
+		turnCounter.alpha(0.6f);
+		add( turnCounter );
+
 		//version = new BitmapText( "v" + Game.version, PixelScene.pixelFont);
 		//version.alpha( 0.5f );
 //change from budding
@@ -214,6 +220,11 @@ public class StatusPane extends Component {
 		hpText.y = hp.y + (hp.height - (hpText.baseLine()+hpText.scale.y))/2f;
 		hpText.y -= 0.001f; //prefer to be slightly higher
 		PixelScene.align(hpText);
+
+		turnCounter.scale.set(PixelScene.align(0.5f));
+		turnCounter.x = 11;
+		turnCounter.y = 36;
+		PixelScene.align(turnCounter);
 
 		bossHP.setPos( 6 + (width - bossHP.width())/2, 20);
 
@@ -278,6 +289,10 @@ public class StatusPane extends Component {
 			shieldedHP.scale.x = 0;
 			rawShielding.scale.x = 0;
 		}
+
+		turnCounter.text("T:" + (int)Dungeon.totalTurns());
+		turnCounter.x = 11 - turnCounter.width()/2f;
+		PixelScene.align(turnCounter);
 
 		exp.scale.x = (width / exp.width) * Dungeon.hero.exp / Dungeon.hero.maxExp();
 

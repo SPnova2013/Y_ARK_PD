@@ -22,35 +22,20 @@
 package com.shatteredpixel.shatteredpixeldungeon.actors;
 
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
-import com.shatteredpixel.shatteredpixeldungeon.SPDSettings;
 import com.shatteredpixel.shatteredpixeldungeon.Statistics;
 import com.shatteredpixel.shatteredpixeldungeon.TomorrowRogueNight;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Blob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
-import com.shatteredpixel.shatteredpixeldungeon.utils.AutoSaveManager;
 import com.watabou.noosa.Game;
 import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
-import com.watabou.utils.DeviceCompat;
 import com.watabou.utils.SparseArray;
 
-import java.io.BufferedReader;
-import java.io.File;
-
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashSet;
-import java.util.Locale;
-
-import com.watabou.utils.PlatformSupport;
 
 public abstract class Actor implements Bundlable {
-	
+
 	public static final float TICK	= 1f;
 
 	private float time;
@@ -84,7 +69,7 @@ public abstract class Actor implements Bundlable {
 	public void spendToWhole(){
 		time = (float)Math.ceil(time);
 	}
-	
+
 	protected void postpone( float time ) {
 		if (this.time < now + time) {
 			this.time = now + time;
@@ -96,20 +81,20 @@ public abstract class Actor implements Bundlable {
 		}
 		TomorrowRogueNight.actorLogger.logActorEntry(this.getClass(),"postpone");
 	}
-	
+
 	public float cooldown() {
 		return time - now;
 	}
 	public void timeToNow() {
 		time = now;
 	}//change from budding
-	
+
 	protected void diactivate() {
 		time = Float.MAX_VALUE;
 	}
-	
+
 	protected void onAdd() {}
-	
+
 	protected void onRemove() {}
 
 	private static final String TIME    = "time";
@@ -119,7 +104,6 @@ public abstract class Actor implements Bundlable {
 	public void storeInBundle( Bundle bundle ) {
 		bundle.put( TIME, time );
 		bundle.put( ID, id );
-		Actor.storeTurnState(bundle);
 	}
 
 	@Override
@@ -131,7 +115,6 @@ public abstract class Actor implements Bundlable {
 		} else {
 			id = nextID++;
 		}
-		Actor.restoreTurnState(bundle);
 	}
 
 
@@ -146,7 +129,7 @@ public abstract class Actor implements Bundlable {
 	// **********************
 	// *** Static members ***
 	// **********************
-	
+
 	private static HashSet<Actor> all = new HashSet<>();
 	private static HashSet<Char> chars = new HashSet<>();
 	private static volatile Actor current;
@@ -154,13 +137,13 @@ public abstract class Actor implements Bundlable {
 	private static SparseArray<Actor> ids = new SparseArray<>();
 	private static int nextID = 1;
 	private static float now = 0;
-	
+
 	public static float now(){
 		return now;
 	}
-	
+
 	public static synchronized void clear() {
-		
+
 		now = 0;
 
 		all.clear();
@@ -170,9 +153,9 @@ public abstract class Actor implements Bundlable {
 	}
 
 	public static synchronized void fixTime() {
-		
+
 		if (all.isEmpty()) return;
-		
+
 		float min = Float.MAX_VALUE;
 		for (Actor a : all) {
 			if (a.time < min) {
@@ -191,20 +174,21 @@ public abstract class Actor implements Bundlable {
 			Statistics.duration += min;
 		}
 		now -= min;
+		Dungeon.lastCountedTurn -= min;
 	}
-	
+
 	public static void init() {
-		
+
 		add( Dungeon.hero );
-		
+
 		for (Mob mob : Dungeon.level.mobs) {
 			add( mob );
 		}
-		
+
 		for (Blob blob : Dungeon.level.blobs.values()) {
 			add( blob );
 		}
-		
+
 		current = null;
 	}
 
@@ -235,27 +219,27 @@ public abstract class Actor implements Bundlable {
 	public static int curActorPriority() {
 		return current != null ? current.actPriority : DEFAULT;
 	}
-	
+
 	public static boolean keepActorThreadAlive = true;
-	
+
 	public static void process() {
 		boolean doNext;
 		boolean interrupted = false;
 		do {
-			
+
 			current = null;
 			if (!interrupted && !Game.switchingScene()) {
 				float earliest = Float.MAX_VALUE;
 
 				for (Actor actor : all) {
-					
+
 					//some actors will always go before others if time is equal.
 					if (actor.time < earliest ||
 							actor.time == earliest && (current == null || actor.actPriority > current.actPriority)) {
 						earliest = actor.time;
 						current = actor;
 					}
-					
+
  				}
 			}
 
@@ -263,7 +247,7 @@ public abstract class Actor implements Bundlable {
 
 				now = current.time;
 				Actor acting = current;
-				updateTurnCounter();
+				Dungeon.updateTurnCounter(now);
 
 				if (acting instanceof Char && ((Char) acting).sprite != null) {
 					// If it's character's turn to act, but its sprite
@@ -278,23 +262,14 @@ public abstract class Actor implements Bundlable {
 						interrupted = true;
 					}
 				}
-				
+
 				interrupted = interrupted || Thread.interrupted();
-				
+
 				if (interrupted){
 					doNext = false;
 					current = null;
 				} else {
 					doNext = acting.act();
-					// Turn-based autosave
-					try {
-						if (Dungeon.hero != null && Dungeon.hero.isAlive()
-								&& (totalTurns - lastTurnSavedAbs) >= AUTOSAVE_TURN_INTERVAL) {
-							lastTurnSavedAbs = totalTurns;
-							com.badlogic.gdx.Gdx.app.postRunnable(AutoSaveManager::saveTurnBased);
-						}
-					} catch (Throwable ignored) {}
-
 					if (doNext && (Dungeon.hero == null || !Dungeon.hero.isAlive())) {
 						doNext = false;
 						current = null;
@@ -331,13 +306,13 @@ public abstract class Actor implements Bundlable {
 	public static void add( Actor actor ) {
 		add( actor, now );
 	}
-	
+
 	public static void addDelayed( Actor actor, float delay ) {
 		add( actor, now + delay );
 	}
-	
+
 	private static synchronized void add( Actor actor, float time ) {
-		
+
 		if (all.contains( actor )) {
 			return;
 		}
@@ -387,48 +362,5 @@ public abstract class Actor implements Bundlable {
 	}
 
 	public static synchronized HashSet<Char> chars() { return new HashSet<>(chars); }
-
-	//Turn counting
-	private static long totalTurns = 0;
-	private static int  lastWholeSeen = 0;
-	private static long lastTurnSavedAbs = 0;
-
-	private static final int AUTOSAVE_TURN_INTERVAL = 10;
-
-	private static final String TOTAL_TURNS_KEY       = "total_turns";
-	private static final String LAST_WHOLE_SEEN_KEY   = "last_whole_seen";
-	private static final String LAST_TURN_SAVED_ABS   = "last_turn_saved_abs";
-
-	public static long totalTurns() { return totalTurns; }
-
-	public static void resetTurnCounter() {
-		totalTurns = 0;
-		lastWholeSeen = 0;
-		lastTurnSavedAbs = 0;
-	}
-
-	private static void updateTurnCounter() {
-		int whole = (int)Math.floor(now);
-		if (whole > lastWholeSeen) {
-			totalTurns += (whole - lastWholeSeen);
-			lastWholeSeen = whole;
-		}
-	}
-
-	public static void storeTurnState(Bundle b) {
-		b.put(TOTAL_TURNS_KEY, totalTurns);
-		b.put(LAST_WHOLE_SEEN_KEY, lastWholeSeen);
-		b.put(LAST_TURN_SAVED_ABS, lastTurnSavedAbs);
-	}
-
-	public static void restoreTurnState(Bundle b) {
-		DeviceCompat.log("Restoring turn state: " +
-				" totalTurns=" + b.getLong(TOTAL_TURNS_KEY) +
-				" lastWholeSeen=" + b.getInt(LAST_WHOLE_SEEN_KEY) +
-				" lastTurnSavedAbs=" + b.getLong(LAST_TURN_SAVED_ABS));
-		totalTurns = b.getLong(TOTAL_TURNS_KEY);
-		lastWholeSeen = b.getInt(LAST_WHOLE_SEEN_KEY);
-		lastTurnSavedAbs = b.getLong(LAST_TURN_SAVED_ABS);
-	}
 
 }

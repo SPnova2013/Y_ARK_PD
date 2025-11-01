@@ -26,7 +26,6 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Amok;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Awareness;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Haste;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Light;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.MindVision;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.RevealedArea;
@@ -88,12 +87,10 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.secret.SecretRoom;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.special.SpecialRoom;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
-import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
 import com.shatteredpixel.shatteredpixeldungeon.ui.QuickSlotButton;
 import com.shatteredpixel.shatteredpixeldungeon.utils.AutoSaveManager;
 import com.shatteredpixel.shatteredpixeldungeon.utils.BArray;
 import com.shatteredpixel.shatteredpixeldungeon.utils.DungeonSeed;
-import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.noosa.Game;
 import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
@@ -101,7 +98,6 @@ import com.watabou.utils.DeviceCompat;
 import com.watabou.utils.FileUtils;
 import com.watabou.utils.PathFinder;
 import com.watabou.utils.Random;
-import com.watabou.utils.Reflection;
 import com.watabou.utils.SparseArray;
 
 import java.io.IOException;
@@ -267,6 +263,7 @@ public class Dungeon {
 		spchallenges = SPDSettings.spchallenges();
 		mobsToChampion = -1;
 		mobsToHonor = -1;
+		resetTurnCounter();
 
 		seed = DungeonSeed.randomSeed();
 
@@ -681,6 +678,8 @@ public class Dungeon {
 	private static final String BUY_WAND = "buyWandbox";
 	private static final String BUY_TRANS = "buyTransbox";
 	private static final String BUY_RING = "buyRingbox";
+	private static final String TOTAL_TURNS = "total_turns";
+	private static final String LAST_AUTOSAVE_TURN = "last_saved_abs";
 
 	public static void saveGame(int save ) {
 		try {
@@ -728,6 +727,9 @@ public class Dungeon {
 			bundle.put (BUY_WAND, buyWandbox);
 			bundle.put (BUY_TRANS, buyTransbox);
 			bundle.put (BUY_RING, buyRingbox);
+
+			bundle.put(TOTAL_TURNS, totalTurns);
+			bundle.put(LAST_AUTOSAVE_TURN, lastAutoSaveTurn);
 
 
 			for (int d : droppedItems.keyArray()) {
@@ -944,6 +946,12 @@ public class Dungeon {
 				portedItems.put( i, items );
 			}
 		}
+
+		if (bundle.contains(TOTAL_TURNS)) totalTurns = bundle.getLong(TOTAL_TURNS);
+		else totalTurns = 0;
+
+		if (bundle.contains(LAST_AUTOSAVE_TURN)) lastAutoSaveTurn = bundle.getLong(LAST_AUTOSAVE_TURN);
+		else lastAutoSaveTurn = 0;
 	}
 	
 	public static Level loadLevel( int save ) throws IOException {
@@ -1189,6 +1197,39 @@ public class Dungeon {
 		}
 		return step;
 		
+	}
+
+	//Turn counting
+	public static float lastCountedTurn = 0;//do not save this one, as actor turn resets on load
+	private static float totalTurns = 0;
+	private static float lastAutoSaveTurn = 0;
+
+	public static final int TURN_AUTOSAVE_INTERVAL = 10;
+
+	public static float totalTurns() { return totalTurns; }
+
+	public static void updateTurnCounter(float wholeNow) {
+		DeviceCompat.log("[TurnCounting] lastWholeSeen: " + lastCountedTurn + ", wholeNow: " + wholeNow);
+		if (wholeNow > lastCountedTurn) {
+			float delta = wholeNow - lastCountedTurn;
+			DeviceCompat.log("[TurnCounting] Advancing turn counter by " + delta + " from " + totalTurns + " to " + (totalTurns + delta));
+			totalTurns += delta;
+			lastCountedTurn = wholeNow;
+			DeviceCompat.log("[TurnCounting] Current Turn: " + (int) totalTurns);
+		}
+		try {
+			if (Dungeon.hero != null && Dungeon.hero.isAlive()
+					&& (totalTurns - lastAutoSaveTurn) >= TURN_AUTOSAVE_INTERVAL) {
+				lastAutoSaveTurn = totalTurns;
+				com.badlogic.gdx.Gdx.app.postRunnable(AutoSaveManager::saveTurnBased);
+			}
+		} catch (Throwable ignored) {}
+	}
+
+	public static void resetTurnCounter() {
+		totalTurns = 0;
+		lastCountedTurn = 0;
+		lastAutoSaveTurn = 0;
 	}
 
 }

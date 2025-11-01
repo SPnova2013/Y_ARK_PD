@@ -113,7 +113,7 @@ public class InterlevelScene extends PixelScene {
 			default:
 				loadingDepth = Dungeon.depth;
 				scrollSpeed = 0;
-				Actor.resetTurnCounter();//at start of the game actor's turn counter need to be manually reset
+				Dungeon.resetTurnCounter();
 				break;
 			case CONTINUE:
 				loadingDepth = GamesInProgress.check(GamesInProgress.curSlot).depth;
