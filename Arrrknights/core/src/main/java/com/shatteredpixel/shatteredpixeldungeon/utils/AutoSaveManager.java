@@ -126,8 +126,7 @@ public final class AutoSaveManager {
 
         try {
             Actor.fixTime();
-            Dungeon.saveGame(GamesInProgress.curSlot);
-            Dungeon.saveLevel(GamesInProgress.curSlot);
+            Dungeon.saveAll();
         } catch (Exception e) {
             TomorrowRogueNight.reportException(e);
         }
