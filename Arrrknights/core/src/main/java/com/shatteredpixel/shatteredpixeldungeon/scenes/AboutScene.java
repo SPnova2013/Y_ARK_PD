@@ -21,6 +21,8 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.scenes;
 
+import static com.watabou.noosa.PointerArea.NEVER_BLOCK;
+
 import com.shatteredpixel.shatteredpixeldungeon.TomorrowRogueNight;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Flare;
 import com.shatteredpixel.shatteredpixeldungeon.ui.ExitButton;
@@ -44,6 +46,10 @@ public class AboutScene extends PixelScene {
 	private static final float SCROLL_SPEED = 30f;
 	public static ScrollPane list;
 	private float shift = -40;
+	private static final float AUTOSCROLL_RESUME_DELAY = 3f;
+	private boolean pausedByUser = false;
+	private float inactivity = 0f;
+
 
 	@Override
 	public void create() {
@@ -57,6 +63,36 @@ public class AboutScene extends PixelScene {
 
 		list = new ScrollPane(new Component());
 		add(list);
+
+		PointerArea inputWatcher = new PointerArea(0, 0, w, h) {
+			@Override
+			protected void onPointerDown(com.watabou.input.PointerEvent event) {
+				super.onPointerDown(event);
+				pausedByUser = true;
+				inactivity    = 0f;
+			}
+
+			@Override
+			protected void onDrag(com.watabou.input.PointerEvent event) {
+				super.onDrag(event);
+				pausedByUser = true;
+				inactivity    = 0f;
+			}
+
+			@Override
+			protected void onPointerUp(com.watabou.input.PointerEvent event) {
+				super.onPointerUp(event);
+			}
+
+			@Override
+			protected void onClick(com.watabou.input.PointerEvent event) {
+				super.onClick(event);
+				pausedByUser = true;
+				inactivity    = 0f;
+			}
+		};
+		inputWatcher.blockLevel = NEVER_BLOCK;
+		add(inputWatcher);
 
 		Component content = list.content();
 		content.clear();
@@ -316,8 +352,17 @@ public class AboutScene extends PixelScene {
 	@Override
 	public void update() {
 		super.update();
-		if (list != null) {
-			list.disableThumb();
+		if (list == null) return;
+
+		list.disableThumb();
+		if (pausedByUser) {
+			inactivity += Game.elapsed;
+			if (inactivity >= AUTOSCROLL_RESUME_DELAY) {
+				pausedByUser = false;
+				shift = list.content().camera().scroll.y;
+			}
+		}
+		else {
 			shift += Game.elapsed * SCROLL_SPEED;
 			float maxScroll = Math.max(0, list.content().height() - list.height());
 			list.scrollTo(0, Math.min(Math.max(shift, 0), maxScroll));
@@ -326,8 +371,9 @@ public class AboutScene extends PixelScene {
 
 	@Override
 	protected void onBackPressed() {
-		// reset for next visit
 		shift = -40;
+		pausedByUser = false;
+		inactivity = 0f;
 		TomorrowRogueNight.switchScene(TitleScene.class);
 	}
 
