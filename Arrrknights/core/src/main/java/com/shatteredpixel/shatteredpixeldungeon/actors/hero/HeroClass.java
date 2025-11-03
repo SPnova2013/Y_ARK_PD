@@ -566,6 +566,7 @@ package com.shatteredpixel.shatteredpixeldungeon.actors.hero;
 				case 26: return Assets.Sprites.NEURO_CAT;
 				case 27: return Assets.Sprites.NEURO_JOKER;
 				case 28: return Assets.Sprites.NEURO_WITCH;
+				case 29: return Assets.Sprites.SEIA;
 			}
 		}
 		switch (this) {

@@ -573,6 +573,7 @@ public class Assets {
 		public static final String NEURO_CAT = "sprites/neuro-cat.png";
 		public static final String NEURO_JOKER = "sprites/neuro-joker.png";
 		public static final String NEURO_WITCH = "sprites/neuro-witch.png";
+		public static final String SEIA = "sprites/seia.png";
 
 		//cover sprites
 		public static final String EX42COVER	= "sprites/ex42cover.png";

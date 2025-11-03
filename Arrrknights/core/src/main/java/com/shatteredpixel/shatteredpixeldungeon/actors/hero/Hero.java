@@ -314,6 +314,7 @@ public class Hero extends Char {
     public static final int NEURO_CAT = 26;
     public static final int NEURO_JOKER = 27;
     public static final int NEURO_WITCH = 28;
+    public static final int SEIA = 29;
 
     {
         actPriority = HERO_PRIO;

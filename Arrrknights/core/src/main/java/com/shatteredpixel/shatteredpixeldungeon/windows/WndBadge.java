@@ -45,6 +45,7 @@ import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.NeuroJokerSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.NeuroSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.NeuroWitchSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.SchwarzSkinSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.SeiaSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.SkadiSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.SpecterSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.SussurroSprite;
@@ -266,6 +267,11 @@ public class WndBadge extends Window {
 			case SKIN_NEURO_WITCH:
 				Dungeon.hero.CharSkin = Hero.NEURO_WITCH;
 				Dungeon.hero.CharSkinClass = new NeuroWitchSprite();
+				break;
+
+			case SKIN_SEIA:
+				Dungeon.hero.CharSkin = Hero.SEIA;
+				Dungeon.hero.CharSkinClass = new SeiaSprite();
 				break;
 		}
 	}

@@ -23,6 +23,7 @@ import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.NeuroJokerSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.NeuroSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.NeuroWitchSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.SchwarzSkinSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.SeiaSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.SkadiSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.SpecterSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.skins.SussurroSprite;
@@ -38,7 +39,7 @@ public class SkinModel extends NPC {
         properties.add(Property.IMMOVABLE);
         properties.add(Property.NPC);
     }
-    private final int MAX_SKIN = 27;
+    private final int MAX_SKIN = 28;
     public SkinModel()
     {
         super();
@@ -99,7 +100,9 @@ public class SkinModel extends NPC {
                break;
            case 26 : spriteClass= NeuroJokerSprite.class;
                break;
-           case MAX_SKIN: spriteClass = NeuroWitchSprite.class;
+           case 27: spriteClass = NeuroWitchSprite.class;
+               break;
+           case MAX_SKIN: spriteClass = SeiaSprite.class;
                break;
        }
     }

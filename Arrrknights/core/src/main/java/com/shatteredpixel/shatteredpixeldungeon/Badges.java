@@ -279,6 +279,7 @@ public class Badges {
 		SKIN_NEURO_CAT(313, false, true),
 		SKIN_NEURO_JOKER(314, false, true),
 		SKIN_NEURO_WITCH(315, false, true),
+		SKIN_SEIA(316, false, true),
 
 		//기타
 		SUPPORT;
@@ -1216,6 +1217,10 @@ public class Badges {
 		Badge badge = Badge.SKIN_NEURO_WITCH;
 		displayBadge( badge );
 	}
+	public static void validateSeiaSkin(){
+		Badge badge = Badge.SKIN_SEIA;
+		displayBadge( badge );
+	}
 
 	// 0.3.2버전의 스킨 관련 처리로 인해 추가된 구문입니다. 추후 필요없어질 수 있습니다.
 	public static void allskindestroy() {
@@ -1307,6 +1312,9 @@ public class Badges {
 		if(isUnlocked(Badge.SKIN_NEURO_WITCH)){
 			global.remove(Badge.SKIN_NEURO_WITCH);
 		}
+		if(isUnlocked(Badge.SKIN_SEIA)){
+			global.remove(Badge.SKIN_SEIA);
+		}
 
 		if (Badges.isUnlocked(Badge.SUPPORT)) {
 			Badges.validatetaluskin();
@@ -1364,6 +1372,7 @@ public class Badges {
 		if(!Badges.isUnlocked(Badge.SKIN_NEURO_CAT)) { Badges.validateNeuroCatSkin();}
 		if(!Badges.isUnlocked(Badge.SKIN_NEURO_JOKER)) { Badges.validateNeuroJokerSkin();}
 		if(!Badges.isUnlocked(Badge.SKIN_NEURO_WITCH)) { Badges.validateNeuroWitchSkin();}
+		if(!Badges.isUnlocked(Badge.SKIN_SEIA)) { Badges.validateSeiaSkin();}
 	}
 
 	//necessary in order to display the happy end badge in the surface scene
@@ -1744,7 +1753,7 @@ public class Badges {
 			{Badge.SKIN_BABOSKADI}, {Badge.SKIN_TALU}, {Badge.SKIN_NOVA}, {Badge.SKIN_SUSUU}, {Badge.SKIN_GRN}, {Badge.SKIN_LAPPY}, {Badge.SKIN_JESSI}, {Badge.SKIN_LEAF},
 			{Badge.SKIN_ASTESIA}, {Badge.SKIN_SPECTER}, {Badge.SKIN_MUDROCK}, {Badge.SKIN_SCHWARZ}, {Badge.SKIN_ARCH}, {Badge.SKIN_TOMIMI}, {Badge.SKIN_FRANKA},
 			{Badge.SKIN_WEEDY},{Badge.SKIN_LILITH},{Badge.SKIN_KAYOKO},{Badge.SKIN_HINA},{Badge.SKIN_TLIPOCA},{Badge.SKIN_NEURO},{Badge.SKIN_WISADEL},
-			{Badge.SKIN_TENMA},{Badge.SKIN_ES},{Badge.SKIN_NEURO_ANGEL},{Badge.SKIN_NEURO_CAT},{Badge.SKIN_NEURO_JOKER},{Badge.SKIN_NEURO_WITCH}
+			{Badge.SKIN_TENMA},{Badge.SKIN_ES},{Badge.SKIN_NEURO_ANGEL},{Badge.SKIN_NEURO_CAT},{Badge.SKIN_NEURO_JOKER},{Badge.SKIN_NEURO_WITCH},{Badge.SKIN_SEIA}
 	};
 	
 	public static List<Badge> filterReplacedBadges( List<Badge> badges ) {
