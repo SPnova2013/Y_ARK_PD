@@ -35,9 +35,15 @@ import com.watabou.noosa.Group;
 import com.watabou.noosa.Image;
 import com.watabou.noosa.PointerArea;
 import com.watabou.noosa.ui.Component;
+import com.watabou.noosa.Game;
 import com.watabou.utils.DeviceCompat;
 
 public class AboutScene extends PixelScene {
+
+	// --- Autoscroll (mirrors your CreditScene) ---
+	private static final float SCROLL_SPEED = 30f;
+	public static ScrollPane list;
+	private float shift = -40;
 
 	@Override
 	public void create() {
@@ -49,8 +55,8 @@ public class AboutScene extends PixelScene {
 		int w = Camera.main.width;
 		int h = Camera.main.height;
 
-		ScrollPane list = new ScrollPane( new Component() );
-		add( list );
+		list = new ScrollPane(new Component());
+		add(list);
 
 		Component content = list.content();
 		content.clear();
@@ -283,25 +289,45 @@ public class AboutScene extends PixelScene {
 
 		addLine(transifex.top() - 4, content);
 
+		// small extra block so there's enough content to scroll
+		CreditsBlock extraThanks = new CreditsBlock(true,
+				Window.TITLE_COLOR,
+				null,
+				null,
+				"Special Thanks (sample):\n" +
+						"- Longtime Players\n- Modding Community\n- Bug Reporters\n- _And you!_\n",
+				null,
+				null);
+		extraThanks.setRect(transifex.left() - 10, transifex.bottom() + 8, colWidth + 20, 0);
+		content.add(extraThanks);
 
+		content.setSize(fullWidth, extraThanks.bottom() + 10);
 
-		transifex.setRect(transifex.left()-10, transifex.bottom() + 8, colWidth+20, 0);
-		content.add(transifex);
-
-		content.setSize( fullWidth, transifex.bottom()+10 );
-
-		list.setRect( 0, 0, w, h );
+		list.setRect(0, 0, w, h);
 		list.scrollTo(0, 0);
 
 		ExitButton btnExit = new ExitButton();
-		btnExit.setPos( Camera.main.width - btnExit.width(), 0 );
-		add( btnExit );
+		btnExit.setPos(Camera.main.width - btnExit.width(), 0);
+		add(btnExit);
 
 		fadeIn();
 	}
-	
+
+	@Override
+	public void update() {
+		super.update();
+		if (list != null) {
+			list.disableThumb();
+			shift += Game.elapsed * SCROLL_SPEED;
+			float maxScroll = Math.max(0, list.content().height() - list.height());
+			list.scrollTo(0, Math.min(Math.max(shift, 0), maxScroll));
+		}
+	}
+
 	@Override
 	protected void onBackPressed() {
+		// reset for next visit
+		shift = -40;
 		TomorrowRogueNight.switchScene(TitleScene.class);
 	}
 
