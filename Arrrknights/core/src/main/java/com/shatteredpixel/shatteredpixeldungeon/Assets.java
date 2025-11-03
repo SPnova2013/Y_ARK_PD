@@ -351,6 +351,7 @@ public class Assets {
 		public static final String SHILDED	= "sprites/Shielded.png";
 		public static final String SHILDED_L	= "sprites/ShieldedLeader.png";
 		public static final String SHIELDED_GUARD	= "sprites/shielded_guard.png";
+		public static final String LIGHTARMOREDSOLDIER	= "sprites/LightArmoredSoldierLeader.png";
 		public static final String HAUND		= "sprites/haund.png";
 		public static final String RODENT		= "sprites/rodent.png";
 		public static final String GLOOMPINCER		= "sprites/gloompincer.png";
