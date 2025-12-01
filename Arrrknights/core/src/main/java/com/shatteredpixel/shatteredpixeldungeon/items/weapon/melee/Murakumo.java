@@ -75,7 +75,7 @@ public class Murakumo extends MeleeWeapon{
             final int dest = target;
 
             hero.busy();
-            hero.sprite.jump(hero.pos, dest, new Callback() {
+            hero.sprite.jump(hero.pos, dest, 0.5f, 0.3f, new Callback() {
                 @Override
                 public void call() {
                     hero.move(dest);
@@ -102,7 +102,7 @@ public class Murakumo extends MeleeWeapon{
                     hero.spendAndNext(hero.attackDelay());
 
                 }
-            }, 0.5f, 0.3f);
+            });
         }
 
         @Override

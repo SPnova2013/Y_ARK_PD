@@ -324,8 +324,11 @@ public abstract class Char extends Actor {
 			}
 		}
 	}
-	
 	public boolean attack( Char enemy ) {
+		return attack(enemy, 1f, 0f, 1f);
+	}
+	
+	public boolean attack( Char enemy , float dmgMulti, float dmgBonus, float accMulti) {
 
 		if (enemy == null) return false;
 		
@@ -341,7 +344,7 @@ public abstract class Char extends Actor {
 
 			return false;
 
-		} else if (hit( this, enemy, false ))
+		} else if (hit( this, enemy, accMulti, false ))
 		{
 			
 			int dr = enemy.drRoll();
@@ -395,6 +398,9 @@ public abstract class Char extends Actor {
 			} else {
 				dmg = damageRoll();
 			}
+
+			dmg *= dmgMulti;
+			dmg += dmgBonus;
 			
 			int effectiveDamage = enemy.defenseProc( this, dmg );
 			effectiveDamage = Math.max( effectiveDamage - dr, 0 );
@@ -562,8 +568,11 @@ public abstract class Char extends Actor {
 
 	public static final int INFINITE_ACCURACY = 1_000_000;
 	public static final int INFINITE_EVASION = 1_000_000;
-
 	public static boolean hit( Char attacker, Char defender, boolean magic ) {
+		return hit(attacker, defender, magic ? 2f : 1f, magic);
+	}
+
+	public static boolean hit( Char attacker, Char defender,float accMulti, boolean magic ) {
 		float acuStat = attacker.attackSkill(defender);
 		float defStat = defender.defenseSkill(attacker);
 
@@ -633,7 +642,8 @@ public abstract class Char extends Actor {
 		for (ChampionHero buff : defender.buffs(ChampionHero.class)) {
 			defRoll *= buff.evasionAndAccuracyFactor();
 		}
-		boolean result = (magic ? acuRoll * 2 : acuRoll) >= defRoll;
+		acuRoll *= accMulti;
+		boolean result = acuRoll >= defRoll;
 
 		if(Dungeon.hero.buff(PotatoAimReady.class)!=null && Dungeon.hero.buff(PotatoAimReady.class).isReady())return true;
 		if(!result) {
