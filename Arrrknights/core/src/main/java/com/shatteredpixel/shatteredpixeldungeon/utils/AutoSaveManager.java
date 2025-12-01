@@ -16,6 +16,8 @@ import com.watabou.utils.Bundle;
 import com.watabou.utils.FileUtils;
 
 import java.nio.charset.StandardCharsets;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public final class AutoSaveManager {
 
@@ -30,7 +32,23 @@ public final class AutoSaveManager {
 
     public static void saveOnLevelEnter() { snapshotTo(GamesInProgress.curSlot, Slot.ENTER); }
     public static void saveOnLevelExit()  { snapshotTo(GamesInProgress.curSlot, Slot.EXIT);  }
-    public static void saveTurnBased()    { snapshotTo(GamesInProgress.curSlot, pickTurnSlot(GamesInProgress.curSlot)); }
+
+    private static final ExecutorService saveExecutor = Executors.newSingleThreadExecutor(r -> {
+        Thread t = new Thread(r, "AutoSave-Thread");
+        t.setDaemon(true); // 设置为守护线程
+        return t;
+    });
+    public static void saveTurnBased()    {
+        final int runSlot = GamesInProgress.curSlot;
+        final Slot slot = pickTurnSlot(runSlot);
+
+        saveExecutor.submit(() -> {
+            try {
+                snapshotTo(runSlot, slot);
+            } catch (Exception e) {
+                TomorrowRogueNight.reportException(e);
+            }
+        });}
 
     public static boolean hasSlot(Slot s) { return hasSlot(GamesInProgress.curSlot, s); }
     public static boolean hasSlot(int runSlot, Slot s) {
