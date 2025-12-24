@@ -111,9 +111,10 @@ public class ItemSlot extends Button {
 	@Override
 	protected void layout() {
 		super.layout();
-		
-		sprite.x = x + (width - sprite.width * 0.65f);
-		sprite.y = y + (height - sprite.height * 0.625f);
+
+		sprite.x = x + (width - sprite.width*0.625f)*0.5f;
+		sprite.y = y + (height - sprite.height*0.625f)*0.5f;
+
 		PixelScene.align(sprite);
 		
 		if (status != null) {
