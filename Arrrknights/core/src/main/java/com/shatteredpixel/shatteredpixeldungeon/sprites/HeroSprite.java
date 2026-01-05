@@ -423,7 +423,7 @@ public class HeroSprite extends CharSprite {
 			case Hero.HINA:
 				return new PointF(50, 40);
 			case Hero.ES:
-				return new PointF(80, 50);
+				return new PointF(80, 60);
 			case Hero.NEURO:
 			case Hero.WISADEL:
 			case Hero.TENMA:

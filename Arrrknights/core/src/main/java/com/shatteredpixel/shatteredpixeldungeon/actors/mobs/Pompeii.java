@@ -514,7 +514,7 @@ public class Pompeii extends Mob {
     }
 
 
-    public class BossSlug extends LavaSlug {
+    public static class BossSlug extends LavaSlug {
         {
             HP = HT = 65;
             maxLvl = -5;
