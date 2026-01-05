@@ -52,14 +52,9 @@ import com.watabou.noosa.Image;
 import com.watabou.noosa.NinePatch;
 import com.watabou.noosa.PointerArea;
 import com.watabou.noosa.ui.Component;
-import com.watabou.utils.DeviceCompat;
 import com.watabou.utils.GameMath;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.Locale;
-import java.util.TimeZone;
 
 public class HeroSelectScene extends PixelScene {
 
@@ -411,6 +406,9 @@ public class HeroSelectScene extends PixelScene {
 					break;
 				case MIDORI:
 					icon(new Image(Icons.MIDORI.get()));
+					break;
+				case IRENE:
+					icon(new Image(Icons.IRENE.get()));
 					break;
 			}
 

@@ -21,15 +21,10 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.scenes;
 
-import static com.shatteredpixel.shatteredpixeldungeon.windows.WndGameInProgress.SEP;
-
-import com.google.firebase.crashlytics.buildtools.reloc.org.apache.commons.codec.binary.Base64;
 import com.shatteredpixel.shatteredpixeldungeon.Badges;
 import com.shatteredpixel.shatteredpixeldungeon.Chrome;
-import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.GamesInProgress;
 import com.shatteredpixel.shatteredpixeldungeon.TomorrowRogueNight;
-import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroSubClass;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Journal;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Archs;
@@ -38,20 +33,14 @@ import com.shatteredpixel.shatteredpixeldungeon.ui.Icons;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RedButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
-import com.shatteredpixel.shatteredpixeldungeon.utils.JsonCompress;
 import com.shatteredpixel.shatteredpixeldungeon.utils.SaveImportUtil;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndGameInProgress;
-import com.shatteredpixel.shatteredpixeldungeon.windows.WndMessage;
 import com.watabou.noosa.BitmapText;
 import com.watabou.noosa.Camera;
-import com.watabou.noosa.Game;
 import com.watabou.noosa.Image;
 import com.watabou.noosa.NinePatch;
 import com.watabou.noosa.ui.Button;
-import com.watabou.utils.Bundle;
-import com.watabou.utils.FileUtils;
 
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 public class StartScene extends PixelScene {
@@ -218,6 +207,9 @@ public class StartScene extends PixelScene {
 						case MIDORI:
 							hero = new Image(Icons.MIDORI.get());
 							break;
+						case IRENE:
+							hero = new Image(Icons.IRENE.get());
+							break;
 					}
 					add(hero);
 					
@@ -258,6 +250,9 @@ public class StartScene extends PixelScene {
 							break;
 						case MIDORI:
 							hero = new Image(Icons.MIDORI.get());
+							break;
+						case IRENE:
+							hero = new Image(Icons.IRENE.get());
 							break;
 					}
 

@@ -60,6 +60,7 @@ public class Badges {
 		MASTERY_CHEN,
 		MASTERY_RABBIT,
 		MASTERY_MIDORI,
+		MASTERY_IRENE,
 //한 줄당 16칸, 모든 위치는 현재 좌표보다 1을 빼서 추가할것
 		//bronze
 		UNLOCK_MAGE                 ( 1 ),
@@ -70,6 +71,7 @@ public class Badges {
 		UNLOCK_CHEN               	( 22),
 		UNLOCK_RABBIT				( 24),
 		UNLOCK_MIDORI				( 25),
+		UNLOCK_IRENE				( 26),
 		MONSTERS_SLAIN_1            ( 4 ),
 		MONSTERS_SLAIN_2            ( 5 ),
 		GOLD_COLLECTED_1            ( 6 ),
@@ -118,6 +120,7 @@ public class Badges {
 		BOSS_SLAIN_1_CHEN,
 		BOSS_SLAIN_1_RABBIT,
 		BOSS_SLAIN_1_MIDORI,
+		BOSS_SLAIN_1_IRENE,
 		BOSS_SLAIN_1_ALL_CLASSES    ( 69, true ),
 		GAMES_PLAYED_1              ( 70, true ),
 		CERTIFICATE_2               (71),
@@ -168,6 +171,8 @@ public class Badges {
 		BOSS_SLAIN_3_PHANTOM,
 		BOSS_SLAIN_3_MARKSMIDORI,
 		BOSS_SLAIN_3_KEYANIMATOR,
+		BOSS_SLAIN_3_INQUISITOR,
+		BOSS_SLAIN_3_SAINT,
 		BOSS_SLAIN_3_ALL_SUBCLASSES ( 112, true ),
 		GAMES_PLAYED_2              ( 113, true ),
 
@@ -180,6 +185,7 @@ public class Badges {
 		CHEN_CHAMPION1              ( 22, true ),//change from budding
 		RABBIT_CHAMPION1              ( 125, true ),
 		MIDORI_CHAMPION1              ( 126, true ),
+		IRENE_CHAMPION1              ( 127, true ),
 
 		GOLD_COLLECTED_5              ( 120 ),
 
@@ -204,6 +210,7 @@ public class Badges {
 		VICTORY_CHEN,
 		VICTORY_RABBIT,
 		VICTORY_MIDORI,
+		VICTORY_IRENE,
 		VICTORY_ALL_CLASSES         ( 162, true ),
 		GAMES_PLAYED_3              ( 163, true ),
 		CHAMPION_1                  ( 164 ),
@@ -219,6 +226,7 @@ public class Badges {
 		CHEN_CHAMPION2              ( 22, true ),//change from budding
 		RABBIT_CHAMPION2              ( 176, true ),
 		MIDORI_CHAMPION2              ( 177, true ),
+		IRENE_CHAMPION2              ( 178, true ),
 
 		SIESTA_PART2              ( 173),
 		GAVIAL_PART2              ( 174 ),
@@ -243,6 +251,7 @@ public class Badges {
 		CHEN_CHAMPION3              ( 22, true ),//change from budding
 		RABBIT_CHAMPION3              ( 210, true ),
 		MIDORI_CHAMPION3              ( 211, true ),
+		IRENE_CHAMPION3              ( 212, true ),
 
 		//Puple
 		Get_25_STONES                (256),
@@ -793,6 +802,9 @@ public class Badges {
 				case MIDORI://change from budding
 					badge=Badge.BOSS_SLAIN_1_MIDORI;
 					break;
+				case IRENE://change from budding
+					badge=Badge.BOSS_SLAIN_1_IRENE;
+					break;
 				}
 				local.add( badge );
 				unlock(badge);
@@ -805,7 +817,9 @@ public class Badges {
 						isUnlocked( Badge.BOSS_SLAIN_1_NEARL) &&
 						isUnlocked( Badge.BOSS_SLAIN_1_CHEN)&&
 						isUnlocked( Badge.BOSS_SLAIN_1_RABBIT)&&
-						isUnlocked( Badge.BOSS_SLAIN_1_MIDORI)) {
+						isUnlocked( Badge.BOSS_SLAIN_1_MIDORI)&&
+						isUnlocked( Badge.BOSS_SLAIN_1_IRENE)
+				) {
 
 					badge = Badge.BOSS_SLAIN_1_ALL_CLASSES;
 					if (!isUnlocked( badge )) {
@@ -839,6 +853,8 @@ public class Badges {
 				if(subClassSet.contains(HeroSubClass.PHANTOM)) badge = Badge.BOSS_SLAIN_3_PHANTOM;
 				if(subClassSet.contains(HeroSubClass.MARKSMIDORI)) badge = Badge.BOSS_SLAIN_3_MARKSMIDORI;
 				if(subClassSet.contains(HeroSubClass.KEYANIMATOR)) badge = Badge.BOSS_SLAIN_3_KEYANIMATOR;
+				if(subClassSet.contains(HeroSubClass.INQUISITOR)) badge = Badge.BOSS_SLAIN_3_INQUISITOR;
+				if(subClassSet.contains(HeroSubClass.SAINT)) badge = Badge.BOSS_SLAIN_3_SAINT;
 				local.add( badge );
 				unlock(badge);
 
@@ -874,6 +890,9 @@ public class Badges {
 						&&
 						(isUnlocked( Badge.BOSS_SLAIN_3_MARKSMIDORI ) ||
 						isUnlocked( Badge.BOSS_SLAIN_3_KEYANIMATOR ))
+						&&
+						(isUnlocked( Badge.BOSS_SLAIN_3_INQUISITOR ) ||
+						isUnlocked( Badge.BOSS_SLAIN_3_SAINT ))
 				) {
 
 					badge = Badge.BOSS_SLAIN_3_ALL_SUBCLASSES;
@@ -915,6 +934,9 @@ public class Badges {
 		case MIDORI:
 			badge = Badge.MASTERY_MIDORI;
 			break;
+		case IRENE:
+			badge = Badge.MASTERY_IRENE;
+			break;
 		}
 		unlock(badge);
 	}
@@ -954,6 +976,7 @@ public class Badges {
 	public static void validateLazyUnlock(){
 		validateRabbitUnlock();
 		validateMidoriUnlock();
+		validateIreneUnlock();
 	}
 
 	public static void validateRabbitUnlock(){
@@ -964,6 +987,11 @@ public class Badges {
 	public static void validateMidoriUnlock(){
 		if(!isUnlocked(Badge.UNLOCK_MIDORI)){
 			displayBadge(Badge.UNLOCK_MIDORI);
+		}
+	}
+	public static void validateIreneUnlock(){
+		if(!isUnlocked(Badge.UNLOCK_IRENE)){
+			displayBadge(Badge.UNLOCK_IRENE);
 		}
 	}
 
@@ -1008,6 +1036,9 @@ public class Badges {
 		case MIDORI:
 			badge = Badge.VICTORY_MIDORI;
 			break;
+		case IRENE:
+			badge = Badge.VICTORY_IRENE;
+			break;
 		}
 
 		local.add( badge );
@@ -1021,7 +1052,8 @@ public class Badges {
 		    global.contains( Badge.VICTORY_NEARL ) &&
 			global.contains( Badge.VICTORY_CHEN )&&
 			global.contains(Badge.VICTORY_RABBIT)&&
-			global.contains(Badge.VICTORY_MIDORI)
+			global.contains(Badge.VICTORY_MIDORI)&&
+			global.contains(Badge.VICTORY_IRENE)
 		){
 
 			badge = Badge.VICTORY_ALL_CLASSES;
@@ -1539,6 +1571,20 @@ public class Badges {
 					unlock(badge);
 					badge = Badge.MIDORI_CHAMPION3;
 				}
+				break;
+			case IRENE:
+				if (challenges >= 1) {
+					badge = Badge.IRENE_CHAMPION1;
+				}
+				if (challenges >= 3) {
+					unlock(badge);
+					badge = Badge.IRENE_CHAMPION2;
+				}
+				if (challenges >= 6) {
+					unlock(badge);
+					badge = Badge.IRENE_CHAMPION3;
+				}
+				break;
 			default:
 				break;
 		}

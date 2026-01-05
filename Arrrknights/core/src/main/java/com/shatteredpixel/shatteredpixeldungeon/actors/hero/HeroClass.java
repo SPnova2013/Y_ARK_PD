@@ -122,7 +122,8 @@ package com.shatteredpixel.shatteredpixeldungeon.actors.hero;
 	NEARL("nearl", HeroSubClass.KNIGHT, HeroSubClass.SAVIOR, HeroSubClass.FLASH),
 	CHEN("chen", HeroSubClass.SWORDMASTER, HeroSubClass.SPSHOOTER),
 	RABBIT("rabbit", HeroSubClass.KILLER, HeroSubClass.PHANTOM),
-	MIDORI("midori", HeroSubClass.MARKSMIDORI, HeroSubClass.KEYANIMATOR, HeroSubClass.SCHOLAR);
+	MIDORI("midori", HeroSubClass.MARKSMIDORI, HeroSubClass.KEYANIMATOR, HeroSubClass.SCHOLAR),
+	 IRENE("irene", HeroSubClass.INQUISITOR, HeroSubClass.SAINT);
 
 	private String title;
 	private HeroSubClass[] subClasses;
@@ -174,6 +175,10 @@ package com.shatteredpixel.shatteredpixeldungeon.actors.hero;
 
 			case MIDORI:
 				initMidori(hero);
+				break;
+
+			case IRENE:
+				initIrene(hero);
 				break;
 		}
 	}
@@ -262,6 +267,8 @@ package com.shatteredpixel.shatteredpixeldungeon.actors.hero;
 				return Badges.Badge.MASTERY_RABBIT;
 			case MIDORI:
 				return Badges.Badge.MASTERY_MIDORI;
+			case IRENE:
+				return Badges.Badge.MASTERY_IRENE;
 		}
 		return null;
 	}
@@ -522,6 +529,9 @@ package com.shatteredpixel.shatteredpixeldungeon.actors.hero;
 		 }
 	 }
 
+	 private void initIrene(Hero hero) {
+
+	 }
 	public String title() {
 		return Messages.get(HeroClass.class, title);
 	}
@@ -588,6 +598,8 @@ package com.shatteredpixel.shatteredpixeldungeon.actors.hero;
 				return Assets.Sprites.RABBIT;
 			case MIDORI:
 				return Assets.Sprites.MIDORI;
+			case IRENE:
+				return Assets.Sprites.IRENE;
 		}
 	}
 
@@ -611,6 +623,8 @@ package com.shatteredpixel.shatteredpixeldungeon.actors.hero;
 				return Assets.Sprites.RABBIT;
 			case MIDORI:
 				return Assets.Sprites.MIDORI;
+			case IRENE:
+				return Assets.Sprites.IRENE;
 		}
 	}
 
@@ -634,6 +648,8 @@ package com.shatteredpixel.shatteredpixeldungeon.actors.hero;
 				return Assets.Splashes.RABBIT;
 			case MIDORI:
 				return Assets.Splashes.MIDORI;
+			case IRENE:
+				return Assets.Splashes.IRENE;
 		}
 	}
 	
@@ -697,6 +713,8 @@ package com.shatteredpixel.shatteredpixeldungeon.actors.hero;
 				return Badges.isUnlocked(Badges.Badge.UNLOCK_RABBIT);
 			case MIDORI:
 				return Badges.isUnlocked(Badges.Badge.UNLOCK_MIDORI);
+			case IRENE:
+				return Badges.isUnlocked(Badges.Badge.UNLOCK_IRENE);
 		}
 	}
 	
@@ -720,6 +738,8 @@ package com.shatteredpixel.shatteredpixeldungeon.actors.hero;
 				return Messages.get(HeroClass.class, "rabbit_unlock");
 			case MIDORI:
 				return Messages.get(HeroClass.class, "midori_unlock");
+			case IRENE:
+				return Messages.get(HeroClass.class, "irene_unlock");
 		}
 	}
 
