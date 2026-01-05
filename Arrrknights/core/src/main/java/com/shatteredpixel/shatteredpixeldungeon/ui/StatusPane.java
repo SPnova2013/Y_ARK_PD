@@ -110,7 +110,7 @@ public class StatusPane extends Component {
 		btnMenu = new MenuButton();
 		add( btnMenu );
 
-		avatar = HeroSprite.avatar( Dungeon.hero.heroClass, lastTier );
+		avatar = HeroSprite.avatar( Dungeon.hero.heroClass, lastTier , Dungeon.hero.CharSkin);
 		add( avatar );
 
 		talentBlink = 0;
@@ -316,13 +316,13 @@ public class StatusPane extends Component {
 		int tier = Dungeon.hero.tier();
 		if (tier != lastTier) {
 			lastTier = tier;
-			avatar.copy( HeroSprite.avatar( Dungeon.hero.heroClass, tier ) );
+			avatar.copy( HeroSprite.avatar( Dungeon.hero.heroClass, tier, Dungeon.hero.CharSkin ) );
 		}
 	}
 
 	public void Avaterupdate()
 	{
-		avatar.copy( HeroSprite.avatar( Dungeon.hero.heroClass, lastTier ) );
+		avatar.copy( HeroSprite.avatar( Dungeon.hero.heroClass, lastTier, Dungeon.hero.CharSkin ) );
 
 	}
 

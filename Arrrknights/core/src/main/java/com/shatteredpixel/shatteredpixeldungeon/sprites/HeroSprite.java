@@ -418,15 +418,39 @@ public class HeroSprite extends CharSprite {
 		
 		return tiers;
 	}
-	
-	public static Image avatar( HeroClass cl, int armorTier ) {
-		
-		RectF patch = tiers().get( armorTier );
-		Image avatar = new Image( cl.spritesheet() );
-		RectF frame = avatar.texture.uvRect( 1, 0, FRAME_WIDTH, FRAME_HEIGHT );
-		frame.shift( patch.left, patch.top );
-		avatar.frame( frame );
-		
+	public static PointF getAvatarFrameSize(HeroClass cl, int skinId) {
+		switch (skinId) {
+			case Hero.HINA:
+				return new PointF(50, 40);
+			case Hero.ES:
+				return new PointF(80, 50);
+			case Hero.NEURO:
+			case Hero.WISADEL:
+			case Hero.TENMA:
+			case Hero.NEURO_ANGEL:
+			case Hero.NEURO_CAT:
+			case Hero.NEURO_JOKER:
+			case Hero.NEURO_WITCH:
+				return new PointF(36, 36);
+			default:
+				return new PointF(36, 36);
+		}
+	}
+	public static Image avatar(HeroClass cl, int armorTier) {
+		return avatar(cl, armorTier, 0);
+	}
+	public static Image avatar(HeroClass cl, int armorTier, int skinId) {
+		PointF frameSize = getAvatarFrameSize(cl, skinId);
+		int frameWidth = (int)frameSize.x;
+		int frameHeight = (int)frameSize.y;
+
+		RectF patch = tiers().get(armorTier);
+		Image avatar = new Image(cl.spritesheet());
+
+		RectF frame = avatar.texture.uvRect(1, 0, frameWidth, frameHeight);
+		frame.shift(patch.left, patch.top);
+		avatar.frame(frame);
+
 		return avatar;
 	}
 
