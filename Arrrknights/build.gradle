@@ -7,7 +7,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.5.1'
+        classpath 'com.android.tools.build:gradle:8.13.0'
         classpath 'com.google.gms:google-services:4.4.2'
         classpath 'com.google.firebase:firebase-crashlytics-gradle:3.0.2'
     }
@@ -24,9 +24,9 @@ allprojects {
 
         appJavaCompatibility = JavaVersion.VERSION_11
 
-        appAndroidCompileSDK = 33
-        appAndroidMinSDK = 19   //隔壁是9
-        appAndroidTargetSDK = 33
+        appAndroidCompileSDK = 36
+        appAndroidMinSDK = 24   //隔壁是9
+        appAndroidTargetSDK = 36
 
         gdxVersion = '1.12.1'
         gdxControllersVersion = '2.2.4'

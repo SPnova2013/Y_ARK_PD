@@ -52,6 +52,60 @@ public class RenderedTextBlock extends Component {
 	public static final int CENTER_ALIGN = 2;
 	public static final int RIGHT_ALIGN = 3;
 	private int alignment = LEFT_ALIGN;
+	private boolean breakLongTokens = false;
+	private float alpha = 1f; // preserve alpha across rebuilds
+
+	/** If enabled, tokens longer than maxWidth are split across lines. */
+	public void breakLongTokens(boolean enabled){
+		if (breakLongTokens != enabled){
+			breakLongTokens = enabled;
+			build();
+		}
+	}
+
+	private float measureWidth(String s){
+		RenderedText t = new RenderedText(s, size);
+		t.scale.set(zoom);
+		return t.width();
+	}
+
+	private ArrayList<String> splitToFit(String s){
+		ArrayList<String> parts = new ArrayList<>();
+		while (s.length() > 0){
+
+			// binary search: longest prefix that fits maxWidth
+			int lo = 1, hi = s.length(), best = 1;
+			while (lo <= hi){
+				int mid = (lo + hi) >>> 1;
+				if (measureWidth(s.substring(0, mid)) <= maxWidth){
+					best = mid;
+					lo = mid + 1;
+				} else {
+					hi = mid - 1;
+				}
+			}
+
+			// prefer splitting at separators if possible
+			int preferred = -1;
+			for (int i = best - 1; i >= 0; i--){
+				char c = s.charAt(i);
+				if (c == '.' || c == '/' || c == '_' || c == '-'){
+					int cand = i + 1; // include separator
+					if (cand > 0 && measureWidth(s.substring(0, cand)) <= maxWidth){
+						preferred = cand;
+						break;
+					}
+				}
+			}
+			if (preferred > 0) best = preferred;
+
+			if (best <= 0) best = 1; // safety
+			parts.add(s.substring(0, best));
+			s = s.substring(best);
+		}
+		return parts;
+	}
+
 	
 	public RenderedTextBlock(int size){
 		this.size = size;
@@ -110,16 +164,40 @@ public class RenderedTextBlock extends Component {
 			} else if (str.equals(" ")){
 				words.add(SPACE);
 			} else {
-				RenderedText word = new RenderedText(str, size);
-				
-				if (highlighting) word.hardlight(hightlightColor);
-				else if (color != -1) word.hardlight(color);
-				word.scale.set(zoom);
-				
-				words.add(word);
-				add(word);
-				
-				if (height < word.height()) height = word.height();
+				if (breakLongTokens && multiline && maxWidth != Integer.MAX_VALUE && maxWidth > 0
+						&& measureWidth(str) > maxWidth){
+
+					ArrayList<String> parts = splitToFit(str);
+					for (int p = 0; p < parts.size(); p++){
+
+						RenderedText word = new RenderedText(parts.get(p), size);
+
+						if (highlighting) word.hardlight(hightlightColor);
+						else if (color != -1) word.hardlight(color);
+
+						word.scale.set(zoom);
+						word.alpha(alpha);
+
+						words.add(word);
+						add(word);
+
+						if (height < word.height()) height = word.height();
+
+						if (p < parts.size()-1) words.add(NEWLINE);
+					}
+
+				} else {
+					RenderedText word = new RenderedText(str, size);
+
+					if (highlighting) word.hardlight(hightlightColor);
+					else if (color != -1) word.hardlight(color);
+					word.scale.set(zoom);
+
+					words.add(word);
+					add(word);
+
+					if (height < word.height()) height = word.height();
+				}
 			}
 		}
 		layout();
@@ -146,8 +224,9 @@ public class RenderedTextBlock extends Component {
 			if (word != null) word.resetColor();
 		}
 	}
-	
+
 	public synchronized void alpha(float value){
+		this.alpha = value;
 		for (RenderedText word : words) {
 			if (word != null) word.alpha( value );
 		}

@@ -37,9 +37,11 @@ import com.shatteredpixel.shatteredpixeldungeon.services.updates.AvailableUpdate
 import com.shatteredpixel.shatteredpixeldungeon.services.updates.Updates;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Archs;
+import com.shatteredpixel.shatteredpixeldungeon.ui.IconButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Icons;
 import com.shatteredpixel.shatteredpixeldungeon.ui.StyledButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
+import com.shatteredpixel.shatteredpixeldungeon.utils.crash.WndCrashReports;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndOptions;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndSettings;
 import com.watabou.glwrap.Blending;
@@ -177,6 +179,19 @@ public class TitleScene extends PixelScene {
 		GAP /= landscape() ? 3 : 5;
 		GAP = Math.max(GAP, 2);
 
+		IconButton btnCrashReport = new IconButton(new Image(Assets.Sprites.AMULET)){
+			@Override
+			protected void onClick() {
+				TomorrowRogueNight.scene().add(new WndCrashReports());
+			}
+
+			@Override
+			protected void layout() {
+				super.layout();
+			}
+		};
+		add(btnCrashReport);
+
 		StyledButton btnCopy = new StyledButton(GREY_TR, "Clear"){
 			@Override
 			protected void onClick() {
@@ -216,6 +231,7 @@ public class TitleScene extends PixelScene {
 			btnAbout.setRect(btnSettings.left(), btnSettings.bottom() + GAP, btnRankings.width(), BTN_HEIGHT);
 			btnCopy.setRect(btnSettings.left(), btnSettings.bottom(), 40, 20);
 			btnShare.setRect(btnCopy.left(), btnCopy.bottom(), 40, 20);
+			btnCrashReport.setRect(2, camera().height - 16, 16, 16 );
 			//crashButton.setRect(btnShare.left(), btnShare.bottom(), 40, 20);
 		} else {
 			btnPlay.setRect(title.x, topRegion+GAP, title.width(), BTN_HEIGHT);
@@ -229,6 +245,7 @@ public class TitleScene extends PixelScene {
 			btnAbout.setRect(btnSettings.right()+2, btnSettings.top(), btnSettings.width(), BTN_HEIGHT);
 			btnCopy.setRect(0, btnSettings.bottom(), 40, 10);
 			btnShare.setRect(0, btnCopy.bottom(), 40, 10);
+			btnCrashReport.setRect(2, camera().height - 16, 16, 16 );
 			//crashButton.setRect(0, btnShare.bottom(), 40, 10);
 		}
 
