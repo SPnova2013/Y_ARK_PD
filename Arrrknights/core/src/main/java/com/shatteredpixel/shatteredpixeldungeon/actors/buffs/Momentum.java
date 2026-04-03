@@ -26,9 +26,14 @@ import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
+import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
 import com.shatteredpixel.shatteredpixeldungeon.ui.ActionIndicator;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
+import com.shatteredpixel.shatteredpixeldungeon.ui.HeroIcon;
+import com.watabou.noosa.BitmapText;
 import com.watabou.noosa.Image;
+import com.watabou.noosa.Visual;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.GameMath;
@@ -190,10 +195,25 @@ public class Momentum extends Buff implements ActionIndicator.Action {
 	}
 
 	@Override
-	public Image getIcon() {
-		Image im = new Image(Assets.Interfaces.BUFFS_LARGE, 144, 32, 16, 16);
-		im.hardlight(0x99992E);
-		return im;
+	public String actionName() {
+		return Messages.get(this, "action_name");
+	}
+
+	@Override
+	public int actionIcon() {
+		return HeroIcon.COMBO;
+	}
+	@Override
+	public Visual secondaryVisual() {
+		BitmapText txt = new BitmapText(PixelScene.pixelFont);
+		txt.text(Integer.toString((int)momentumStacks) );
+		txt.hardlight(CharSprite.POSITIVE);
+		txt.measure();
+		return txt;
+	}
+	@Override
+	public int indicatorColor() {
+		return 0x444444;
 	}
 
 	@Override

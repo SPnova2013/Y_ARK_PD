@@ -23,6 +23,7 @@ package com.shatteredpixel.shatteredpixeldungeon.effects;
 
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.BlueBlastParticle;
+import com.shatteredpixel.shatteredpixeldungeon.effects.particles.CompositeParticleFactory;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.CorrosionParticle;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.ElmoParticle;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.FlameParticle;
@@ -31,6 +32,7 @@ import com.shatteredpixel.shatteredpixeldungeon.effects.particles.LeafParticle;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.PitfallParticle;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.RainbowParticle;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.ShadowParticle;
+import com.shatteredpixel.shatteredpixeldungeon.effects.particles.SmokeParticle;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.WindParticle;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.WoolParticle;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.DungeonTilemap;
@@ -83,12 +85,18 @@ public class MagicMissile extends Emitter {
 
 	public static final int FIRE_SHOT    = 104;
 	public static final int TIME_CONE       = 105;
-	
+
+	public static final int VALSTRAX_FIRE    = 106;
+
 	public void reset( int type, int from, int to, Callback callback ) {
+		reset(type,from,to,callback,SPEED);
+	}
+	public void reset( int type, int from, int to, Callback callback ,float changeableSpeed) {
 		reset( type,
 				DungeonTilemap.raisedTileCenterToWorld( from ),
 				DungeonTilemap.raisedTileCenterToWorld( to ),
-				callback );
+				callback,
+				changeableSpeed);
 	}
 
 	public void reset( int type, Visual from, Visual to, Callback callback ) {
@@ -104,8 +112,11 @@ public class MagicMissile extends Emitter {
 				DungeonTilemap.raisedTileCenterToWorld( to ),
 				callback);
 	}
-
 	public void reset( int type, PointF from, PointF to, Callback callback ) {
+		reset(type,from,to,callback,SPEED);
+	}
+
+	public void reset( int type, PointF from, PointF to, Callback callback , float changeableSpeed) {
 		this.callback = callback;
 		
 		this.to = to;
@@ -116,10 +127,10 @@ public class MagicMissile extends Emitter {
 		height = 0;
 		
 		PointF d = PointF.diff( to, from );
-		PointF speed = new PointF( d ).normalize().scale( SPEED );
+		PointF speed = new PointF( d ).normalize().scale( changeableSpeed );
 		sx = speed.x;
 		sy = speed.y;
-		time = d.length() / SPEED;
+		time = d.length() / changeableSpeed;
 
 		switch(type){
 			case MAGIC_MISSILE: default:
@@ -208,10 +219,18 @@ public class MagicMissile extends Emitter {
 				size( 15 );
 				pour( FlameParticle.FACTORY, 0.0005f );
 				break;
-
 			case TIME_CONE:
 				size( 7 );
 				pour( BlueBlastParticle.FACTORY, 0.06f );
+				break;
+
+			case VALSTRAX_FIRE:
+				size( 18 );
+				Emitter.Factory combined = new CompositeParticleFactory(
+					SmokeParticle.FACTORY,
+					FlameParticle.withLifespan(0.2f)   // 自定义寿命的火焰粒子
+				);
+				pour(combined, 0.001f);
 				break;
 		}
 

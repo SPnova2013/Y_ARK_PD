@@ -59,6 +59,8 @@ package com.shatteredpixel.shatteredpixeldungeon.actors.hero;
  import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfParalyticGas;
  import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfStrength;
  import com.shatteredpixel.shatteredpixeldungeon.items.potions.exotic.PotionOfCleansing;
+ import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfEnergy;
+ import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfMight;
  import com.shatteredpixel.shatteredpixeldungeon.items.rings.SP.BadgeOfCharger;
  import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfIdentify;
  import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfLullaby;
@@ -86,6 +88,7 @@ package com.shatteredpixel.shatteredpixeldungeon.actors.hero;
  import com.shatteredpixel.shatteredpixeldungeon.items.testtool.TimeReverser;
  import com.shatteredpixel.shatteredpixeldungeon.items.testtool.TrapPlacer;
  import com.shatteredpixel.shatteredpixeldungeon.items.testtool.UnknownLazyTest;
+ import com.shatteredpixel.shatteredpixeldungeon.items.wands.SSP.StaffOfVision;
  import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfMagicMissile;
  import com.shatteredpixel.shatteredpixeldungeon.items.weapon.SpiritBow;
  import com.shatteredpixel.shatteredpixeldungeon.items.weapon.chimera.Blossoming;
@@ -100,6 +103,7 @@ package com.shatteredpixel.shatteredpixeldungeon.actors.hero;
  import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MagesStaff;
  import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Murakumo;
  import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.NEARL_AXE;
+ import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.SwordofArtorius;
  import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Violin;
  import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.WornShortsword;
  import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.LightKnife;
@@ -530,7 +534,22 @@ package com.shatteredpixel.shatteredpixeldungeon.actors.hero;
 	 }
 
 	 private void initIrene(Hero hero) {
+		 SwordofArtorius swordofartorius;
+		 swordofartorius = new SwordofArtorius();
+		 (hero.belongings.weapon = swordofartorius).identify();
+		 hero.belongings.weapon.activate(hero);
 
+		 RingOfEnergy roe = new RingOfEnergy();
+		 (hero.belongings.ring = roe).upgrade(20).identify();
+		 hero.belongings.ring.activate( hero );
+
+		 RingOfMight rom = new RingOfMight();
+		 (hero.belongings.misc = rom).upgrade(20).identify();
+		 hero.belongings.misc.activate( hero );
+
+		 StaffOfVision sov = new StaffOfVision();
+		 sov.upgrade(20).identify().collect();
+		 Dungeon.quickslot.setSlot(0, sov);
 	 }
 	public String title() {
 		return Messages.get(HeroClass.class, title);

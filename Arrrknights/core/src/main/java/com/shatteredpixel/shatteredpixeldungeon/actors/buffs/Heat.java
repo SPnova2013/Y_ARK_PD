@@ -12,6 +12,7 @@ import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
 import com.shatteredpixel.shatteredpixeldungeon.ui.ActionIndicator;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
+import com.shatteredpixel.shatteredpixeldungeon.ui.HeroIcon;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Icons;
 import com.watabou.noosa.Image;
 import com.watabou.noosa.audio.Sample;
@@ -86,9 +87,19 @@ public class Heat extends Buff implements ActionIndicator.Action {
         else if (power >= 50) return 0.5f;
         else return 1f;
     }
+    @Override
+    public String actionName() {
+        return Messages.get(this, "action_name");
+    }
 
     @Override
-    public Image getIcon() { return Icons.get(Icons.COMBO); }
+    public int actionIcon() {
+        return HeroIcon.COMBO;
+    }
+    @Override
+    public int indicatorColor() {
+        return 0x444444;
+    }
 
     @Override
     public void doAction() {

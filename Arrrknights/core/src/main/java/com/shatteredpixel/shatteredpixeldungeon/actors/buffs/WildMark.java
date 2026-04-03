@@ -31,6 +31,7 @@ import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.DungeonTilemap;
 import com.shatteredpixel.shatteredpixeldungeon.ui.ActionIndicator;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
+import com.shatteredpixel.shatteredpixeldungeon.ui.HeroIcon;
 import com.shatteredpixel.shatteredpixeldungeon.ui.QuickSlotButton;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.noosa.Image;
@@ -101,8 +102,17 @@ public class WildMark extends Buff implements ActionIndicator.Action {
      }
 
     @Override
-    public Image getIcon() {
-        return new ItemSprite(ItemSpriteSheet.THROWING_KNIFE, null);
+    public String actionName() {
+        return Messages.get(this, "action_name");
+    }
+
+    @Override
+    public int actionIcon() {
+        return HeroIcon.COMBO;
+    }
+    @Override
+    public int indicatorColor() {
+        return 0x444444;
     }
 
     @Override

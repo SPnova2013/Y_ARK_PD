@@ -15,6 +15,7 @@ import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.ui.ActionIndicator;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
+import com.shatteredpixel.shatteredpixeldungeon.ui.HeroIcon;
 import com.watabou.noosa.Image;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
@@ -47,16 +48,24 @@ public class ChenShooterBuff extends FlavourBuff implements ActionIndicator.Acti
     }
 
     @Override
+    public String actionName() {
+        return Messages.get(this, "action_name");
+    }
+
+    @Override
     public void restoreFromBundle( Bundle bundle ) {
         super.restoreFromBundle( bundle );
         targetid = bundle.getInt(TARGET);
         bundle.put(TARGET, targetid);
     }
     @Override
-    public Image getIcon() {
-        Image im = new Image(Assets.Interfaces.BUFFS_LARGE, 144, 32, 16, 16);
-        im.hardlight(0x99992E);
-        return im;
+    public int actionIcon() {
+        return HeroIcon.COMBO;
+    }
+
+    @Override
+    public int indicatorColor() {
+        return 0x444444;
     }
 
     public void set(int id) {

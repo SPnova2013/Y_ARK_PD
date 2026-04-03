@@ -28,6 +28,7 @@ import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.ui.ActionIndicator;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
+import com.shatteredpixel.shatteredpixeldungeon.ui.HeroIcon;
 import com.shatteredpixel.shatteredpixeldungeon.ui.QuickSlotButton;
 import com.watabou.noosa.Image;
 import com.watabou.noosa.audio.Sample;
@@ -96,9 +97,19 @@ public class WolfMark extends FlavourBuff implements ActionIndicator.Action  {
         theknife = new ArrayList<>((Collection<MissileWeapon>) ((Collection<?>) bundle.getCollection(KNIFE)));
         bundle.put( OBJECT, object );
     }
+
     @Override
-    public Image getIcon() {
-        return new ItemSprite(ItemSpriteSheet.THROWING_KNIFE, null);
+    public String actionName() {
+        return Messages.get(this, "action_name");
+    }
+
+    @Override
+    public int actionIcon() {
+        return HeroIcon.COMBO;
+    }
+    @Override
+    public int indicatorColor() {
+        return 0x444444;
     }
 
     @Override

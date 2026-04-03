@@ -259,6 +259,7 @@ public class SPDSettings extends GameSettings {
 	
 	public static final String KEY_LANG         = "language";
 	public static final String KEY_SYSTEMFONT	= "system_font";
+	public static final String KEY_VIBRATION    = "vibration";
 	
 	public static void language(Languages lang) {
 		put( KEY_LANG, lang.code());
@@ -283,6 +284,14 @@ public class SPDSettings extends GameSettings {
 		return getBoolean(KEY_SYSTEMFONT,
 				(language() == Languages.KOREAN/* || language() == Languages.CHINESE || language() == Languages.JAPANESE*/));
 	}
+	public static void vibration(boolean value){
+		put(KEY_VIBRATION, value);
+	}
+
+	public static boolean vibration(){
+		return getBoolean(KEY_VIBRATION, true);
+	}
+
 
 	//Connectivity
 

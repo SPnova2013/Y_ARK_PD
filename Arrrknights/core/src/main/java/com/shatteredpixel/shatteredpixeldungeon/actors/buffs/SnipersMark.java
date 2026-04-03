@@ -32,6 +32,7 @@ import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.ui.ActionIndicator;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
+import com.shatteredpixel.shatteredpixeldungeon.ui.HeroIcon;
 import com.shatteredpixel.shatteredpixeldungeon.ui.QuickSlotButton;
 import com.watabou.noosa.Image;
 import com.watabou.utils.Bundle;
@@ -100,10 +101,30 @@ public class SnipersMark extends FlavourBuff implements ActionIndicator.Action {
 	public String desc() {
 		return Messages.get(this, "desc");
 	}
-	
 	@Override
-	public Image getIcon() {
-		return new ItemSprite(ItemSpriteSheet.SPIRIT_BOW, null);
+	public String actionName() {
+		SpiritBow bow = Dungeon.hero.belongings.getItem(SpiritBow.class);
+
+		if (bow == null) return null;
+
+		switch (bow.augment){
+			case NONE: default:
+				return Messages.get(this, "action_name_snapshot");
+			case SPEED:
+				return Messages.get(this, "action_name_volley");
+			case DAMAGE:
+				return Messages.get(this, "action_name_sniper");
+		}
+	}
+
+	@Override
+	public int actionIcon() {
+		return HeroIcon.SNIPERS_MARK;
+	}
+
+	@Override
+	public int indicatorColor() {
+		return 0x444444;
 	}
 	
 	@Override

@@ -22,6 +22,7 @@
 package com.shatteredpixel.shatteredpixeldungeon.actors.hero;
 
 import com.shatteredpixel.shatteredpixeldungeon.Badges;
+import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.GamesInProgress;
 import com.shatteredpixel.shatteredpixeldungeon.items.EquipableItem;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
@@ -34,7 +35,6 @@ import com.shatteredpixel.shatteredpixeldungeon.items.keys.Key;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.Ring;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfRemoveCurse;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.Wand;
-import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
 
@@ -55,7 +55,28 @@ public class Belongings implements Iterable<Item> {
 
 	//used when thrown weapons temporary occupy the weapon slot
 	public KindOfWeapon stashedWeapon = null;
-	
+	public KindOfWeapon thrownWeapon = null;
+	public KindOfWeapon abilityWeapon = null;
+
+	public KindOfWeapon secondWep = null;
+	public KindOfWeapon attackingWeapon(){
+		if (thrownWeapon != null) return thrownWeapon;
+		if (abilityWeapon != null) return abilityWeapon;
+		return weapon();
+	}
+	private boolean lostInvent;//以后改版十字架了才用得到
+	public void lostInventory( boolean val ){
+		lostInvent = val;
+	}
+	public KindOfWeapon weapon(){
+		/*if (!lostInventory() || (weapon != null && weapon.keptThroughLostInventory())){
+			return weapon;
+		} else {
+			return null;
+		}*/
+		return weapon;
+	}
+
 	public Belongings( Hero owner ) {
 		this.owner = owner;
 		
@@ -65,6 +86,10 @@ public class Belongings implements Iterable<Item> {
 				for (Item item : items){
 					if (item instanceof Bag){
 						cap++;
+					}
+					if (Dungeon.hero != null && Dungeon.hero.belongings.secondWep != null){
+						//secondary weapons still occupy an inv. slot
+						cap--;
 					}
 				}
 				return cap;
@@ -78,6 +103,7 @@ public class Belongings implements Iterable<Item> {
 	private static final String ARTIFACT   = "artifact";
 	private static final String MISC       = "misc";
 	private static final String RING       = "ring";
+	private static final String SECOND_WEP = "second_wep";
 
 	public void storeInBundle( Bundle bundle ) {
 		
@@ -88,6 +114,7 @@ public class Belongings implements Iterable<Item> {
 		bundle.put( ARTIFACT, artifact );
 		bundle.put( MISC, misc );
 		bundle.put( RING, ring );
+		bundle.put( SECOND_WEP, secondWep );
 	}
 	
 	public void restoreFromBundle( Bundle bundle ) {
@@ -136,6 +163,8 @@ public class Belongings implements Iterable<Item> {
 		if (artifact != null)   artifact.activate(owner);
 		if (misc != null)       misc.activate( owner );
 		if (ring != null)       ring.activate( owner );
+		secondWep = (KindOfWeapon) bundle.get(SECOND_WEP);
+		if (secondWep != null)    secondWep.activate(owner);
 	}
 	
 	public static void preview( GamesInProgress.Info info, Bundle bundle ) {
@@ -214,6 +243,10 @@ public class Belongings implements Iterable<Item> {
 			weapon.identify();
 			Badges.validateItemLevelAquired( weapon );
 		}
+		if (secondWep != null) {
+			secondWep.identify();
+			Badges.validateItemLevelAquired( secondWep );
+		}
 		if (armor != null) {
 			armor.identify();
 			Badges.validateItemLevelAquired( armor );
@@ -238,7 +271,7 @@ public class Belongings implements Iterable<Item> {
 	}
 	
 	public void uncurseEquipped() {
-		ScrollOfRemoveCurse.uncurse( owner, armor, weapon, artifact, misc, ring);
+		ScrollOfRemoveCurse.uncurse( owner, armor, weapon, artifact, misc, ring, secondWep);
 	}
 	
 	public Item randomUnequipped() {
@@ -311,7 +344,7 @@ public class Belongings implements Iterable<Item> {
 		
 		private Iterator<Item> backpackIterator = backpack.iterator();
 		
-		private Item[] equipped = {weapon, armor, artifact, misc, ring};
+		private Item[] equipped = {weapon, armor, artifact, misc, ring, secondWep};
 		private int backpackIndex = equipped.length;
 		
 		@Override
@@ -356,6 +389,9 @@ public class Belongings implements Iterable<Item> {
 				break;
 			case 4:
 				equipped[4] = ring = null;
+				break;
+			case 5:
+				equipped[5] = secondWep = null;
 				break;
 			default:
 				backpackIterator.remove();

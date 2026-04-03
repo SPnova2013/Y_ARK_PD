@@ -21,6 +21,7 @@ import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.ui.ActionIndicator;
 import com.shatteredpixel.shatteredpixeldungeon.ui.AttackIndicator;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
+import com.shatteredpixel.shatteredpixeldungeon.ui.HeroIcon;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndKnightSkill;
 import com.watabou.noosa.Image;
@@ -126,15 +127,17 @@ public class KnightSKILL extends Buff implements ActionIndicator.Action {
     }
 
     @Override
-    public Image getIcon() {
-        Image icon;
-        if (((Hero)target).belongings.weapon != null){
-            icon = new ItemSprite(((Hero)target).belongings.weapon.image, null);
-        } else {
-            icon = new ItemSprite(new Item(){ {image = ItemSpriteSheet.WEAPON_HOLDER; }});
-        }
+    public String actionName() {
+        return Messages.get(this, "action_name");
+    }
 
-        return icon;
+    @Override
+    public int actionIcon() {
+        return HeroIcon.COMBO;
+    }
+    @Override
+    public int indicatorColor() {
+        return 0x444444;
     }
 
     @Override

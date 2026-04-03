@@ -127,7 +127,9 @@ public class Item implements Bundlable {
 		actions.add( AC_THROW );
 		return actions;
 	}
-	
+	public String actionName(String action, Hero hero){
+		return Messages.get(this, "ac_" + action);
+	}
 	public boolean doPickUp( Hero hero ) {
 		if (collect( hero.belongings.backpack )) {
 
@@ -180,7 +182,11 @@ public class Item implements Bundlable {
 	public void doThrow( Hero hero ) {
 		GameScene.selectCell(thrower);
 	}
-	
+
+	public String defaultAction(){
+		return defaultAction;
+	}
+
 	public void execute( Hero hero, String action ) {
 
 		GameScene.cancel();

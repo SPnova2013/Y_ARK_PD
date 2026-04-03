@@ -11,6 +11,7 @@ import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.ui.ActionIndicator;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
+import com.shatteredpixel.shatteredpixeldungeon.ui.HeroIcon;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Icons;
 import com.watabou.noosa.Image;
 import com.watabou.noosa.audio.Sample;
@@ -76,8 +77,20 @@ public class WindEnergy extends Buff implements ActionIndicator.Action {
     public int Eneray() { return  Energy;}
     public void Eneray(int n) { Energy = n; }
 
+
     @Override
-    public Image getIcon() { return Icons.get(Icons.TALENT); }
+    public String actionName() {
+        return Messages.get(this, "action_name");
+    }
+
+    @Override
+    public int actionIcon() {
+        return HeroIcon.COMBO;
+    }
+    @Override
+    public int indicatorColor() {
+        return 0x444444;
+    }
 
     @Override
     public void doAction() {

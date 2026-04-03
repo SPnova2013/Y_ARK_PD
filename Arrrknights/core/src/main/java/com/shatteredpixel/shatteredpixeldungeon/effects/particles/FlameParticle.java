@@ -30,14 +30,35 @@ public class FlameParticle extends PixelParticle.Shrinking {
 	public static final Emitter.Factory FACTORY = new Factory() {
 		@Override
 		public void emit( Emitter emitter, int index, float x, float y ) {
-			((FlameParticle)emitter.recycle( FlameParticle.class )).reset( x, y );
+			FlameParticle particle = (FlameParticle) emitter.recycle(FlameParticle.class);
+			particle.setLifespan(0.6f);
+			particle.reset(x, y);
 		}
 		@Override
 		public boolean lightMode() {
 			return true;
 		}
 	};
-	
+
+	public static Factory withLifespan(final float lifespan) {
+		return new Factory() {
+			@Override
+			public void emit(Emitter emitter, int index, float x, float y) {
+				FlameParticle particle = (FlameParticle) emitter.recycle(FlameParticle.class);
+				particle.setLifespan(lifespan);
+				particle.reset(x, y);
+			}
+
+			@Override
+			public boolean lightMode() {
+				return true;
+			}
+		};
+	}
+	public void setLifespan(float lifespan) {
+		this.lifespan = lifespan;
+	}
+
 	public FlameParticle() {
 		super();
 		
