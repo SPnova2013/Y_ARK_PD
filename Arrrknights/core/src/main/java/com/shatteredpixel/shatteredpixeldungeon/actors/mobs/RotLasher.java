@@ -22,14 +22,20 @@
 package com.shatteredpixel.shatteredpixeldungeon.actors.mobs;
 
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.ToxicGas;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Amok;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Burning;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Charm;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Cripple;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Terror;
 import com.shatteredpixel.shatteredpixeldungeon.items.Generator;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.RotLasherSprite;
 import com.watabou.utils.Random;
+
+import java.util.HashSet;
 
 public class RotLasher extends Mob {
 
@@ -53,6 +59,15 @@ public class RotLasher extends Mob {
 
 		properties.add(Property.IMMOVABLE);
 		properties.add(Property.MINIBOSS);
+	}
+	public RotLasher(){
+		super();
+		HP = HT = Dungeon.roundedDepth * 5;
+		damageMax = Dungeon.roundedDepth * 2;
+		damageMin = Dungeon.roundedDepth;
+		drMax = Dungeon.roundedDepth;
+		attackSkill = Dungeon.roundedDepth * 2;
+		maxLvl = Dungeon.roundedDepth;
 	}
 
 	@Override
@@ -99,4 +114,56 @@ public class RotLasher extends Mob {
 	}
 
 	private class Waiting extends Mob.Wandering{}
+
+	@Override
+	protected Char chooseEnemy() {
+		Terror terror = buff(Terror.class);
+		if (terror != null) {
+			Char source = (Char) Actor.findById(terror.object);
+			if (source != null) {
+				return source;
+			}
+		}
+
+		HashSet<Char> enemies = new HashSet<>();
+
+		if (Dungeon.hero.isAlive() && fieldOfView[Dungeon.hero.pos] && Dungeon.hero.invisible <= 0) {
+			if (!Dungeon.hero.isInvulnerable(getClass())) {
+				enemies.add(Dungeon.hero);
+			}
+		}
+
+		for (Mob mob : Dungeon.level.mobs) {
+			if (mob == this || mob instanceof RotLasher || mob instanceof RotHeart) {
+				continue;
+			}
+			if (mob.isAlive() && fieldOfView[mob.pos] && mob.invisible <= 0) {
+				if (!mob.isInvulnerable(getClass())) {
+					enemies.add(mob);
+				}
+			}
+		}
+
+		Charm charm = buff(Charm.class);
+		if (charm != null) {
+			Char source = (Char) Actor.findById(charm.object);
+			if (source != null && enemies.contains(source) && enemies.size() > 1) {
+				enemies.remove(source);
+			}
+		}
+
+		if (enemies.isEmpty()) {
+			return null;
+		}
+
+		Char closest = null;
+		for (Char curr : enemies) {
+			if (closest == null
+					|| Dungeon.level.distance(pos, curr.pos) < Dungeon.level.distance(pos, closest.pos)
+					|| (Dungeon.level.distance(pos, curr.pos) == Dungeon.level.distance(pos, closest.pos) && curr == Dungeon.hero)) {
+				closest = curr;
+			}
+		}
+		return closest;
+	}
 }

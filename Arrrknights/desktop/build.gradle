@@ -1,7 +1,10 @@
 apply plugin: "java"
 
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
-sourceCompatibility = targetCompatibility = appJavaCompatibility
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+}
 
 ext.appMainClass = "com.shatteredpixel.shatteredpixeldungeon.desktop.DesktopLauncher"
 processResources {
@@ -18,7 +21,7 @@ task debug(dependsOn: classes, type: JavaExec) {
     classpath = sourceSets.debug.runtimeClasspath + sourceSets.main.runtimeClasspath
     ignoreExitValue = true
 
-    main = appMainClass
+    mainClass.set(appMainClass)
     systemProperty 'Specification-Title', appName
     systemProperty 'Implementation-Title', appPackageName
     systemProperty 'Specification-Version', appVersionName + "-INDEV"

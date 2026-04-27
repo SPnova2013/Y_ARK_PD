@@ -232,8 +232,7 @@ abstract public class MissileWeapon extends Weapon {
 						if (canSpreadGrass(cell2)){
 							if (Random.Int(5) == 3){
 								int terr = Dungeon.level.map[cell2];
-								if (terr == Terrain.EMPTY || terr == Terrain.EMBERS || terr == Terrain.EMPTY_DECO ||
-										terr == Terrain.GRASS || terr == Terrain.HIGH_GRASS) {
+								if (Terrain.isPlantable(terr)) {
 									Level.set(cell2, Terrain.FURROWED_GRASS);
 								GameScene.updateMap( cell2 );}
 							}

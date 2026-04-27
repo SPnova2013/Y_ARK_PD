@@ -28,16 +28,15 @@ android {
         minSdkVersion appAndroidMinSDK
         targetSdkVersion appAndroidTargetSDK
         multiDexEnabled true
+        resourceConfigurations += ['en_US', 'cs', 'tr', 'ca', 'ko', 'pl', 'it', 'ja', 'eo', 'ru', 'zh_CN', 'de', 'fr', 'es', 'pt', 'fi', 'hu', 'in']
 
-        resConfigs "en_US", "cs", "tr", "ca", "ko", "pl", "it", "ja",
-                "eo", "ru", "zh_CN", "de", "fr", "es", "pt", "fi", "hu", "in"
     }
 
     buildTypes {
         debug {
             //applicationIdSuffix ".indev"
             versionNameSuffix '-INDEV'
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             dependencies {
                 debugImplementation project(':services:updates:debugUpdates')
                 debugImplementation project(':services:news:debugNews')

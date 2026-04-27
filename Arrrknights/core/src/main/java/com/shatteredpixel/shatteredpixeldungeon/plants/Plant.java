@@ -30,6 +30,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Amok;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Barkskin;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Hex;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.PlantBuff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroSubClass;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
@@ -43,6 +44,7 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundlable;
@@ -52,6 +54,7 @@ import com.watabou.utils.Random;
 import com.watabou.utils.Reflection;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 public abstract class Plant implements Bundlable {
 
@@ -246,5 +249,35 @@ public abstract class Plant implements Bundlable {
 				return "";
 			}
 		}
+	}
+	public HashSet<PlantBuff> buffs = new HashSet<>();
+	public synchronized  <T extends PlantBuff> T buff( Class<T> c ) {
+		for (PlantBuff b : buffs) {
+			if (b.getClass() == c) {
+				return (T)b;
+			}
+		}
+		return null;
+	}
+	public synchronized HashSet<PlantBuff> buffs() {
+		return new HashSet<>(buffs);
+	}
+	public synchronized void add( PlantBuff buff ) {
+		buffs.add( buff );
+		Actor.add( buff );
+	}
+	public void clearBuffs() {
+		for (PlantBuff b : new ArrayList<>(buffs)) {
+			removePlantBuff(b);
+		}
+	}
+	public void removePlantBuff(Class<? extends PlantBuff> cl) {
+		for (PlantBuff b : new ArrayList<>(buffs)) {
+			if (cl.isInstance(b)) removePlantBuff(b);
+		}
+	}
+	public void removePlantBuff(PlantBuff buff) {
+		buffs.remove(buff);
+		Actor.remove(buff);
 	}
 }

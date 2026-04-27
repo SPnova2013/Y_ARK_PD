@@ -211,6 +211,7 @@ public class Dungeon {
 	public static QuickSlot quickslot = new QuickSlot();
 	
 	public static int depth;
+	public static int roundedDepth;
 	public static int gold;
 	public static int guardquest;
 	public static int acequest;
@@ -288,6 +289,7 @@ public class Dungeon {
 		QuickSlotButton.reset();
 		
 		depth = 0; //@
+		roundedDepth = 0; //@
 		gold = 0;
 		cautusquset = -1;
 		guardquest = -1;
@@ -359,6 +361,7 @@ public class Dungeon {
 		Actor.clear();
 		
 		depth++;
+		roundedDepth = depth + 25 * Statistics.victoryLapRounds;
 		if (depth > Statistics.deepestFloor) {
 			if (depth != 27 && depth != 28) Statistics.deepestFloor = depth;
 			if (Statistics.deepestFloor <= 1) Statistics.deepestFloor = 1;

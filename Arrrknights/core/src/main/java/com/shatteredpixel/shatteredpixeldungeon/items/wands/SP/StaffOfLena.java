@@ -68,8 +68,7 @@ public class StaffOfLena extends DamageWand {
             }
 
             int terr = Dungeon.level.map[c];
-            if (terr == Terrain.EMPTY || terr == Terrain.EMBERS || terr == Terrain.EMPTY_DECO ||
-                    terr == Terrain.GRASS || terr == Terrain.HIGH_GRASS) {
+            if (Terrain.isPlantable(terr)) {
             Level.set(c, Terrain.FURROWED_GRASS);
                 GameScene.updateMap( c );}
         }

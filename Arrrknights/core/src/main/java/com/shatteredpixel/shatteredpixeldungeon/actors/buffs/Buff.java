@@ -24,6 +24,7 @@ package com.shatteredpixel.shatteredpixeldungeon.actors.buffs;
 import com.shatteredpixel.shatteredpixeldungeon.TomorrowRogueNight;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
+import com.shatteredpixel.shatteredpixeldungeon.plants.Plant;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
 import com.watabou.noosa.Image;
 import com.watabou.utils.Reflection;
@@ -150,7 +151,33 @@ public class Buff extends Actor {
 			return append( target, buffClass );
 		}
 	}
-	
+	public static<T extends PlantBuff> T affect(Plant target, Class<T> buffClass ) {
+		T buff = target.buff( buffClass );
+		if (buff != null) {
+			return buff;
+		} else {
+			return append( target, buffClass );
+		}
+	}
+	public static<T extends PlantBuff> T append( Plant target, Class<T> buffClass ) {
+		T buff = Reflection.newInstance(buffClass);
+		buff.attachTo( target );
+		return buff;
+	}
+	public Plant plantTarget;
+	public boolean attachTo( Plant target ) {
+		TomorrowRogueNight.actorLogger.logActorEntry(this.getClass(),"attachTo" + target.getClass().getSimpleName());
+
+		this.plantTarget = target;
+		target.add( (PlantBuff) this );
+
+		if (target.buffs().contains(this)){
+			return true;
+		} else {
+			this.target = null;
+			return false;
+		}
+	}
 	public static<T extends FlavourBuff> T affect( Char target, Class<T> buffClass, float duration ) {
 		T buff = affect( target, buffClass );
 		buff.spend( duration * target.resist(buffClass) );

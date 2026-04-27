@@ -21,6 +21,10 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.levels;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 public class Terrain {
 
 	public static final int CHASM			= 0;
@@ -125,5 +129,11 @@ public class Terrain {
 		}
 		return map;
 	}
+	private static final Set<Integer> PLANTABLE = new HashSet<>(Arrays.asList(
+			EMPTY, EMBERS, EMPTY_DECO, GRASS, HIGH_GRASS, FURROWED_GRASS
+	));
 
+	public static boolean isPlantable(int terr) {
+		return PLANTABLE.contains(terr);
+	}
 }
