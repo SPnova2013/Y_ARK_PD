@@ -23,6 +23,7 @@ package com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.Statistics;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.FetidSlug;
@@ -278,55 +279,70 @@ public class Ghost extends NPC {
 		}
 		
 		public static void spawn( SewerLevel level ) {
-			if (!spawned && Dungeon.depth > 1 && Random.Int( 5 - Dungeon.depth ) == 0) {
-				
-				Ghost ghost = new Ghost();
-				do {
-					ghost.pos = level.randomRespawnCell( ghost );
-				} while (ghost.pos == -1);
-				level.mobs.add( ghost );
-				
-				spawned = true;
-				//dungeon depth determines type of quest.
-				//depth2=fetid rat, 3=gnoll trickster, 4=great crab
-				type = Dungeon.depth-1;
-				
-				given = false;
-				processed = false;
-				depth = Dungeon.depth;
+			if (SpawnConfig.decidedDepth > 0) {
+				if (spawned) return;
+				if (Dungeon.depth != SpawnConfig.decidedDepth) return;
+			} else {
+				if (spawned) return;
+				if (Dungeon.depth <= 1) return;
+				if (Random.Int(5 - Dungeon.depth) != 0) return;
+			}
+			Ghost ghost = new Ghost();
+			do {
+				ghost.pos = level.randomRespawnCell( ghost );
+			} while (ghost.pos == -1);
+			level.mobs.add( ghost );
 
-				//50%:tier2, 30%:tier3, 15%:tier4, 5%:tier5
-				switch (Random.chances(new float[]{0, 0, 10, 6, 3, 1})){
-					default:
-					case 2: armor = new LeatherArmor(); break;
-					case 3: armor = new MailArmor();    break;
-					case 4: armor = new ScaleArmor();   break;
-					case 5: armor = new PlateArmor();   break;
-				}
-				//50%:tier2, 30%:tier3, 15%:tier4, 5%:tier5
-				int wepTier = Random.chances(new float[]{0, 0, 10, 6, 3, 1});
-				Generator.Category c = Generator.wepTiers[wepTier - 1];
-				weapon = (MeleeWeapon) Reflection.newInstance(c.classes[Random.chances(c.probs)]);
+			spawned = true;
+			//dungeon depth determines type of quest.
+			//depth2=fetid rat, 3=gnoll trickster, 4=great crab
+			type = Dungeon.depth-1;
 
-				//+1 : 87% / +2 : 10% / +3 : 3%
-				float itemLevelRoll = Random.Float();
-				int itemLevel;
-				if (itemLevelRoll < 0.87f){
-					itemLevel = 1;
-				} else if (itemLevelRoll < 0.97f){
-					itemLevel = 2;
-				} else {
-					itemLevel = 3;
-				}
-				weapon.upgrade(itemLevel);
-				armor.upgrade(itemLevel);
+			given = false;
+			processed = false;
+			depth = Dungeon.depth;
+			int victoryLapRounds = Statistics.victoryLapRounds;
 
-				//10% to be enchanted. We store it separately so enchant status isn't revealed early
-				if (Random.Int(10) == 0){
-					enchant = Weapon.Enchantment.random();
-					glyph = Armor.Glyph.random();
-				}
+			//50%:tier2, 30%:tier3, 15%:tier4, 5%:tier5
+			float[] tierChances = SpawnConfig.tierChances;
+			if (tierChances == null) {
+				tierChances = new float[]{0, 0, 10, 6, 3, 1};  // 与原含义一致
+			}
+			if(victoryLapRounds > 0) tierChances = new float[]{0, 0, 0, 0, 0, 1};
+			switch (Random.chances(tierChances)){
+				default:
+				case 2: armor = new LeatherArmor(); break;
+				case 3: armor = new MailArmor();    break;
+				case 4: armor = new ScaleArmor();   break;
+				case 5: armor = new PlateArmor();   break;
+			}
+			//50%:tier2, 30%:tier3, 15%:tier4, 5%:tier5
+			int wepTier = Random.chances(tierChances);
+			Generator.Category c = Generator.wepTiers[wepTier - 1];
+			weapon = (MeleeWeapon) Reflection.newInstance(c.classes[Random.chances(c.probs)]);
 
+			float[] chances = SpawnConfig.levelChances;
+			//默认情况下：+1 : 87% / +2 : 10% / +3 : 3%
+			if (chances == null) {
+				chances = new float[]{0.87f, 0.10f, 0.03f};
+			}
+			float roll = Random.Float();
+			int itemLevel;
+			if (roll < chances[0]){
+				itemLevel = 1;
+			} else if (roll < chances[0] + chances[1]){
+				itemLevel = 2;
+			} else {
+				itemLevel = 3;
+			}
+			if(victoryLapRounds>0) itemLevel += 10*victoryLapRounds;
+			weapon.upgrade(itemLevel);
+			armor.upgrade(itemLevel);
+
+			//10% to be enchanted. We store it separately so enchant status isn't revealed early
+			if (Random.Int(10) == 0){
+				enchant = Weapon.Enchantment.random();
+				glyph = Armor.Glyph.random();
 			}
 		}
 		
@@ -351,6 +367,41 @@ public class Ghost extends NPC {
 		
 		public static boolean completed(){
 			return processed() && weapon == null && armor == null;
+		}
+	}
+	public static class SpawnConfig {
+		public static int decidedDepth = -1;
+		public static float[] tierChances = null;
+		public static float[] levelChances = null;
+
+		public static void setDecidedDepth(int depth) {
+			decidedDepth = depth;
+		}
+
+		public static void setTierChances(float[] weights) {
+			if (weights != null && weights.length == 6) {
+				tierChances = weights.clone();
+			} else {
+				tierChances = null;
+			}
+		}
+
+		public static void setRewardLevelChances(float[] chances) {
+			if (chances != null && chances.length == 3) {
+				float sum = 0;
+				for (float c : chances) sum += c;
+				if (Math.abs(sum - 1.0f) < 0.001f) {
+					levelChances = chances.clone();
+					return;
+				}
+			}
+			levelChances = null;
+		}
+
+		public static void reset() {
+			decidedDepth = -1;
+			tierChances = null;
+			levelChances = null;
 		}
 	}
 }

@@ -21,9 +21,14 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.levels.painters;
 
+import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.RlyehText;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Wandmaker;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.Room;
+import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.standard.EntranceRoom;
+import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.standard.ExitRoom;
 import com.watabou.utils.Random;
 
 import java.util.ArrayList;
@@ -32,6 +37,14 @@ public class SewerPainter extends RegularPainter {
 	
 	@Override
 	protected void decorate(Level level, ArrayList<Room> rooms) {
+		if(Dungeon.depth == 1){
+			for (Room r : rooms) {
+				if (r instanceof ExitRoom) {
+					RlyehText.spawn(level, r);
+					break;
+				}
+			}
+		}
 		
 		int[] map = level.map;
 		int w = level.width();

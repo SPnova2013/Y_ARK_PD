@@ -22,6 +22,7 @@
 package com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs;
 
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.Statistics;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.items.Generator;
@@ -317,17 +318,20 @@ public class Wandmaker extends NPC {
 				level.mobs.add( npc );
 
 				spawned = true;
+				int victoryLapRounds = Statistics.victoryLapRounds;
 
 				given = false;
 				wand1 = (Wand) Generator.random(Generator.Category.WAND);
 				wand1.cursed = false;
 				wand1.upgrade();
+				if(victoryLapRounds>0) wand1.upgrade(10*victoryLapRounds);
 
 				do {
 					wand2 = (Wand) Generator.random(Generator.Category.WAND);
 				} while (wand2.getClass().equals(wand1.getClass()));
 				wand2.cursed = false;
 				wand2.upgrade();
+				if(victoryLapRounds>0) wand2.upgrade(10*victoryLapRounds);
 				
 			}
 		}
@@ -337,7 +341,8 @@ public class Wandmaker extends NPC {
 			if (!spawned && (type != 0 || (Dungeon.depth > 6 && Random.Int( 10 - Dungeon.depth ) == 0))) {
 				
 				// decide between 1,2, or 3 for quest type.
-				if (type == 0) type = Random.Int(3)+1;
+				if(SpawnConfig.missionType != -1) type = SpawnConfig.missionType;
+				if (type == 0 ) type = Random.Int(3)+1;
 				
 				switch (type){
 					case 1: default:
@@ -362,6 +367,17 @@ public class Wandmaker extends NPC {
 			wand2 = null;
 			
 			Notes.remove( Notes.Landmark.WANDMAKER );
+		}
+	}
+	public static class SpawnConfig {
+		public static int missionType = -1;
+
+		public static void setMissionType(int type) {
+			missionType = type;
+		}
+
+		public static void reset() {
+			missionType = -1;
 		}
 	}
 }
