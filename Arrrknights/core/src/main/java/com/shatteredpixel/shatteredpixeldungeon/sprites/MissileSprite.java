@@ -53,32 +53,50 @@ import java.util.HashMap;
 public class MissileSprite extends ItemSprite implements Tweener.Listener {
 
 	private static final float SPEED	= 480f;
-	
+
 	private Callback callback;
-	
 	public void reset( int from, int to, Item item, Callback listener ) {
-		reset(Dungeon.level.solid[from] ? DungeonTilemap.raisedTileCenterToWorld(from) : DungeonTilemap.raisedTileCenterToWorld(from),
-				Dungeon.level.solid[to] ? DungeonTilemap.raisedTileCenterToWorld(to) : DungeonTilemap.raisedTileCenterToWorld(to),
-				item, listener);
+		reset(from, to, item, listener, SPEED);
 	}
 
 	public void reset( Visual from, int to, Item item, Callback listener ) {
-		reset(from.center(),
-				Dungeon.level.solid[to] ? DungeonTilemap.raisedTileCenterToWorld(to) : DungeonTilemap.raisedTileCenterToWorld(to),
-				item, listener );
+		reset(from, to, item, listener, SPEED);
 	}
 
 	public void reset( int from, Visual to, Item item, Callback listener ) {
-		reset(Dungeon.level.solid[from] ? DungeonTilemap.raisedTileCenterToWorld(from) : DungeonTilemap.raisedTileCenterToWorld(from),
-				to.center(),
-				item, listener );
+		reset(from, to, item, listener, SPEED);
 	}
 
 	public void reset( Visual from, Visual to, Item item, Callback listener ) {
-		reset(from.center(), to.center(), item, listener );
+		reset(from, to, item, listener, SPEED);
 	}
 
 	public void reset( PointF from, PointF to, Item item, Callback listener) {
+		reset(from, to, item, listener, SPEED);
+	}
+	public void reset( int from, int to, Item item, Callback listener,float speed ) {
+		reset(Dungeon.level.solid[from] ? DungeonTilemap.raisedTileCenterToWorld(from) : DungeonTilemap.raisedTileCenterToWorld(from),
+				Dungeon.level.solid[to] ? DungeonTilemap.raisedTileCenterToWorld(to) : DungeonTilemap.raisedTileCenterToWorld(to),
+				item, listener,speed);
+	}
+
+	public void reset( Visual from, int to, Item item, Callback listener,float speed ) {
+		reset(from.center(),
+				Dungeon.level.solid[to] ? DungeonTilemap.raisedTileCenterToWorld(to) : DungeonTilemap.raisedTileCenterToWorld(to),
+				item, listener,speed );
+	}
+
+	public void reset( int from, Visual to, Item item, Callback listener, float speed ) {
+		reset(Dungeon.level.solid[from] ? DungeonTilemap.raisedTileCenterToWorld(from) : DungeonTilemap.raisedTileCenterToWorld(from),
+				to.center(),
+				item, listener,speed );
+	}
+
+	public void reset( Visual from, Visual to, Item item, Callback listener, float speed) {
+		reset(from.center(), to.center(), item, listener, speed );
+	}
+
+	public void reset( PointF from, PointF to, Item item, Callback listener, float speed) {
 		revive();
 
 		if (item == null)   view(0, null);
@@ -87,11 +105,11 @@ public class MissileSprite extends ItemSprite implements Tweener.Listener {
 		setup( from,
 				to,
 				item,
-				listener );
+				listener, speed );
 	}
-	
+
 	private static final int DEFAULT_ANGULAR_SPEED = 1080;
-	
+
 	private static final HashMap<Class<?extends Item>, Integer> ANGULAR_SPEEDS = new HashMap<>();
 	static {
 		ANGULAR_SPEEDS.put(Dart.class,          0);
@@ -103,16 +121,16 @@ public class MissileSprite extends ItemSprite implements Tweener.Listener {
 		ANGULAR_SPEEDS.put(Javelin.class,       0);
 		ANGULAR_SPEEDS.put(Trident.class,       0);
 		ANGULAR_SPEEDS.put(LightKnife.class,       0);
-		
+
 		ANGULAR_SPEEDS.put(SpiritBow.SpiritArrow.class,       0);
 		ANGULAR_SPEEDS.put(SarkazSniperSprite.ScorpioShot.class,   0);
 		ANGULAR_SPEEDS.put(SarkazSniperEliteSprite.ScorpioShot.class,   0);
 
 		ANGULAR_SPEEDS.put(HeavyBoomerang.class,1440);
 		ANGULAR_SPEEDS.put(Bolas.class,         1440);
-		
+
 		ANGULAR_SPEEDS.put(Shuriken.class,      0);
-		
+
 		ANGULAR_SPEEDS.put(WSprite.TenguShuriken.class,      2160);
 		ANGULAR_SPEEDS.put(Thoughts.SpiritArrow.class,0);
 		ANGULAR_SPEEDS.put(TerminationT.SpiritArrow.class,0);
@@ -121,7 +139,7 @@ public class MissileSprite extends ItemSprite implements Tweener.Listener {
 	}
 
 	//TODO it might be nice to have a source and destination angle, to improve thrown weapon visuals
-	private void setup( PointF from, PointF to, Item item, Callback listener ){
+	private void setup( PointF from, PointF to, Item item, Callback listener , float customSpeed){
 
 		originToCenter();
 
@@ -137,7 +155,7 @@ public class MissileSprite extends ItemSprite implements Tweener.Listener {
 
 		PointF d = PointF.diff( to, from );
 		speed.set(d).normalize().scale(SPEED);
-		
+
 		angularSpeed = DEFAULT_ANGULAR_SPEED;
 		for (Class<?extends Item> cls : ANGULAR_SPEEDS.keySet()){
 			if (cls.isAssignableFrom(item.getClass())){
@@ -145,25 +163,25 @@ public class MissileSprite extends ItemSprite implements Tweener.Listener {
 				break;
 			}
 		}
-		
+
 		angle = 135 - (float)(Math.atan2( d.x, d.y ) / 3.1415926 * 180);
-		
+
 		if (d.x >= 0){
 			flipHorizontal = false;
 			updateFrame();
-			
+
 		} else {
 			angularSpeed = -angularSpeed;
 			angle += 90;
 			flipHorizontal = true;
 			updateFrame();
 		}
-		
-		float speed = SPEED;
+
+		float speed = customSpeed;
 		if (item instanceof Dart && Dungeon.hero.belongings.weapon instanceof Crossbow
 				|| item instanceof TerminationT.SpiritArrow){
 			speed *= 3f;
-			
+
 		} else if (item instanceof SpiritBow.SpiritArrow
 				|| item instanceof ScorpioSprite.ScorpioShot
 				|| item instanceof WSprite.TenguShuriken){

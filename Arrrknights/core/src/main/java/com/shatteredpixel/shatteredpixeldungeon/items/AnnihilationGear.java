@@ -254,35 +254,36 @@ public class AnnihilationGear extends Item {
         arts = bundle.getInt(MAGICARTS);
         artsused = bundle.getInt(ARTSUSED);
     }
-
-
-    protected CellSelector.Listener Shot = new  CellSelector.Listener() {
+    protected CellSelector.Listener Shot = new CellSelector.Listener() {
         @Override
         public void onSelect( Integer target ) {
             if (target != null && target != curUser.pos) {
                 int targetCell = target;
 
-                final int finalTargetCell = targetCell;
-
-                final AnnihilationGear.Spriteex Arrow = new AnnihilationGear.Spriteex();
+                if (Dungeon.hero.hasTalent(Talent.LIGHTNESSMEAL) && Dungeon.hero.buff(Levitation.class) != null) {
+                    Buff.detach(Dungeon.hero, Levitation.class);
+                } else charge--;
 
                 curUser.sprite.zap(targetCell);
 
-                if (Dungeon.hero.hasTalent(Talent.LIGHTNESSMEAL) && Dungeon.hero.buff(Levitation.class) != null) {
-                    Buff.detach(Dungeon.hero, Levitation.class);
-                }
-                else charge--;
-                ((MissileSprite) curUser.sprite.parent.recycle(MissileSprite.class)).
-                        reset(curUser.sprite,
-                                finalTargetCell,
-                                Arrow,
-                                new Callback() {
-                                    @Override
-                                    public void call() {
-                                        Arrow.onThrow(target);
-                                        updateQuickslot();
-                                    }
-                                });
+                int levelWidth = Dungeon.level.width();
+
+                final AnnihilationGear.Spriteex riseArrow = new AnnihilationGear.Spriteex();
+                ((MissileSprite) curUser.sprite.parent.recycle(MissileSprite.class))
+                        .reset(curUser.pos, curUser.pos % Dungeon.level.width(), riseArrow, new Callback() {
+                            @Override
+                            public void call() {
+                                final AnnihilationGear.Spriteex fallArrow = new AnnihilationGear.Spriteex();
+                                ((MissileSprite) curUser.sprite.parent.recycle(MissileSprite.class))
+                                        .reset(targetCell%Dungeon.level.width(), targetCell, fallArrow, new Callback() {
+                                            @Override
+                                            public void call() {
+                                                fallArrow.onThrow(targetCell);
+                                                updateQuickslot();
+                                            }
+                                        },1500f);
+                            }
+                        },2000f);
             }
         }
 
@@ -290,8 +291,6 @@ public class AnnihilationGear extends Item {
         public String prompt() {
             return Messages.get(AnnihilationGear.class, "prompt");
         }
-
-
     };
 
 

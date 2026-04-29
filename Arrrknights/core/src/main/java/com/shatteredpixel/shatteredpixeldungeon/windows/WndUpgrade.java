@@ -393,7 +393,7 @@ public class WndUpgrade extends Window {
             @Override
             protected void onClick() {
                 super.onClick();
-
+                Talent.onUpgradeScrollUsed( Dungeon.hero );
                 ScrollOfUpgrade.upgrade(Dungeon.hero);
 
                 Item upgraded = toUpgrade;
