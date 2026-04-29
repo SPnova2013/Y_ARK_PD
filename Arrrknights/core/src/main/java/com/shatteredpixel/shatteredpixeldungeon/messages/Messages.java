@@ -104,27 +104,34 @@ public class Messages {
 	public static String get(Object o, String k, Object...args){
 		return get(o.getClass(), k, args);
 	}
+	public static String get(Class c, String k, Object... args) {
+		// 构建初始 key
+		String initialKey;
+		if (c != null) {
+			initialKey = c.getName().replace("com.shatteredpixel.shatteredpixeldungeon.", "") + "." + k;
+		} else {
+			initialKey = k;
+		}
+		return getInternal(c, k, initialKey, args);
+	}
 
-	public static String get(Class c, String k, Object...args){
+	private static String getInternal(Class c, String k, String initialKey, Object... args) {
 		String key;
-		if (c != null){
-			key = c.getName().replace("com.shatteredpixel.shatteredpixeldungeon.", "");
-			key += "." + k;
-		} else
+		if (c != null) {
+			key = c.getName().replace("com.shatteredpixel.shatteredpixeldungeon.", "") + "." + k;
+		} else {
 			key = k;
+		}
 
 		String value = getFromBundle(key.toLowerCase(Locale.KOREAN));
-		if (value != null){
+		if (value != null) {
 			if (args.length > 0) return format(value, args);
 			else return value;
 		} else {
-			//this is so child classes can inherit properties from their parents.
-			//in cases where text is commonly grabbed as a utility from classes that aren't mean to be instantiated
-			//(e.g. flavourbuff.dispTurns()) using .class directly is probably smarter to prevent unnecessary recursive calls.
-			if (c != null && c.getSuperclass() != null){
-				return get(c.getSuperclass(), k, args);
+			if (c != null && c.getSuperclass() != null) {
+				return getInternal(c.getSuperclass(), k, initialKey, args);
 			} else {
-				return  "!NTF! " + key;
+				return "!NTF! " + initialKey;
 			}
 		}
 	}
