@@ -16,10 +16,8 @@ public class TiacauhLancer extends Mob {
         HP = HT = 110;
         damageMax = 38;
         damageMaxIncRate = 20;
-        damageMaxInc = damageMaxIncRate*rounds;
         damageMin = 30;
         damageMinIncRate = 16;
-        damageMinInc = damageMinIncRate*rounds;
         drMax = 16;
         drMin = 0;
         attackSkill = 36;

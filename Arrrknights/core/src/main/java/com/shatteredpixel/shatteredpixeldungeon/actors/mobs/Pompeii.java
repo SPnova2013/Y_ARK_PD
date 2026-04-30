@@ -104,8 +104,8 @@ public class Pompeii extends Mob {
 
     @Override
     public int damageRoll() {
-        if (phase == 3) return Random.NormalIntRange(55+damageMinInc, 65+damageMaxInc);
-        return Random.NormalIntRange(45+damageMinInc, 55+damageMaxInc);
+        if (phase == 3) return Random.NormalIntRange(55+damageMinIncRate*rounds, 65+damageMaxIncRate*rounds);
+        return Random.NormalIntRange(45+damageMinIncRate*rounds, 55+damageMaxIncRate*rounds);
     }
     @Override
     public void damage(int dmg, Object src) {

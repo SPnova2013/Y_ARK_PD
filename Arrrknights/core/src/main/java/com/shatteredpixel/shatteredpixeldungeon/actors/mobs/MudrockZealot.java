@@ -35,16 +35,16 @@ public class MudrockZealot extends Mob {
 
     @Override
     public int damageRoll() {
-        if (barrier) return Random.NormalIntRange(7+damageMinInc, 21+damageMaxInc);
-        return Random.NormalIntRange(5+damageMinInc, 16+damageMaxInc);
+        if (barrier) return Random.NormalIntRange(7+damageMinIncRate*rounds, 21+damageMaxIncRate*rounds);
+        return Random.NormalIntRange(5+damageMinIncRate*rounds, 16+damageMaxIncRate*rounds);
     }
     @Override
     public int drRoll() {
         if (barrier) {
-            if (Dungeon.isChallenged(Challenges.TACTICAL_UPGRADE)) return Random.NormalIntRange(8+drMinInc, 14+Math.round(drMaxInc*1.5f));
-            return Random.NormalIntRange(4+drMinInc, 12+Math.round(drMaxInc*1.5f));
+            if (Dungeon.isChallenged(Challenges.TACTICAL_UPGRADE)) return Random.NormalIntRange(8+drMinIncRate*rounds, 14+Math.round(drMaxIncRate*rounds*1.5f));
+            return Random.NormalIntRange(4+drMinIncRate*rounds, 12+Math.round(drMaxIncRate*rounds*1.5f));
         }
-        return Random.NormalIntRange(0+drMinInc, 5+drMaxInc);
+        return Random.NormalIntRange(0+drMinIncRate*rounds, 5+drMaxIncRate*rounds);
     }
 
     @Override

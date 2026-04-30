@@ -13,11 +13,9 @@ public class RioterLeader extends Gnoll{
         HP = HT = 12;
         damageMax = 10;
         damageMaxIncRate = 45;
-        damageMaxInc = damageMaxIncRate*rounds;
         damageMin = 1;
         drMax = 2;
         drMaxIncRate = 13;
-        drMaxInc = drMaxIncRate*rounds;
         drMin = 0;
         attackSkill = 10;
         defenseSkill = 4;

@@ -49,7 +49,6 @@ public class Snake extends Mob {
 		
 		HP = HT = 1;
 		hthpIncRate = 10;
-		hthpInc = hthpIncRate*rounds;
 		defenseSkill = 35;
 		
 		EXP = 2;

@@ -16,10 +16,8 @@ public class TiacauhRipper extends Mob {
         HP = HT = 85;
         damageMax = 38;
         damageMaxIncRate = 16;
-        damageMaxInc = damageMaxIncRate*rounds;
         damageMin = 24;
         damageMinIncRate = 13;
-        damageMinInc = damageMinIncRate*rounds;
         drMax = 16;
         drMin = 0;
         attackSkill = 38;

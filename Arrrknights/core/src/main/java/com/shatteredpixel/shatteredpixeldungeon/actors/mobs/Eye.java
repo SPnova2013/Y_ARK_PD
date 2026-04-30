@@ -71,8 +71,8 @@ public class Eye extends Mob {
 	}
 	@Override
 	public int attackSkill( Char target ) {
-		if (Dungeon.isChallenged(Challenges.TACTICAL_UPGRADE))	return 45+attackSkillInc;
-		return 30+attackSkillInc;
+		if (Dungeon.isChallenged(Challenges.TACTICAL_UPGRADE))	return 45+attackSkillIncRate*rounds;
+		return 30+attackSkillIncRate*rounds;
 	}
 	private Ballistica beam;
 	private int beamTarget = -1;
@@ -179,7 +179,7 @@ public class Eye extends Mob {
 			}
 
 			if (hit( this, ch, true )) {
-				ch.damage( Random.NormalIntRange( 30+damageMinInc, 55+damageMaxInc), new DeathGaze() );
+				ch.damage( Random.NormalIntRange( 30+damageMinIncRate*rounds, 55+damageMaxIncRate*rounds), new DeathGaze() );
 
 				if (Dungeon.level.heroFOV[pos]) {
 					ch.sprite.flash();

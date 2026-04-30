@@ -36,10 +36,8 @@ public class Ergate extends Mob {
         HP = HT = 75;
         damageMax = 35;
         damageMaxIncRate = 20;
-        damageMaxInc = damageMaxIncRate*rounds;
         damageMin = 24;
         damageMinIncRate = 16;
-        damageMinInc = damageMinIncRate*rounds;
         drMax = 6;
         drMin = 0;
         attackSkill = 35;

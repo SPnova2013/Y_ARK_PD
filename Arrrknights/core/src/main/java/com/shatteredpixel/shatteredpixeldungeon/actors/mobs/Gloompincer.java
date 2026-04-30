@@ -23,7 +23,6 @@ public class Gloompincer extends Hound{
         damageMin = 1;
         drMax = 10;
         drMaxIncRate = 17;
-        drMaxInc = drMaxIncRate*rounds;
         drMin = 2;
         attackSkill = 12;
         defenseSkill = 5;

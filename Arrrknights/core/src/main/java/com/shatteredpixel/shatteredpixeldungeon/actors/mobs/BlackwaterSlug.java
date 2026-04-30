@@ -35,11 +35,8 @@ public class BlackwaterSlug extends Slug {
 
         HP = HT = 15;
         damageMaxIncRate = 45;
-        damageMaxInc = damageMaxIncRate*rounds;
         damageMinIncRate = 35;
-        damageMinInc = damageMinIncRate*rounds;
         drMaxIncRate = 10;
-        drMaxInc = drMaxIncRate*rounds;
         EXP = 2;
 
         properties.add(Property.INFECTED);

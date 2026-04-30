@@ -195,7 +195,7 @@ public class Tomimi extends Mob {
                     CellEmitter.center(cell).burst(BlastParticle.FACTORY, 2);
                     Char ch = Actor.findChar(cell);
                     if (ch != null) {
-                        int damage = Random.NormalIntRange(65+damageMinInc, 90+damageMaxInc);
+                        int damage = Random.NormalIntRange(65+damageMinIncRate*rounds, 90+damageMaxIncRate*rounds);
                         if (ch != Dungeon.hero) damage *= 2;
                         ch.damage(damage - ch.drRoll(),RPG7.class);
                         if (!ch.isAlive() && ch == Dungeon.hero) {

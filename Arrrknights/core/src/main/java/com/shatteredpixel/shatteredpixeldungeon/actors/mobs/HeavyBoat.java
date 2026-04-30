@@ -41,14 +41,14 @@ public class HeavyBoat extends Mob {
     }
 
     public int damageRoll() {
-        if (Dungeon.level.map[this.pos] != Terrain.WATER) return Random.NormalIntRange(25+damageMinInc, 40+damageMaxInc);
-        return Random.NormalIntRange(45+damageMinInc, 60+damageMaxInc);
+        if (Dungeon.level.map[this.pos] != Terrain.WATER) return Random.NormalIntRange(25+damageMinIncRate*rounds, 40+damageMaxIncRate*rounds);
+        return Random.NormalIntRange(45+damageMinIncRate*rounds, 60+damageMaxIncRate*rounds);
     }
 
     @Override
     public int drRoll() {
-        if (Dungeon.level.map[this.pos] != Terrain.WATER) return Random.NormalIntRange(1+drMinInc, 12+drMaxInc);
-        return Random.NormalIntRange(2+drMinInc, 24+drMaxInc);
+        if (Dungeon.level.map[this.pos] != Terrain.WATER) return Random.NormalIntRange(1+drMinIncRate*rounds, 12+drMaxIncRate*rounds);
+        return Random.NormalIntRange(2+drMinIncRate*rounds, 24+drMaxIncRate*rounds);
     }
     @Override
     public float speed() {

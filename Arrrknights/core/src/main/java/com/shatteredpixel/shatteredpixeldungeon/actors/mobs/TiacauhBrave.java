@@ -42,14 +42,14 @@ public class TiacauhBrave extends Mob {
     @Override
     public int damageRoll() {
 
-        if (Dungeon.isChallenged(Challenges.TACTICAL_UPGRADE))  return Random.NormalIntRange( 44+damageMinInc, 57+damageMaxInc );
-        return Random.NormalIntRange( 35+damageMinInc, 57+damageMaxInc );
+        if (Dungeon.isChallenged(Challenges.TACTICAL_UPGRADE))  return Random.NormalIntRange( 44+damageMinIncRate*rounds, 57+damageMaxIncRate*rounds );
+        return Random.NormalIntRange( 35+damageMinIncRate*rounds, 57+damageMaxIncRate*rounds );
     }
     @Override
     public int drRoll()
     {
-        if (!isAttack) return Random.NormalIntRange(20+drMinInc, 50+drMaxInc);
-        return Random.NormalIntRange(0+drMinInc, 18+drMaxInc);
+        if (!isAttack) return Random.NormalIntRange(20+drMinIncRate*rounds, 50+drMaxIncRate*rounds);
+        return Random.NormalIntRange(0+drMinIncRate*rounds, 18+drMaxIncRate*rounds);
     }
 
     @Override

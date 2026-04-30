@@ -58,8 +58,8 @@ public class Hound extends Mob {
 	
 	@Override
 	public int damageRoll() {
-		if (Dungeon.isChallenged(Challenges.TACTICAL_UPGRADE)) return Random.NormalIntRange(2+damageMinInc, 6+damageMaxInc);
-		return Random.NormalIntRange( 1+damageMinInc, 6+damageMaxInc);
+		if (Dungeon.isChallenged(Challenges.TACTICAL_UPGRADE)) return Random.NormalIntRange(2+damageMinIncRate*rounds, 6+damageMaxIncRate*rounds);
+		return Random.NormalIntRange( 1+damageMinIncRate*rounds, 6+damageMaxIncRate*rounds);
 	}
 	@Override
 	public boolean hasNotebookSkill(){ return true;}

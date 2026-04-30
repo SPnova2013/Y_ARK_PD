@@ -20,7 +20,7 @@ public class StrikerElite extends Striker {
     }
     @Override
     public int damageRoll() {
-        if (HP <= HT/2) return Random.NormalIntRange(45+damageMinInc,60+damageMaxInc);
-        return Random.NormalIntRange(30+damageMinInc,40+damageMaxInc);
+        if (HP <= HT/2) return Random.NormalIntRange(45+damageMinIncRate*rounds,60+damageMaxIncRate*rounds);
+        return Random.NormalIntRange(30+damageMinIncRate*rounds,40+damageMaxIncRate*rounds);
     }
 }

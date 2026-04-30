@@ -58,7 +58,7 @@ public class TiacauhShaman extends TiacauhRitualist {
             spend( TIME_TO_ZAP );
 
             if (hit( this, enemy, true )) {
-                int dmg = Random.NormalIntRange(12+damageMinInc/2, 18+drMaxIncRate/2);
+                int dmg = Random.NormalIntRange(12+damageMinIncRate*rounds/2, 18+drMaxIncRate*rounds/2);
                 enemy.damage( dmg, new TiacauhShaman.TiacauhBolat() );
 
                 if (Dungeon.isChallenged(Challenges.TACTICAL_UPGRADE) && Random.Int(2) == 0) {

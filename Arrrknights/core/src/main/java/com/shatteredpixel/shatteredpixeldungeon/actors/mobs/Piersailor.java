@@ -38,8 +38,8 @@ public class Piersailor extends Mob {
     }
     @Override
     public int drRoll() {
-        if (Dungeon.isChallenged(Challenges.TACTICAL_UPGRADE)) return Random.NormalIntRange(4+drMinInc, 24+drMaxInc);
-        return Random.NormalIntRange(2+drMinInc, 20+drMaxInc);
+        if (Dungeon.isChallenged(Challenges.TACTICAL_UPGRADE)) return Random.NormalIntRange(4+drMinIncRate*rounds, 24+drMaxIncRate*rounds);
+        return Random.NormalIntRange(2+drMinIncRate*rounds, 20+drMaxIncRate*rounds);
     }
     @Override
     protected boolean act() {

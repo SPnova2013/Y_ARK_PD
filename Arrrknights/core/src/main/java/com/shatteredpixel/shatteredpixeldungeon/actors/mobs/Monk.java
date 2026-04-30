@@ -66,15 +66,15 @@ public class Monk extends Mob {
 	{
 		Focus f = buff(Focus.class);
 		if (f != null) {
-			return Random.NormalIntRange( 20+damageMinInc/2, 32+damageMaxInc/2 );
+			return Random.NormalIntRange( 20+damageMinIncRate*rounds/2, 32+damageMaxIncRate*rounds/2 );
 		}
-		return Random.NormalIntRange( 10+damageMinInc/2, 27+damageMaxInc/2 );
+		return Random.NormalIntRange( 10+damageMinIncRate*rounds/2, 27+damageMaxIncRate*rounds/2 );
 	}
 	
 	@Override
 	public int attackSkill( Char target ) {
 		Buff.affect(this, ActiveOriginium.class).set(HT * 0.1f);
-		return 30+attackSkillInc;
+		return 30+attackSkillIncRate*rounds;
 	}
 	
 	@Override

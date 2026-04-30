@@ -51,10 +51,8 @@ public class RipperDemon extends Mob {
 		HP = HT = 38;
 		damageMax = 25;
 		damageMaxIncRate = 20;
-		damageMaxInc = damageMaxIncRate*rounds;
 		damageMin = 15;
 		damageMinIncRate = 16;
-		damageMinInc = damageMinIncRate*rounds;
 		drMax = 4;
 		drMin = 0;
 		attackSkill = 30;

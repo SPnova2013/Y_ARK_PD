@@ -87,8 +87,8 @@ public class Succubus extends Mob {
     @Override
     public int damageRoll() {
 
-        if (ASPlus != 0) return Random.NormalIntRange(25+damageMinInc, 25 + damageMaxInc + ASPlus * (2+rounds));
-        else return Random.NormalIntRange(18+damageMinInc, 28+damageMaxInc);
+        if (ASPlus != 0) return Random.NormalIntRange(25+damageMinIncRate*rounds, 25 + damageMaxIncRate*rounds + ASPlus * (2+rounds));
+        else return Random.NormalIntRange(18+damageMinIncRate*rounds, 28+damageMaxIncRate*rounds);
     }
     @Override
     public int attackProc(Char enemy, int damage) {
@@ -127,7 +127,7 @@ public class Succubus extends Mob {
 
     @Override
     public int attackSkill(Char target) {
-        return 40 + attackSkillInc + (ASPlus * (2+rounds));
+        return 40 + attackSkillIncRate*rounds + (ASPlus * (2+rounds));
     }
     @Override
     public void die(Object cause) {

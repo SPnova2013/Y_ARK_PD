@@ -69,10 +69,8 @@ public class Thief extends Mob {
 		HP = HT = 20;
 		damageMax = 10;
 		damageMaxIncRate = 20;
-		damageMaxInc = damageMaxIncRate*rounds;
 		damageMin = 1;
 		damageMinIncRate = 16;
-		damageMinInc = damageMinIncRate * rounds;
 		drMax = 3;
 		drMin = 0;
 		attackSkill = 12;

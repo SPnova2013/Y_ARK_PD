@@ -1477,14 +1477,15 @@ public abstract class Level implements Bundlable {
 	}
 	public static void setVictoryLapBonus(Mob m){
 		int rounds = Statistics.victoryLapRounds;
-		m.addHTandHP(m.hthpInc);
-		m.addDamageMax(m.damageMaxInc);
-		m.addDamageMin(m.damageMinInc);
-		m.addDrMax(m.drMaxInc);
-		m.addDefenseSkill(m.defenseSkillInc);
-		m.addAttackSkill(m.attackSkillInc);
-		m.addExp(m.EXPInc);
-		m.addMaxLvl(m.maxLvlInc);
+		m.addHTandHP(m.hthpIncRate);
+		m.addDamageMax(m.damageMaxIncRate);
+		m.addDamageMin(m.damageMinIncRate);
+		m.addDrMax(m.drMaxIncRate);
+		m.addDrMin(m.drMinIncRate);
+		m.addDefenseSkill(m.defenseSkillIncRate);
+		m.addAttackSkill(m.attackSkillIncRate);
+		m.addExp(m.EXPIncRate);
+		m.addMaxLvl(m.maxLvlIncRate);
 		if(Random.Float()< (rounds/(rounds+4f))){
 			int championTimes = Random.IntUsingLuck(rounds+2,-1);
 			for(int i=0; i<championTimes; i++){

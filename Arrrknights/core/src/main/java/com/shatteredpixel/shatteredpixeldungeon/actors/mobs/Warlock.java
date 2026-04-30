@@ -79,7 +79,7 @@ public class Warlock extends Mob implements Callback {
 	@Override
 	public int attackSkill( Char target ) {
 		Buff.affect(this, ActiveOriginium.class).set(HT * 0.1f);
-		return 25+attackSkillInc;
+		return 25+attackSkillIncRate*rounds;
 	}
 
 	@Override
@@ -123,7 +123,7 @@ public class Warlock extends Mob implements Callback {
 
 		if (hit( this, enemy, true )) {
 
-			int dmg = Random.NormalIntRange( 14+damageMinInc/2, 18+damageMaxInc/2 );
+			int dmg = Random.NormalIntRange( 14+damageMinIncRate*rounds/2, 18+damageMaxIncRate*rounds/2 );
 			enemy.damage( dmg, new DarkBolt() );
 			if (Dungeon.isChallenged(Challenges.TACTICAL_UPGRADE)) Buff.affect(enemy, Weakness.class, 2f);
 			

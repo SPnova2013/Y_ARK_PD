@@ -131,7 +131,7 @@ public abstract class Shaman extends Mob {
 				if (enemy == Dungeon.hero) Sample.INSTANCE.play( Assets.Sounds.DEBUFF );
 			}
 			
-			int dmg = Random.NormalIntRange( 6+damageMinInc/2, 15+damageMaxInc/2 );
+			int dmg = Random.NormalIntRange( 6+damageMinIncRate*rounds/2, 15+damageMaxIncRate*rounds/2 );
 			enemy.damage( dmg, new EarthenBolt() );
 			
 			if (!enemy.isAlive() && enemy == Dungeon.hero) {

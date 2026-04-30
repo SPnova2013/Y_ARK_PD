@@ -40,7 +40,6 @@ public class RoughlyRaisedSlug extends Slug {
 
         HP = HT = 15;
         hthpIncRate = 90;
-        hthpInc = hthpIncRate*rounds;
         EXP = 2;
         loot = new MysteryMeat();
         lootChance = 1;

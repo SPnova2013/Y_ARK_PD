@@ -19,7 +19,6 @@ public class CocktailThrower extends Mob{
         HP = HT = 12;
         damageMax = 1;
         damageMaxIncRate = 35;
-        damageMaxInc = damageMaxIncRate*rounds;
         damageMin = 1;
         drMax = 2;
         drMin = 0;

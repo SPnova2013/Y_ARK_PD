@@ -37,6 +37,6 @@ public class Rockbreaker extends Mob {
     }
     @Override
     public int attackSkill( Char target ) {
-        if (Dungeon.isChallenged(Challenges.TACTICAL_UPGRADE)) return 60+attackSkillInc;
-        return 45+attackSkillInc; }
+        if (Dungeon.isChallenged(Challenges.TACTICAL_UPGRADE)) return 60+attackSkillIncRate*rounds;
+        return 45+attackSkillIncRate*rounds; }
 }

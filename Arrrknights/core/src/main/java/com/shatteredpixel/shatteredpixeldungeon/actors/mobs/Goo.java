@@ -86,9 +86,9 @@ public class Goo extends Mob {
 
 	@Override
 	public int damageRoll() {
-		int min = 1 + damageMinInc;
+		int min = 1 + damageMinIncRate*rounds;
 		int max = (HP*2 <= HT) ? 12 : 8;
-		max += damageMaxInc;
+		max += damageMaxIncRate*rounds;
 		if (pumpedUp > 0) {
 			pumpedUp = 0;
 			return Random.NormalIntRange( min*3, max*3 );
@@ -99,8 +99,8 @@ public class Goo extends Mob {
 
 	@Override
 	public int attackSkill( Char target ) {
-		int attack = 10 + attackSkillInc;
-		if (HP*2 <= HT) attack = 15+ attackSkillInc;
+		int attack = 10 + attackSkillIncRate*rounds;
+		if (HP*2 <= HT) attack = 15+ attackSkillIncRate*rounds;
 		if (pumpedUp > 0) attack *= 2;
 		return attack;
 	}
@@ -112,8 +112,8 @@ public class Goo extends Mob {
 
 	@Override
 	public int drRoll() {
-		if (Dungeon.isChallenged(Challenges.DECISIVE_BATTLE) && HP*2 <= HT) { return Random.NormalIntRange(1+drMinInc, 3+drMaxInc); }
-		else return Random.NormalIntRange(0+drMinInc, 2+drMaxInc);
+		if (Dungeon.isChallenged(Challenges.DECISIVE_BATTLE) && HP*2 <= HT) { return Random.NormalIntRange(1+drMinIncRate*rounds, 3+drMaxIncRate*rounds); }
+		else return Random.NormalIntRange(0+drMinIncRate*rounds, 2+drMaxIncRate*rounds);
 	}
 
 	@Override

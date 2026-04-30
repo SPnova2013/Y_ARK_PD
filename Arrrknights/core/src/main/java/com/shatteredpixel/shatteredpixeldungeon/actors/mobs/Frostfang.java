@@ -14,7 +14,6 @@ public class Frostfang extends Mob{
         HP = HT = 30;
         damageMax = 15;
         damageMaxIncRate = 30;
-        damageMaxInc = damageMaxIncRate*rounds;
         drMax = 5;
         drMin = 0;
         attackSkill = 15;

@@ -20,10 +20,8 @@ public class TiacauhFanatic extends Mob {
         HP = HT = 75;
         damageMax = 32;
         damageMaxIncRate = 16;
-        damageMaxInc = damageMaxIncRate*rounds;
         damageMin = 20;
         damageMinIncRate = 13;
-        damageMinInc = damageMinIncRate*rounds;
         drMax = 14;
         drMin = 0;
         attackSkill = 36;

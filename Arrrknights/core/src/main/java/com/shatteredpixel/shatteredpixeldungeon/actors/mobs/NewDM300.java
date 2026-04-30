@@ -130,16 +130,16 @@ public class NewDM300 extends Mob {
 
     @Override
     public int damageRoll() {
-        return Random.NormalIntRange(12 +damageMinInc, 22 + DamageUP+damageMaxInc);
+        return Random.NormalIntRange(12 +damageMinIncRate*rounds, 22 + DamageUP+damageMaxIncRate*rounds);
     }
     @Override
     public int drRoll() {
-        if (!Finalcharged) return Random.NormalIntRange(0+drMinInc, 10+drMaxInc);
+        if (!Finalcharged) return Random.NormalIntRange(0+drMinIncRate*rounds, 10+drMaxIncRate*rounds);
         else {
             if (Dungeon.isChallenged(Challenges.SPECIAL_BOSS) && Dungeon.mboss14 == 1) {
-                return Random.NormalIntRange(12+drMinInc, 24+drMaxInc);
+                return Random.NormalIntRange(12+drMinIncRate*rounds, 24+drMaxIncRate*rounds);
             }
-            else return Random.NormalIntRange(3+drMinInc, 10+drMaxInc);
+            else return Random.NormalIntRange(3+drMinIncRate*rounds, 10+drMaxIncRate*rounds);
         }
     }
 

@@ -138,32 +138,23 @@ public abstract class Mob extends Char {
 
 	int rounds = Statistics.victoryLapRounds;
 	public int hthpIncRate = 100;
-	public int hthpInc =hthpIncRate*rounds;
 	public int damageMax = 0;
 	public int damageMaxIncRate = 40;
-	public int damageMaxInc = damageMaxIncRate*rounds;
 	public int damageMin = 0;
 	public int damageMinIncRate = 32;
-	public int damageMinInc = damageMinIncRate*rounds;
 	public int drMax = 0;
 	public int drMaxIncRate = 15;
-	public int drMaxInc = drMaxIncRate*rounds;
 	public int drMin = 0;
 	public int drMinIncRate = 0;
-	public int drMinInc = drMinIncRate*rounds;
 	public int defenseSkill = 0;
 	public int defenseSkillIncRate = 22;
-	public int defenseSkillInc = defenseSkillIncRate*rounds;
 	public int attackSkill = 0;
 	public int attackSkillIncRate = 34;
-	public int attackSkillInc = attackSkillIncRate*rounds;
 
 	public int EXP = 1;
 	public int EXPIncRate = 14;
-	public int EXPInc = EXPIncRate*rounds;
 	public int maxLvl = Hero.MAX_LEVEL;
 	public int maxLvlIncRate = 22;
-	public int maxLvlInc = maxLvlIncRate*rounds;
 
 
 
@@ -1523,15 +1514,15 @@ public abstract class Mob extends Char {
 	public boolean hasNotebookSkill(){ return false;}
 	public void notebookSkill(ScholarNotebook notebook, int index){ }
 
-	public void addHTandHP(int ht){this.HP = this.HT = this.HT+ht;}
-	public void addDamageMax(int dmx){this.damageMax += dmx;}
-	public void addDamageMin(int dmm){this.damageMin += dmm;}
-	public void addDrMax(int drmx){this.drMax += drmx;}
-	public void addDrMin(int drmn){this.drMin += drmn;}
-	public void addDefenseSkill(int eva){this.defenseSkill += eva;}
-	public void addAttackSkill(int acc){this.attackSkill += acc;}
-	public void addExp(int exp){this.EXP += exp;}
-	public void addMaxLvl(int mxl){this.maxLvl += mxl;}
+	public void addHTandHP(int ht){this.HP = this.HT = this.HT+ht*rounds;}
+	public void addDamageMax(int dmx){this.damageMax += dmx*rounds;}
+	public void addDamageMin(int dmm){this.damageMin += dmm*rounds;}
+	public void addDrMax(int drmx){this.drMax += drmx*rounds;}
+	public void addDrMin(int drmn){this.drMin += drmn*rounds;}
+	public void addDefenseSkill(int eva){this.defenseSkill += eva*rounds;}
+	public void addAttackSkill(int acc){this.attackSkill += acc*rounds;}
+	public void addExp(int exp){this.EXP += exp*rounds;}
+	public void addMaxLvl(int mxl){this.maxLvl += mxl*rounds;}
 
 	public Class upToAlter() {
 		return null;
