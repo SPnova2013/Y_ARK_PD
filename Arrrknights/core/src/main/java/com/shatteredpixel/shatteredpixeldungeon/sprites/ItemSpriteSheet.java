@@ -122,6 +122,7 @@ public class ItemSpriteSheet {
 	public static final int SKILL_CHIP1     = CONTAINERS+9;
 	public static final int SKILL_CHIP2     = CONTAINERS+10;
 	public static final int SKILL_CHIP3     = CONTAINERS+11;
+	public static final int VOID_CRADLE     = CONTAINERS+12;
 	static{
 		assignItemRect(BONES,           16, 16);
 		assignItemRect(REMAINS,         16, 16);
@@ -135,6 +136,7 @@ public class ItemSpriteSheet {
 		assignItemRect(SKILL_CHIP1,     16, 16);
 		assignItemRect(SKILL_CHIP2,     16, 16);
 		assignItemRect(SKILL_CHIP3,     16, 16);
+		assignItemRect(VOID_CRADLE,     16, 16);
 
 
 	}

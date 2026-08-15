@@ -569,7 +569,7 @@ public abstract class ChampionEnemy extends Buff {
 		@Override
 		public void onAttackProc(Char enemy, int damage) {
 			if(enemy.buff(Collapse.class)!=null) Buff.affect(enemy, Collapse.class).stack();
-			else Buff.affect(enemy, Collapse.class).setup(enemy,damage);
+			else Buff.affect(enemy, Collapse.class).setup(enemy.id(),damage);
 		}
 		@Override
 		public boolean act() {
@@ -600,7 +600,7 @@ public abstract class ChampionEnemy extends Buff {
 			return "<#CC33FF>" + name + "<RGB>";
 		}
 		public static class Collapse extends Buff{
-			private Char victim;
+			private int victim;
 			private int left;
 			private int damage;
 			private int stacks;
@@ -616,7 +616,7 @@ public abstract class ChampionEnemy extends Buff {
 			public void tintIcon(Image icon) {
 				icon.hardlight(0.6f, 0f, 1f);
 			}
-			public void setup( Char victim,int damage){
+			public void setup( int victim,int damage){
 				this.victim = victim;
 				this.damage = damage;
 				this.stacks = 1;
@@ -629,8 +629,9 @@ public abstract class ChampionEnemy extends Buff {
 			public boolean act() {
 				left--;
 				if (left <= 0){
-					victim.damage(damage*stacks,this);
-					if (victim==Dungeon.hero && !Dungeon.hero.isAlive()) {
+					Char ch = (Char) Actor.findById(victim);
+					ch.damage(damage*stacks,this);
+					if (ch instanceof Hero && !Dungeon.hero.isAlive()) {
 						Dungeon.fail( getClass() );
 						GLog.n( Messages.get(this, "collapse_kill") );
 					}
@@ -640,6 +641,28 @@ public abstract class ChampionEnemy extends Buff {
 				}
 				spend( TICK );
 				return true;
+			}
+			private static final String VICTIM	    = "victim";
+			private static final String LEFT	    = "left";
+			private static final String DAMAGE	    = "damage";
+			private static final String STACKS	    = "stacks";
+
+			@Override
+			public void storeInBundle( Bundle bundle ) {
+				super.storeInBundle( bundle );
+				bundle.put( VICTIM, victim );
+				bundle.put( LEFT, left );
+				bundle.put( DAMAGE, damage );
+				bundle.put( STACKS, stacks );
+			}
+
+			@Override
+			public void restoreFromBundle( Bundle bundle ) {
+				super.restoreFromBundle( bundle );
+				victim = bundle.getInt( VICTIM );
+				left = bundle.getInt( LEFT );
+				damage = bundle.getInt(DAMAGE);
+				stacks = bundle.getInt(STACKS);
 			}
 		}
 	}
