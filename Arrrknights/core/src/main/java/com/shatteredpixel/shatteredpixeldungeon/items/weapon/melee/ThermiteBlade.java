@@ -23,9 +23,17 @@ package com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.FlavourBuff;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Invisibility;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.IsekaiItem;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
+import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
+import com.watabou.noosa.Image;
 
 public class ThermiteBlade extends MeleeWeapon {
 
@@ -48,6 +56,12 @@ public class ThermiteBlade extends MeleeWeapon {
 				lvl*(tier);
 	}
 	@Override
+	public int damageRoll(Char owner) {
+		int dmg = super.damageRoll(owner);
+		if (curUser.buff(ExtremeSharpness.class) != null){dmg*=2;}
+		return dmg;
+	}
+	@Override
 	public String desc() {
 		String info = Messages.get(this, "desc");
 		if (Dungeon.hero.belongings.getItem(IsekaiItem.class) != null) {
@@ -57,4 +71,47 @@ public class ThermiteBlade extends MeleeWeapon {
 		return info;
 	}
 
+	@Override
+	protected void duelistAbility(Hero hero, Integer target) {
+		hero.belongings.abilityWeapon = this;
+		MeleeWeapon wep = this;
+		wep.beforeAbilityUsed(hero, null);
+		Buff.affect(hero, ExtremeSharpness.class).set(5f + buffedLvl());
+		wep.afterAbilityUsed(hero);
+	}
+
+	public static class ExtremeSharpness extends Buff {
+		{
+			type = buffType.POSITIVE;
+			announced = true;
+		}
+		@Override
+		public int icon() {
+			return BuffIndicator.COMBO;
+		}
+		@Override
+		public void tintIcon(Image icon) {
+			icon.hardlight(0.25f, 1.5f, 1f);
+		}
+		@Override
+		public String toString() {
+			return Messages.get(this, "name");
+		}
+		@Override
+		public String desc() {
+			return Messages.get(this, "desc");
+		}
+
+		float left;
+		private void set(float turns){
+			left = turns;
+		}
+		@Override
+		public boolean act() {
+			left--;
+			if(left<=0) detach();
+			spend( TICK );
+			return true;
+		}
+	}
 }

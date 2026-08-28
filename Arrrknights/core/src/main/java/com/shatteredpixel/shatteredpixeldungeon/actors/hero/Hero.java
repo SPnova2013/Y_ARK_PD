@@ -239,6 +239,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.PatriotSpear;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.SHISHIOH;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.SanktaBet;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Suffering;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.ThermiteBlade;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Violin;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.MissileWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Notes;
@@ -910,7 +911,7 @@ public class Hero extends Char {
             int drplus = pointsInTalent(Talent.PARING);
             dr += Random.NormalIntRange(0,drplus);
         }
-
+        if(buff(ThermiteBlade.ExtremeSharpness.class)!=null) dr = 0;
         return dr;
     }
 
