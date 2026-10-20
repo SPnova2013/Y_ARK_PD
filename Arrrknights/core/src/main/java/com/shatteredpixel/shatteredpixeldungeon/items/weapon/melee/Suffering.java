@@ -12,11 +12,14 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Invisibility;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.MagicImmune;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Paralysis;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroClass;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
 import com.shatteredpixel.shatteredpixeldungeon.effects.MagicMissile;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.FlameParticle;
 import com.shatteredpixel.shatteredpixeldungeon.items.Bonk;
+import com.shatteredpixel.shatteredpixeldungeon.items.Heap;
+import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.CustomeSet;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.TimekeepersHourglass;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfWealth;
@@ -31,6 +34,8 @@ import com.shatteredpixel.shatteredpixeldungeon.ui.QuickSlotButton;
 import com.shatteredpixel.shatteredpixeldungeon.utils.BArray;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.noosa.audio.Sample;
+import com.watabou.noosa.particles.Emitter;
+import com.watabou.utils.Bundle;
 import com.watabou.utils.Callback;
 import com.watabou.utils.PathFinder;
 import com.watabou.utils.Random;
@@ -62,7 +67,7 @@ public class Suffering extends MeleeWeapon {
     @Override
     public ArrayList<String> actions(Hero hero) {
         ArrayList<String> actions = super.actions(hero);
-        if(isEquipped(hero)) actions.add(AC_ZAP);
+        if (isEquipped(hero) && hero.heroClass != HeroClass.IRENE) actions.add(AC_ZAP);
         return actions;
     }
 
@@ -226,6 +231,50 @@ public class Suffering extends MeleeWeapon {
     }
 
     @Override
+    public String targetingPrompt() {
+        return Messages.get(this, "ability_prompt");
+    }
+
+    @Override
+    protected void duelistAbility(Hero hero, Integer target) {
+        if (target == null || target == hero.pos) {
+            GLog.w(Messages.get(this, "self_target"));
+            return;
+        }
+
+        Ballistica bolt = new Ballistica(hero.pos, target, Ballistica.PROJECTILE);
+        if (bolt.path.size() < 2) {
+            GLog.w(Messages.get(this, "self_target"));
+            return;
+        }
+
+        final int landing = bolt.collisionPos;
+
+        final int mainDmg = damageRoll(hero);
+        final int scarDmg = Math.max(1, (int)Math.round(mainDmg * 0.5f));
+
+        MeleeWeapon wep = this;
+        wep.beforeAbilityUsed(hero, null);
+
+        int scarCount = Math.min(4, bolt.dist - 1);
+        for (int i = 1; i <= scarCount; i++) {
+            int c = bolt.path.get(i);
+            Dungeon.level.drop(new ScorchItem().ignite(c, scarDmg), c);
+        }
+
+        hero.sprite.zap(landing);
+        MagicMissile.boltFromChar(hero.sprite.parent, MagicMissile.FIRE, hero.sprite, landing, new Callback() {
+            @Override
+            public void call() {
+                Invisibility.dispel();
+                mainExplode(landing, mainDmg);
+                wep.afterAbilityUsed(hero);
+            }
+        });
+        hero.spendAndNext(Actor.TICK);
+    }
+
+    @Override
     public void SPCharge(int value) {
         if(setbouns()) value *= 2;
         super.SPCharge(value);
@@ -241,6 +290,9 @@ public class Suffering extends MeleeWeapon {
 
     @Override
     public String status() {
+        if (Dungeon.hero != null && Dungeon.hero.heroClass == HeroClass.IRENE) {
+            return super.status();
+        }
         if (chargeCap == 100)
             return Messages.format("%d%%", charge);
         return null;
@@ -252,5 +304,131 @@ public class Suffering extends MeleeWeapon {
                 return true;
         }
         return false;
+    }
+
+    private static void mainExplode(int center, int dmg) {
+        PathFinder.buildDistanceMap(center, BArray.not(Dungeon.level.solid, null), 1);
+        for (int i = 0; i < PathFinder.distance.length; i++) {
+            if (PathFinder.distance[i] < Integer.MAX_VALUE) {
+                if (!Dungeon.level.solid[i]) {
+                    CellEmitter.get(i).burst(FlameParticle.FACTORY, 4);
+                }
+                Char ch = Actor.findChar(i);
+                if (ch != null && ch.alignment != Char.Alignment.ALLY) {
+                    ch.damage(dmg, Dungeon.hero);
+                }
+            }
+        }
+        Sample.INSTANCE.play(Assets.Sounds.BLAST);
+    }
+
+    private static void scarExplode(int cell, int dmg) {
+        Heap heap = Dungeon.level.heaps.get(cell);
+        if (heap != null) {
+            for (Item i : heap.items.toArray(new Item[0])) {
+                if (i instanceof ScorchItem) {
+                    heap.remove(i);
+                }
+            }
+        }
+        for (int i : PathFinder.NEIGHBOURS4) {
+            int c = cell + i;
+            if (!Dungeon.level.insideMap(c)) continue;
+            if (!Dungeon.level.solid[c]) {
+                CellEmitter.get(c).burst(FlameParticle.FACTORY, 2);
+            }
+            Char ch = Actor.findChar(c);
+            if (ch != null && ch.alignment != Char.Alignment.ALLY) {
+                ch.damage(dmg, Dungeon.hero);
+            }
+        }
+        Sample.INSTANCE.play(Assets.Sounds.BURNING);
+    }
+
+    //挂在关卡上的引爆者，随灼痕物品一起被存档，玩家离开并返回该层后仍会正常引爆
+    public static class Scorch extends Actor {
+
+        {
+            actPriority = BLOB_PRIO + 1; //after hero, before other actors
+        }
+
+        public int cell = -1;
+        public int dmg = 0;
+
+        @Override
+        protected boolean act() {
+            scarExplode(cell, dmg);
+            diactivate();
+            Actor.remove(this);
+            return true;
+        }
+
+        private static final String CELL = "cell";
+        private static final String DMG = "dmg";
+
+        @Override
+        public void storeInBundle(Bundle bundle) {
+            super.storeInBundle(bundle);
+            bundle.put(CELL, cell);
+            bundle.put(DMG, dmg);
+        }
+
+        @Override
+        public void restoreFromBundle(Bundle bundle) {
+            super.restoreFromBundle(bundle);
+            cell = bundle.getInt(CELL);
+            dmg = bundle.getInt(DMG);
+        }
+    }
+
+    public static class ScorchItem extends Item {
+
+        public Scorch scorch;
+
+        {
+            dropsDownHeap = true;
+            unique = true;
+            image = ItemSpriteSheet.UNDONE_MARK;
+        }
+
+        //下一回合引爆，其余逻辑与炸弹的引信一致
+        public ScorchItem ignite(int cell, int dmg) {
+            scorch = new Scorch();
+            scorch.cell = cell;
+            scorch.dmg = dmg;
+            Actor.addDelayed(scorch, 1);
+            return this;
+        }
+
+        @Override
+        public boolean doPickUp(Hero hero) {
+            GLog.w(Messages.get(this, "cant_pickup"));
+            return false;
+        }
+
+        @Override
+        public Emitter emitter() {
+            Emitter emitter = new Emitter();
+            emitter.pos(7.5f, 3.5f);
+            emitter.fillTarget = false;
+            emitter.pour(FlameParticle.FACTORY, 0.05f);
+            return emitter;
+        }
+
+        private static final String SCORCH = "scorch";
+
+        @Override
+        public void storeInBundle(Bundle bundle) {
+            super.storeInBundle(bundle);
+            bundle.put(SCORCH, scorch);
+        }
+
+        @Override
+        public void restoreFromBundle(Bundle bundle) {
+            super.restoreFromBundle(bundle);
+            if (bundle.contains(SCORCH)) {
+                Actor.add(scorch = (Scorch) bundle.get(SCORCH));
+            }
+        }
     }
 }

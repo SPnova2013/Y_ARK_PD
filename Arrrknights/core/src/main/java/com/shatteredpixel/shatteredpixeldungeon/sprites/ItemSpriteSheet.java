@@ -315,6 +315,7 @@ public class ItemSpriteSheet {
 	public static final int REVOLVER       = WEP_TIER4+17;
 	public static final int NAGINATA_AND_FAN       = WEP_TIER4+18;
 	public static final int KAZEMARU       = WEP_TIER4+19;
+	public static final int KING_OF_NOTHING       = WEP_TIER4+20;
 	static{
 		assignItemRect(LONGSWORD,       16, 16);
 		assignItemRect(BATTLE_AXE,      16, 16);
@@ -336,6 +337,7 @@ public class ItemSpriteSheet {
 		assignItemRect(REVOLVER,        16, 16);
 		assignItemRect(NAGINATA_AND_FAN,        16, 16);
 		assignItemRect(KAZEMARU,        16, 16);
+		assignItemRect(KING_OF_NOTHING,        16, 16);
 	}
 
 	private static final int WEP_TIER5      =                               xy(1, 10);   //8 slots
@@ -362,6 +364,7 @@ public class ItemSpriteSheet {
 	public static final int DONKEY_SWORD       = WEP_TIER5+20;
 	public static final int FLAMMETTA       = WEP_TIER5+21;
 	public static final int MURAKUMO        = WEP_TIER5+22;
+	public static final int APOCALYPSE_ASPIRANT        = WEP_TIER5+23;
 
 	static{
 		assignItemRect(GREATSWORD,  16, 16);
@@ -386,9 +389,7 @@ public class ItemSpriteSheet {
 		assignItemRect(ECHEVERIA,   16, 16);
 		assignItemRect(DONKEY_SWORD,   16, 16);
 		assignItemRect(FLAMMETTA,   16, 16);
-
-
-
+		assignItemRect(APOCALYPSE_ASPIRANT,   16, 16);
 	}
 
 	                                                                                    //8 free slots

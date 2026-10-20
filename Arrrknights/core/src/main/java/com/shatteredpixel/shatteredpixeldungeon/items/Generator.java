@@ -212,6 +212,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfRegrowth;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfSilence;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfTransfusion;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfWarding;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.ApocalypseAspirant;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.AssassinsBlade;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.BattleAxe;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.BladeDemon;
@@ -241,6 +242,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Gluttony;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.GoldDogSword;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.ImageoverForm;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.KazemaruWeapon;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.KingOfNothing;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.KollamSword;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.LoneJourney;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MinosFury;
@@ -533,28 +535,29 @@ public class Generator {
             WEP_T3.probs = new float[]{5, 5, 5, 4, 4, 4, 4, 4, 3, 3, 0, 0};
 
             WEP_T4.classes = new Class<?>[]{
-                    Longsword.class,
-                    BattleAxe.class,
-                    RunicBlade.class,
-                    AssassinsBlade.class,
-                    Crossbow.class,
-                    M1887.class,
-                    Naginata.class,
-                    Scythe.class,
-                    FolkSong.class,
-                    CrabGun.class,
-                    SnowHunter.class,
-                    FlametailSword.class,
-                    MetallicUnion.class,
-                    WarJournalist.class,
-                    KazemaruWeapon.class,
-                    NaginataAndFan.class,
-                    BladeDemon.class,
-                    Gluttony.class,
-                    GoldDogSword.class,
-                    SanktaBet.class
+                    Longsword.class,//4
+                    BattleAxe.class,//5
+                    RunicBlade.class,//4
+                    AssassinsBlade.class,//4
+                    Crossbow.class,//3
+                    M1887.class,//4
+                    Naginata.class,//4
+                    Scythe.class,//4
+                    FolkSong.class,//3
+                    CrabGun.class,//3
+                    SnowHunter.class,//2
+                    FlametailSword.class,//4
+                    MetallicUnion.class,//2
+                    WarJournalist.class,//3
+                    KazemaruWeapon.class,//4
+                    NaginataAndFan.class,//2
+                    KingOfNothing.class,//2
+                    BladeDemon.class,//0
+                    Gluttony.class,//0
+                    GoldDogSword.class,//0
+                    SanktaBet.class,//0
             };
-            WEP_T4.probs = new float[]{4, 5, 4, 4, 3, 4, 4, 4, 3, 3, 2, 4, 2, 3, 4, 2, 0, 0, 0, 0};
+            WEP_T4.probs = new float[]{4, 5, 4, 4, 3, 4, 4, 4, 3, 3, 2, 4, 2, 3, 4, 2, 2, 0, 0, 0, 0};
 
             WEP_T5.classes = new Class<?>[]{
                     Greatsword.class,//4
@@ -580,7 +583,8 @@ public class Generator {
                     MinosFury.class,
                     Niansword.class,
                     PatriotSpear.class,
-                    SakuraSword.class
+                    SakuraSword.class,
+                    ApocalypseAspirant.class
             };
             WEP_T5.probs = new float[]{4, 3, 3, 4, 4, 4, 4, 3, 3, 4, 4, 4, 3, 3, 3, 3, 3, 0, 0, 0, 0, 0, 0, 0};//59
 

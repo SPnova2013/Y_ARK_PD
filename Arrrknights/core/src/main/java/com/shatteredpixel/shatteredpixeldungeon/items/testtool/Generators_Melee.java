@@ -220,11 +220,11 @@ public class Generators_Melee extends Generators {
 
     private int maxSlots(int t){
         switch (t){
-            case 1:return 8;
-            case 2:return 9;
-            case 3:return 12;
-            case 4:return 19;
-            default:case 5:return 23;
+            case 1:return Generator.Category.WEP_T1.classes.clone().length;
+            case 2:return Generator.Category.WEP_T2.classes.clone().length;
+            case 3:return Generator.Category.WEP_T3.classes.clone().length;
+            case 4:return Generator.Category.WEP_T4.classes.clone().length;
+            default:case 5:return Generator.Category.WEP_T5.classes.clone().length;
         }
     }
 

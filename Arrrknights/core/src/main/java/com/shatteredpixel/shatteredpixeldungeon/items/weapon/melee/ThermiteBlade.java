@@ -99,7 +99,7 @@ public class ThermiteBlade extends MeleeWeapon {
 		}
 		@Override
 		public String desc() {
-			return Messages.get(this, "desc");
+			return Messages.get(this, "desc", left);
 		}
 
 		float left;

@@ -26,10 +26,13 @@ import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.ArcaneArmor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.FlavourBuff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.SandalsOfNature;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
+import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
+import com.watabou.noosa.Image;
 
 public class DeepAbyss extends MeleeWeapon {
 
@@ -45,6 +48,15 @@ public class DeepAbyss extends MeleeWeapon {
 	public int max(int lvl) {
 		return  5*(tier+4) +    //45 base, up from 30
 				lvl*(tier+1);   //scaling unchanged
+	}
+
+	@Override
+	public int damageRoll(Char owner) {
+		int dmg = super.damageRoll(owner);
+		if (owner.buff(RagingTide.class) != null) {
+			dmg *= 2;
+		}
+		return dmg;
 	}
 
 	@Override
@@ -72,4 +84,35 @@ public class DeepAbyss extends MeleeWeapon {
 		return STRReq(tier+1, lvl); //20 base strength req, up from 18
 	}
 
+	@Override
+	public String abilityInfo() {
+		return Messages.get(this, "ability_desc", 5 + buffedLvl()/2);
+	}
+
+	@Override
+	protected void duelistAbility(Hero hero, Integer target) {
+		hero.belongings.abilityWeapon = this;
+		MeleeWeapon wep = this;
+		wep.beforeAbilityUsed(hero, null);
+		Buff.affect(hero, RagingTide.class, 5f + buffedLvl()/2);
+		wep.afterAbilityUsed(hero);
+	}
+
+	public static class RagingTide extends FlavourBuff {
+
+		{
+			type = buffType.POSITIVE;
+			announced = true;
+		}
+
+		@Override
+		public int icon() {
+			return BuffIndicator.COMBO;
+		}
+
+		@Override
+		public void tintIcon(Image icon) {
+			icon.hardlight(0.4f, 0.6f, 1f);
+		}
+	}
 }
