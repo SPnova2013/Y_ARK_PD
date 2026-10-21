@@ -89,6 +89,7 @@ import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
 import com.shatteredpixel.shatteredpixeldungeon.effects.SpellSprite;
 import com.shatteredpixel.shatteredpixeldungeon.items.Heap;
+import com.shatteredpixel.shatteredpixeldungeon.items.KindOfWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.items.Skill.SK3.ExtremeSharpness;
 import com.shatteredpixel.shatteredpixeldungeon.items.Skill.SK3.TrueSilverSlash;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.LeatherArmor;
@@ -113,6 +114,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfDisintegration
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfFireblast;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfFrost;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfLightning;
+import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfMagicMissile;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.SpiritBow;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.chimera.Song;
@@ -736,6 +738,19 @@ public abstract class Char extends Actor {
 		return cachedShield;
 	}
 	
+	//resolves the class used for damage type checks (resistances, immunities, magic damage feedback).
+	//a weapon can report that the attacks it makes count as spell damage, see KindOfWeapon#dealsSpellDamage
+	public static Class<?> damageTypeOf( Object src ) {
+		if (src instanceof Char) {
+			Char ch = (Char) src;
+			KindOfWeapon wep = ch instanceof Hero ? ((Hero) ch).belongings.attackingWeapon() : null;
+			if (wep != null && wep.dealsSpellDamage(ch)) {
+				return WandOfMagicMissile.class;
+			}
+		}
+		return src.getClass();
+	}
+
 	public void damage( int dmg, Object src ) {
 		
 		if (!isAlive() || dmg < 0) {
@@ -797,7 +812,7 @@ public abstract class Char extends Actor {
 			dmg *= 2;
 		}
 		
-		Class<?> srcClass = src.getClass();
+		Class<?> srcClass = damageTypeOf( src );
 		if (isImmune( srcClass )) {
 			dmg = 0;
 		} else {
@@ -805,7 +820,7 @@ public abstract class Char extends Actor {
 		}
 		
 		//TODO improve this when I have proper damage source logic
-		if (AntiMagic.RESISTS.contains(src.getClass()) && buff(ArcaneArmor.class) != null){
+		if (AntiMagic.RESISTS.contains(srcClass) && buff(ArcaneArmor.class) != null){
 			dmg -= Random.NormalIntRange(0, buff(ArcaneArmor.class).level());
 			if (dmg < 0) dmg = 0;
 		}
@@ -837,7 +852,7 @@ public abstract class Char extends Actor {
 		if (!Dummy.kkdy && !ImmortalShield.isImmortal(this))HP -= dmg;//change from budding
 
 		if (sprite != null) {
-			if(AntiMagic.RESISTS.contains(src.getClass())){
+			if(AntiMagic.RESISTS.contains(srcClass)){
 				sprite.showStatus(CharSprite.MAGIC,
 						Integer.toString(dmg + shielded));
 			}else{sprite.showStatus(HP > HT / 2 ?

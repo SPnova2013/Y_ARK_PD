@@ -4,8 +4,11 @@ import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Invisibility;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Paralysis;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroClass;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Chains;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Pushing;
@@ -17,8 +20,10 @@ import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
+import com.shatteredpixel.shatteredpixeldungeon.ui.AttackIndicator;
 import com.shatteredpixel.shatteredpixeldungeon.utils.BArray;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
+import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Callback;
 import com.watabou.utils.PathFinder;
@@ -40,6 +45,11 @@ public class SnowHunter extends MeleeWeapon{
     }
 
     private boolean swiching = false;
+
+    //set while the weapon ability is resolving, its hit must not trigger the usual pull/push effect
+    private boolean abilityAttack = false;
+
+    public static final float ABILITY_PARALYSIS = 3f;
 
     @Override
     public int max(int lvl) {
@@ -72,7 +82,125 @@ public class SnowHunter extends MeleeWeapon{
     }
 
     @Override
+    public String targetingPrompt() {
+        return Messages.get(this, "prompt");
+    }
+
+    @Override
+    protected void duelistAbility(Hero hero, Integer target) {
+        //+(4+2*lvl) damage on top of a regular hit, roughly +25% base damage
+        int dmgBoost = augment.damageFactor(4 + Math.round(2f*buffedLvl()));
+        pullAbility(hero, target, 1f, dmgBoost);
+    }
+
+    @Override
+    public String abilityInfo() {
+        int dmgBoost = levelKnown ? 4 + Math.round(2f*buffedLvl()) : 4;
+        if (levelKnown){
+            return Messages.get(this, "ability_desc", augment.damageFactor(min()+dmgBoost), augment.damageFactor(max()+dmgBoost));
+        } else {
+            return Messages.get(this, "typical_ability_desc", min(0)+dmgBoost, max(0)+dmgBoost);
+        }
+    }
+
+    //hits a target the weapon can reach, then yanks it right in front of the hero and paralyses it
+    private void pullAbility(Hero hero, Integer target, float dmgMulti, int dmgBoost) {
+        if (target == null) {
+            return;
+        }
+
+        final Char enemy = Actor.findChar(target);
+        if (enemy == null || enemy == hero || hero.isCharmedBy(enemy) || !Dungeon.level.heroFOV[target]) {
+            GLog.w(Messages.get(this, "ability_no_target"));
+            return;
+        }
+
+        hero.belongings.abilityWeapon = this;
+        if (!hero.canAttack(enemy)) {
+            GLog.w(Messages.get(this, "ability_target_range"));
+            hero.belongings.abilityWeapon = null;
+            return;
+        }
+        hero.belongings.abilityWeapon = null;
+
+        final boolean alreadyAdjacent = Dungeon.level.adjacent(hero.pos, enemy.pos);
+        final int pulledPos = pullDestination(hero, enemy);
+
+        hero.sprite.attack(enemy.pos, new Callback() {
+            @Override
+            public void call() {
+                beforeAbilityUsed(hero, enemy);
+                AttackIndicator.target(enemy);
+
+                abilityAttack = true;
+                boolean hit = hero.attack(enemy, dmgMulti, dmgBoost, Char.INFINITE_ACCURACY);
+                abilityAttack = false;
+
+                if (hit) {
+                    Sample.INSTANCE.play(Assets.Sounds.HIT_STRONG);
+                    if (enemy.isAlive()) {
+                        if (pulledPos != -1) {
+                            dragEnemy(hero, enemy, pulledPos);
+                        } else if (!alreadyAdjacent) {
+                            GLog.w(Messages.get(this, "cant_pull"));
+                        }
+                        Buff.affect(enemy, Paralysis.class, ABILITY_PARALYSIS);
+                    } else {
+                        MeleeWeapon.onAbilityKill(hero, enemy);
+                    }
+                }
+
+                Invisibility.dispel();
+                hero.spendAndNext(hero.attackDelay());
+                afterAbilityUsed(hero);
+            }
+        });
+    }
+
+    //finds the cell along the chain that is closest to the hero, -1 if the target cannot be dragged
+    private int pullDestination(Hero hero, Char enemy) {
+
+        if (enemy.properties().contains(Char.Property.IMMOVABLE)) {
+            return -1;
+        }
+
+        Ballistica chain = new Ballistica(hero.pos, enemy.pos, Ballistica.STOP_TARGET);
+        for (int i : chain.subPath(1, chain.dist)) {
+            //prefer the earliest point on the path, so the target ends up right in front of the hero
+            if (!Dungeon.level.solid[i]
+                    && Actor.findChar(i) == null
+                    && (!Char.hasProp(enemy, Char.Property.LARGE) || Dungeon.level.openSpace[i])) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    //same visuals as the ethereal chains, the target is dragged along the chain
+    private void dragEnemy(final Hero hero, final Char enemy, final int pulledPos) {
+
+        //the chain is purely a visual, it must not delay the actual move: while the hero
+        //waits for input the actor loop is paused on the hero, so a pushing added from a
+        //render-thread callback would only resolve on the player's next action
+        hero.sprite.parent.add(new Chains(hero.sprite.center(), enemy.sprite.center(), null));
+        Sample.INSTANCE.play(Assets.Sounds.CHAINS);
+
+        Actor.add(new Pushing(enemy, enemy.pos, pulledPos, new Callback() {
+            @Override
+            public void call() {
+                enemy.pos = pulledPos;
+                Dungeon.level.occupyCell(enemy);
+                Dungeon.observe();
+                GameScene.updateFog();
+            }
+        }));
+    }
+
+    @Override
     public int proc(Char attacker, Char defender, int damage) {
+        if (abilityAttack) return super.proc(attacker, defender, damage);
+
         if (!swiching) {
             Ballistica trajectory = new Ballistica(attacker.pos, defender.pos, Ballistica.STOP_TARGET);
             trajectory = new Ballistica(trajectory.collisionPos, trajectory.path.get(trajectory.path.size() - 1), Ballistica.PROJECTILE);
@@ -192,6 +320,9 @@ public class SnowHunter extends MeleeWeapon{
 
     @Override
     public String status() {
+        if (Dungeon.hero != null && Dungeon.hero.heroClass == HeroClass.IRENE) {
+            return super.status();
+        }
         if (this.isIdentified()) {
             if (swiching) return "EX";
             else return "NM";

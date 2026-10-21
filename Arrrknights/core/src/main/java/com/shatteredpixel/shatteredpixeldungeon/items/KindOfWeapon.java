@@ -130,6 +130,13 @@ abstract public class KindOfWeapon extends EquipableItem {
 		}
 	}
 
+	//overridden by weapons whose attacks can count as spell (magic) damage.
+	//Char#damageTypeOf uses this to resolve resistances, immunities and the magic damage feedback,
+	//so a "damage type becomes spell damage" effect can be reused by any weapon.
+	public boolean dealsSpellDamage( Char owner ){
+		return false;
+	}
+
 	public int defenseFactor( Char owner ) {
 		return 0;
 	}

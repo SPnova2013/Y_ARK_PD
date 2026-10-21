@@ -8,6 +8,7 @@ import com.watabou.noosa.Camera;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.MovieClip;
 import com.watabou.noosa.tweeners.Tweener;
+import com.watabou.utils.Callback;
 import com.watabou.utils.PointF;
 
 public class CoverSprite extends MovieClip implements Tweener.Listener, MovieClip.Listener {
@@ -16,6 +17,9 @@ public class CoverSprite extends MovieClip implements Tweener.Listener, MovieCli
     protected float perspectiveRaise    = 6 / 16f; //6 pixels
 
     protected Animation defaultAnim;
+
+    //optional hook, called after the animation finished and the sprite erased itself
+    public Callback onFinish;
 
     public CoverSprite() {
         super();
@@ -66,6 +70,13 @@ public class CoverSprite extends MovieClip implements Tweener.Listener, MovieCli
     @Override
     public void onComplete(Animation anim) {
         killAndErase();
+        //clear first, MovieClip can report the same animation complete more than once
+        //in a single update if a frame took unusually long
+        if (onFinish != null) {
+            Callback callback = onFinish;
+            onFinish = null;
+            callback.call();
+        }
     }
 
     @Override

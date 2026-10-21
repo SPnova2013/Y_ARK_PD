@@ -584,5 +584,7 @@ public class Assets {
 		public static final String BODCOVER	= "sprites/boundary-of-death.png";
 		public static final String GAWAINCOVER	= "sprites/gawaincover.png";
 		public static final String FROSTBLASTCOVER	= "sprites/FrostBlast.png";
+		public static final String SHADOWLESSCOVER	= "sprites/Shadowless.png";
+		public static final String SHADOWLES_FINISH_COVER	= "sprites/Shadowless-finish.png";
 	}
 }
