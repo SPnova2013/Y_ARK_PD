@@ -350,6 +350,11 @@ public abstract class Char extends Actor {
 		{
 			
 			int dr = enemy.drRoll();
+
+			//spell damage ignores armor, just like the damage a wand deals
+			if (dealsSpellDamageNow()) {
+				dr = 0;
+			}
 			
 			if (this instanceof Hero){
 				Hero h = (Hero)this;
@@ -738,15 +743,21 @@ public abstract class Char extends Actor {
 		return cachedShield;
 	}
 	
-	//resolves the class used for damage type checks (resistances, immunities, magic damage feedback).
-	//a weapon can report that the attacks it makes count as spell damage, see KindOfWeapon#dealsSpellDamage
+	//true when the damage this char is currently dealing should count as spell damage.
+	//a weapon reports this itself, see KindOfWeapon#dealsSpellDamage
+	public boolean dealsSpellDamageNow() {
+		if (this instanceof Hero) {
+			//the equipped weapon is what actually swings, same as Hero#attackProc uses
+			KindOfWeapon wep = ((Hero) this).belongings.weapon;
+			return wep != null && wep.dealsSpellDamage(this);
+		}
+		return false;
+	}
+
+	//resolves the class used for damage type checks (resistances, immunities, magic damage feedback)
 	public static Class<?> damageTypeOf( Object src ) {
-		if (src instanceof Char) {
-			Char ch = (Char) src;
-			KindOfWeapon wep = ch instanceof Hero ? ((Hero) ch).belongings.attackingWeapon() : null;
-			if (wep != null && wep.dealsSpellDamage(ch)) {
-				return WandOfMagicMissile.class;
-			}
+		if (src instanceof Char && ((Char) src).dealsSpellDamageNow()) {
+			return WandOfMagicMissile.class;
 		}
 		return src.getClass();
 	}

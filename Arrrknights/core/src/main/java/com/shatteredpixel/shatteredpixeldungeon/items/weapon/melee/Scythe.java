@@ -2,8 +2,13 @@ package com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.FlavourBuff;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Invisibility;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroClass;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
@@ -13,6 +18,8 @@ import com.shatteredpixel.shatteredpixeldungeon.items.ror2items.Aegis;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
+import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
+import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
 
@@ -26,6 +33,45 @@ public class Scythe extends MeleeWeapon {
     }
 
     private int HealCount = 0;
+
+    //the ability lasts ABILITY_DURATION_BASE + weaponLevel turns
+    public static final int ABILITY_DURATION_BASE = 5;
+    //attack speed is doubled, i.e. the delay is halved
+    public static final float ABILITY_SPEED_BONUS = 1f;
+    //bonus damage against wounded enemies
+    public static final float ABILITY_DAMAGE_BONUS = 0.5f;
+    //an enemy counts as wounded below this fraction of its max health
+    public static final float ABILITY_WOUNDED_THRESHOLD = 0.5f;
+
+    @Override
+    protected void duelistAbility(Hero hero, Integer target) {
+        hero.belongings.abilityWeapon = this;
+        beforeAbilityUsed(hero, null);
+
+        Buff.affect(hero, Harvest.class, ABILITY_DURATION_BASE + buffedLvl());
+
+        hero.sprite.operate(hero.pos);
+        Sample.INSTANCE.play(Assets.Sounds.SKILL_BASIC);
+        Invisibility.dispel();
+
+        afterAbilityUsed(hero);
+        hero.spendAndNext(Actor.TICK);
+    }
+
+    @Override
+    public String abilityInfo() {
+        return Messages.get(this, "ability_desc", ABILITY_DURATION_BASE + buffedLvl());
+    }
+
+    //attack speed is a delay, so a 100% speed bonus halves it
+    @Override
+    public float speedFactor(Char owner) {
+        float dly = super.speedFactor(owner);
+        if (owner.buff(Harvest.class) != null) {
+            dly *= 1f / (1f + ABILITY_SPEED_BONUS);
+        }
+        return dly;
+    }
 
     @Override
     public int max(int lvl) {
@@ -52,6 +98,11 @@ public class Scythe extends MeleeWeapon {
         if (Dungeon.hero.belongings.getItem(RingOfFuror.class) != null) {
             if (Dungeon.hero.belongings.getItem(RingOfFuror.class).isEquipped(Dungeon.hero) && defender.properties().contains(Char.Property.BOSS))
                 bounsdmg += 0.35f;
+        }
+
+        //harvest cuts deeper into anything already wounded
+        if (attacker.buff(Harvest.class) != null && defender.HP < defender.HT * ABILITY_WOUNDED_THRESHOLD) {
+            damage *= 1 + ABILITY_DAMAGE_BONUS;
         }
 
         damage = Math.round(damage * bounsdmg);
@@ -95,6 +146,9 @@ public class Scythe extends MeleeWeapon {
 
     @Override
     public String status() {
+        if (Dungeon.hero != null && Dungeon.hero.heroClass == HeroClass.IRENE) {
+            return super.status();
+        }
         if (this.isIdentified()) return HealCount + "/" + 8;
     else return null;}
 
@@ -108,6 +162,20 @@ public class Scythe extends MeleeWeapon {
         return info;
     }
 
+
+    //whet the blade: faster swings, and extra damage to wounded enemies
+    public static class Harvest extends FlavourBuff {
+
+        {
+            type = buffType.POSITIVE;
+            announced = true;
+        }
+
+        @Override
+        public int icon() {
+            return BuffIndicator.HASTE;
+        }
+    }
 
     private static final String HEALPOINT = "HealCount";
 
