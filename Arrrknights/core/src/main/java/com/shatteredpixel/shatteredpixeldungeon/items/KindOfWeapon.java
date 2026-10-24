@@ -137,6 +137,12 @@ abstract public class KindOfWeapon extends EquipableItem {
 		return false;
 	}
 
+	//overridden by weapons whose attacks can count as true damage, i.e. ignoring armor,
+	//resistances, immunities and shields. see Char#dealsTrueDamageNow
+	public boolean dealsTrueDamage( Char owner, Char target ){
+		return false;
+	}
+
 	public int defenseFactor( Char owner ) {
 		return 0;
 	}

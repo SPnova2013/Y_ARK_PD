@@ -135,6 +135,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Violin;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.WarJournalist;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.MissileWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.darts.ShockingDart;
+import com.shatteredpixel.shatteredpixeldungeon.mechanics.TrueDamage;
 import com.shatteredpixel.shatteredpixeldungeon.items.testtool.ImmortalShield;//change from budding
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
@@ -355,6 +356,12 @@ public abstract class Char extends Actor {
 			if (dealsSpellDamageNow()) {
 				dr = 0;
 			}
+
+			//true damage skips the whole mitigation pipeline
+			boolean trueDamage = dealsTrueDamageNow( enemy );
+			if (trueDamage) {
+				dr = 0;
+			}
 			
 			if (this instanceof Hero){
 				Hero h = (Hero)this;
@@ -393,6 +400,9 @@ public abstract class Char extends Actor {
 			PermanentArmorReduction par = enemy.buff(PermanentArmorReduction.class);
 			if(par!=null) dr -= par.get();
 
+			//armor shred must not turn true damage into extra damage either
+			if (trueDamage) dr = 0;
+
 			int dmg;
 			Preparation prep = buff(Preparation.class);
 			if (prep != null){
@@ -430,7 +440,12 @@ public abstract class Char extends Actor {
 				return true;
 			}
 
-			enemy.damage( effectiveDamage, this );
+			if (trueDamage) {
+				//also bypasses resistances, immunities and shields
+				TrueDamage.deal( enemy, effectiveDamage, this );
+			} else {
+				enemy.damage( effectiveDamage, this );
+			}
 			if(Dungeon.level.feeling == Level.Feeling.HEAVYFOG){
 				if(this instanceof Hero) this.HP = Math.min(this.HP+(int)Math.ceil(effectiveDamage/20f), this.HT);
 				else this.HP = Math.min(this.HP+effectiveDamage/2, this.HT);
@@ -750,6 +765,15 @@ public abstract class Char extends Actor {
 			//the equipped weapon is what actually swings, same as Hero#attackProc uses
 			KindOfWeapon wep = ((Hero) this).belongings.weapon;
 			return wep != null && wep.dealsSpellDamage(this);
+		}
+		return false;
+	}
+
+	//true when the damage this char is dealing to the given target should ignore every mitigation
+	public boolean dealsTrueDamageNow( Char enemy ) {
+		if (this instanceof Hero && enemy != null) {
+			KindOfWeapon wep = ((Hero) this).belongings.weapon;
+			return wep != null && wep.dealsTrueDamage(this, enemy);
 		}
 		return false;
 	}
