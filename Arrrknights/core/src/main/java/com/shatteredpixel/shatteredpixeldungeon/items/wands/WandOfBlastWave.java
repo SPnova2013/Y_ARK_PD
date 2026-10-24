@@ -127,6 +127,14 @@ public class WandOfBlastWave extends DamageWand {
 
 	public static void throwChar(final Char ch, final Ballistica trajectory, int power,
 	                             boolean closeDoors, boolean collideDmg){
+		throwChar(ch, trajectory, power, closeDoors, collideDmg, false);
+	}
+
+	//resolveImmediately settles the move at once instead of when the push animation ends.
+	//use it when several chars are pushed one after another in the same cast, so that each
+	//push is resolved against the cells the previous push already vacated
+	public static void throwChar(final Char ch, final Ballistica trajectory, int power,
+	                             boolean closeDoors, boolean collideDmg, boolean resolveImmediately){
 		if (ch.properties().contains(Char.Property.BOSS)) {
 			power /= 2;
 		}
@@ -163,30 +171,55 @@ public class WandOfBlastWave extends DamageWand {
 		final boolean finalCollided = collided && collideDmg;
 		final int initialpos = ch.pos;
 
-		Actor.addDelayed(new Pushing(ch, ch.pos, newPos, new Callback() {
-			public void call() {
-				if (initialpos != ch.pos) {
-					//something caused movement before pushing resolved, cancel to be safe.
-					ch.sprite.place(ch.pos);
-					return;
+		if (resolveImmediately) {
+			//settle the move right now, the animation just catches up
+			applyThrow(ch, newPos, closeDoors);
+			Actor.addDelayed(new Pushing(ch, initialpos, newPos, new Callback() {
+				public void call() {
+					if (finalCollided && ch.isActive()) {
+						ch.damage(Random.NormalIntRange(finalDist, 2*finalDist), this);
+						if (ch.isActive())
+							Paralysis.prolong(ch, Paralysis.class, 1 + finalDist/2f);
+					}
 				}
-				int oldPos = ch.pos;
-				ch.pos = newPos;
-				if (finalCollided && ch.isActive()) {
-					ch.damage(Random.NormalIntRange(finalDist, 2*finalDist), this);
-					if (ch.isActive())
-						Paralysis.prolong(ch, Paralysis.class, 1 + finalDist/2f);
+			}), -1);
+		} else {
+			Actor.addDelayed(new Pushing(ch, ch.pos, newPos, new Callback() {
+				public void call() {
+					if (initialpos != ch.pos) {
+						//something caused movement before pushing resolved, cancel to be safe.
+						ch.sprite.place(ch.pos);
+						return;
+					}
+					ch.pos = newPos;
+					if (finalCollided && ch.isActive()) {
+						ch.damage(Random.NormalIntRange(finalDist, 2*finalDist), this);
+						if (ch.isActive())
+							Paralysis.prolong(ch, Paralysis.class, 1 + finalDist/2f);
+					}
+					applyThrowSideEffects(ch, initialpos, closeDoors);
 				}
-				if (closeDoors && Dungeon.level.map[oldPos] == Terrain.OPEN_DOOR){
-					Door.leave(oldPos);
-				}
-				Dungeon.level.occupyCell(ch);
-				if (ch == Dungeon.hero){
-					//FIXME currently no logic here if the throw effect kills the hero
-					Dungeon.observe();
-				}
-			}
-		}), -1);
+			}), -1);
+		}
+	}
+
+	//moves a char straight away, with the same side effects the deferred push applies.
+	//note the sprite is not touched, the Pushing effect animates it
+	private static void applyThrow(Char ch, int newPos, boolean closeDoors) {
+		int oldPos = ch.pos;
+		ch.pos = newPos;
+		applyThrowSideEffects(ch, oldPos, closeDoors);
+	}
+
+	private static void applyThrowSideEffects(Char ch, int oldPos, boolean closeDoors) {
+		if (closeDoors && Dungeon.level.map[oldPos] == Terrain.OPEN_DOOR){
+			Door.leave(oldPos);
+		}
+		Dungeon.level.occupyCell(ch);
+		if (ch == Dungeon.hero){
+			//FIXME currently no logic here if the throw effect kills the hero
+			Dungeon.observe();
+		}
 	}
 
 	@Override

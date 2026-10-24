@@ -149,14 +149,22 @@ public class StaffOfMageHand extends Wand {
             }
         }
 
-        for (Char ch : chars) {
-            if (!ch.properties().contains(Char.Property.IMMOVABLE)) {
-                processSoulMark(ch, chargesPerCast());
-                Ballistica trajectory = new Ballistica(curUser.pos, ch.pos, Ballistica.STOP_TARGET);
-                trajectory = new Ballistica(trajectory.collisionPos, trajectory.path.get(trajectory.path.size() - 1), Ballistica.PROJECTILE);
-                WandOfBlastWave.throwChar(ch, trajectory, 1 + this.buffedLvl()/2);
+        //work from the far end of the beam back, and let every push resolve at once:
+        //that way each enemy is pushed into the cells the enemy ahead of it just vacated,
+        //instead of every one of them being blocked by the original, unmoved lineup
+        for (int i = chars.size() - 1; i >= 0; i--) {
+            Char ch = chars.get(i);
+            if (!ch.isAlive() || ch.properties().contains(Char.Property.IMMOVABLE)) {
+                continue;
             }
+            processSoulMark(ch, chargesPerCast());
+            Ballistica trajectory = new Ballistica(curUser.pos, ch.pos, Ballistica.STOP_TARGET);
+            trajectory = new Ballistica(trajectory.collisionPos, trajectory.path.get(trajectory.path.size() - 1), Ballistica.PROJECTILE);
+            WandOfBlastWave.throwChar(ch, trajectory, 1 + this.buffedLvl()/2, true, true, true);
         }
+
+        Dungeon.observe();
+        GameScene.updateFog();
     }
 
     @Override
