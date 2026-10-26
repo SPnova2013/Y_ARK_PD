@@ -576,6 +576,12 @@ public class Item implements Bundlable {
 	public String status() {
 		return quantity != 1 ? Integer.toString( quantity ) : null;
 	}
+
+	//shown in the bottom left corner of the item slot, next to the upgrade level.
+	//status() is the top left corner, so this is the free corner for extra info
+	public String statusBottom(){
+		return null;
+	}
 	
 	public static void updateQuickslot() {
 			QuickSlotButton.refresh();

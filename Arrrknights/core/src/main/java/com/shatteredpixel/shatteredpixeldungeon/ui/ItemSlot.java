@@ -50,6 +50,7 @@ public class ItemSlot extends Button {
 	protected ItemSprite sprite;
 	protected Item       item;
 	protected BitmapText status;
+	protected BitmapText statusBottom;
 	protected BitmapText extra;
 	protected Image      itemIcon;
 	protected BitmapText level;
@@ -100,6 +101,9 @@ public class ItemSlot extends Button {
 		
 		status = new BitmapText( PixelScene.pixelFont);
 		add(status);
+
+		statusBottom = new BitmapText( PixelScene.pixelFont);
+		add(statusBottom);
 		
 		extra = new BitmapText( PixelScene.pixelFont);
 		add(extra);
@@ -129,6 +133,18 @@ public class ItemSlot extends Button {
 			PixelScene.align(status);
 		}
 		
+		if (statusBottom != null) {
+			statusBottom.measure();
+			if (statusBottom.width > width){
+				statusBottom.scale.set(PixelScene.align(0.8f));
+			} else {
+				statusBottom.scale.set(1f);
+			}
+			statusBottom.x = x;
+			statusBottom.y = y + (height - statusBottom.baseLine() - 1);
+			PixelScene.align(statusBottom);
+		}
+
 		if (extra != null) {
 			extra.x = x + (width - extra.width());
 			extra.y = y;
@@ -186,13 +202,14 @@ public class ItemSlot extends Button {
 		}
 
 		if (item == null){
-			status.visible = extra.visible = level.visible = false;
+			status.visible = statusBottom.visible = extra.visible = level.visible = false;
 			return;
 		} else {
-			status.visible = extra.visible = level.visible = true;
+			status.visible = statusBottom.visible = extra.visible = level.visible = true;
 		}
 
 		status.text( item.status() );
+		statusBottom.text( item.statusBottom() );
 
 		if (item.icon != -1 && (item.isIdentified() || (item instanceof Ring && ((Ring) item).isKnown()))){
 			extra.text( null );
@@ -249,6 +266,7 @@ public class ItemSlot extends Button {
 		float alpha = value ? ENABLED : DISABLED;
 		sprite.alpha( alpha );
 		status.alpha( alpha );
+		statusBottom.alpha( alpha );
 		extra.alpha( alpha );
 		level.alpha( alpha );
 		if (itemIcon != null) itemIcon.alpha( alpha );
