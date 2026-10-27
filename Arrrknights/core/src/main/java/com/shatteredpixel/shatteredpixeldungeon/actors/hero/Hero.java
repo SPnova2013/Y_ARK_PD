@@ -235,6 +235,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Echeveria;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Enfild2;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Gluttony;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.KRISSVector;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MinosFury;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Niansword;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.PatriotSpear;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.SHISHIOH;
@@ -918,6 +919,12 @@ public class Hero extends Char {
         if (buff(Niansword.BronzeSeal.class) != null
                 && belongings.weapon instanceof Niansword) {
             dr = Math.round(dr * (1f + Niansword.ABILITY_DEFENSE_BONUS));
+        }
+
+        //guard mode braces the whole body behind the pick, again on the total
+        if (buff(MinosFury.GuardMode.class) != null
+                && belongings.weapon instanceof MinosFury) {
+            dr = Math.round(dr * (1f + MinosFury.ABILITY_DEFENSE_BONUS));
         }
 
         return dr;
