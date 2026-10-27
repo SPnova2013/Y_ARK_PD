@@ -589,5 +589,6 @@ public class Assets {
 		public static final String SHADOWLES_FINISH_COVER	= "sprites/Shadowless-finish.png";
 		public static final String SPEAR_FLYING_COVER	= "sprites/SpearFlying.png";
 		public static final String SPEAR_LANDING_COVER	= "sprites/SpearLanding.png";
+		public static final String CLEANSING_EVIL_COVER	= "sprites/CleansingEvil.png";
 	}
 }

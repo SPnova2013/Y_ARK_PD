@@ -221,6 +221,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfMagicMappi
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.SP.StaffOfMudrock;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfBlastWave;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfLivingEarth;
+import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfMagicMissile;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.SpiritBow;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.chimera.Frostcraft;
@@ -912,6 +913,13 @@ public class Hero extends Char {
             dr += Random.NormalIntRange(0,drplus);
         }
         if(buff(ThermiteBlade.ExtremeSharpness.class)!=null) dr = 0;
+
+        //the bronze seal hardens the whole guard: armor, weapon, block buffs and talents alike
+        if (buff(Niansword.BronzeSeal.class) != null
+                && belongings.weapon instanceof Niansword) {
+            dr = Math.round(dr * (1f + Niansword.ABILITY_DEFENSE_BONUS));
+        }
+
         return dr;
     }
 
@@ -1982,7 +1990,13 @@ public class Hero extends Char {
         if (belongings.weapon instanceof Niansword) {
             int dmg = Random.IntRange(0, 3 + belongings.weapon.buffedLvl() * 3);
             int dr = Math.min(enemy.drRoll(), enemy.drRoll());
-            enemy.damage(dmg - dr, this);
+            if (buff(Niansword.BronzeSeal.class) != null) {
+                //the bronze seal turns the bite of the blade into spell damage,
+                //which ignores armor and runs into magic resistance instead
+                enemy.damage(dmg, new WandOfMagicMissile());
+            } else {
+                enemy.damage(dmg - dr, this);
+            }
         }
 
         Earthroot.Armor armor = buff(Earthroot.Armor.class);
