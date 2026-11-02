@@ -37,7 +37,7 @@ public class FlavourBuff extends Buff {
 		return Messages.get(this, "desc", dispTurns());
 	}
 	//flavour buffs can all just rely on cooldown()
-	protected String dispTurns() {
+    public String dispTurns() {
 		return dispTurns(visualcooldown());
 	}
 	public void decCooldown(float time) {

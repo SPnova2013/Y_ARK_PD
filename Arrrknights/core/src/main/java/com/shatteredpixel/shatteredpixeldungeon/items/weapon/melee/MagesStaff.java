@@ -24,9 +24,13 @@ package com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee;
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Badges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Barrier;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.FlavourBuff;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Invisibility;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Paralysis;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroSubClass;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
@@ -49,6 +53,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
+import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndBag;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndOptions;
@@ -70,6 +75,186 @@ public class MagesStaff extends MeleeWeapon {
 	public static final String AC_ZAP	= "ZAP";
 
 	private static final float STAFF_SCALE_FACTOR = 0.75f;
+
+	//mental burst: needs a fully charged staff, splits every cast into weaker bolts
+	public static final int ABILITY_HITS_BASE = 6;
+	//one extra bolt at this level and again at twice this level
+	public static final int ABILITY_HITS_BONUS_LEVEL = 5;
+	//every bolt keeps this much of the original power, plus a little per level
+	public static final float ABILITY_POWER_BASE = 0.33f;
+	public static final float ABILITY_POWER_PER_LEVEL = 0.01f;
+	//the burst lasts ABILITY_DURATION_BASE + weaponLevel/2 turns
+	public static final int ABILITY_DURATION_BASE = 10;
+	//and the staff cannot burst again for ABILITY_COOLDOWN_BASE - weaponLevel turns
+	public static final int ABILITY_COOLDOWN_BASE = 66;
+	//paralysis the hero suffers once the burst is over
+	public static final float ABILITY_PARALYSIS = 5f;
+
+	@Override
+	protected void duelistAbility(Hero hero, Integer target) {
+		if (wand == null) {
+			GLog.w(Messages.get(this, "ability_no_wand"));
+			return;
+		}
+		if (hero.buff(MentalBurstCooldown.class) != null) {
+			GLog.w(Messages.get(this, "ability_cooling"));
+			return;
+		}
+
+		hero.belongings.abilityWeapon = this;
+		beforeAbilityUsed(hero, null);
+
+		int lvl = buffedLvl();
+		int hits = ABILITY_HITS_BASE
+				+ (lvl >= ABILITY_HITS_BONUS_LEVEL ? 1 : 0)
+				+ (lvl >= ABILITY_HITS_BONUS_LEVEL * 2 ? 1 : 0);
+		float power = ABILITY_POWER_BASE + ABILITY_POWER_PER_LEVEL * lvl;
+
+		Buff.prolong(hero, MentalBurst.class, ABILITY_DURATION_BASE + lvl/2).setup(hits, power);
+		Buff.affect(hero, MentalBurstCooldown.class).setDuration(Math.max(1, ABILITY_COOLDOWN_BASE - lvl));
+
+		hero.sprite.operate(hero.pos);
+		Sample.INSTANCE.play(Assets.Sounds.SKILL_BASIC);
+		Invisibility.dispel();
+
+		afterAbilityUsed(hero);
+		hero.spendAndNext(Actor.TICK);
+	}
+
+	@Override
+	public String abilityInfo() {
+		int lvl = buffedLvl();
+		int hits = ABILITY_HITS_BASE
+				+ (lvl >= ABILITY_HITS_BONUS_LEVEL ? 1 : 0)
+				+ (lvl >= ABILITY_HITS_BONUS_LEVEL * 2 ? 1 : 0);
+		int power = Math.round((ABILITY_POWER_BASE + ABILITY_POWER_PER_LEVEL * lvl) * 100f);
+		return Messages.get(this, "ability_desc",
+				ABILITY_DURATION_BASE + lvl/2,             //%1$d duration in turns
+				hits,                                       //%2$d bolts per cast
+				power,                                      //%3$d percent each bolt keeps
+				Math.max(1, ABILITY_COOLDOWN_BASE - lvl));  //%4$d cooldown in turns
+	}
+
+	//every cast is split into this many weaker bolts while the burst lasts
+	public static class MentalBurst extends FlavourBuff {
+
+		private int hits = ABILITY_HITS_BASE;
+		private float power = ABILITY_POWER_BASE;
+
+		{
+			type = buffType.POSITIVE;
+			announced = true;
+		}
+
+		public void setup(int hits, float power) {
+			this.hits = hits;
+			this.power = power;
+		}
+
+		public int hits() {
+			return hits;
+		}
+
+		public float power() {
+			return power;
+		}
+
+		@Override
+		public void detach() {
+			super.detach();
+			if (target != null) {
+				//the mind pays for the outburst
+				Buff.affect(target, Paralysis.class, ABILITY_PARALYSIS);
+			}
+		}
+
+		@Override
+		public int icon() {
+			return BuffIndicator.MAGIC_SLEEP;
+		}
+
+		private static final String HITS = "hits";
+		private static final String POWER = "power";
+
+		@Override
+		public void storeInBundle(Bundle bundle) {
+			super.storeInBundle(bundle);
+			bundle.put(HITS, hits);
+			bundle.put(POWER, power);
+		}
+
+		@Override
+		public void restoreFromBundle(Bundle bundle) {
+			super.restoreFromBundle(bundle);
+			hits = bundle.getInt(HITS);
+			power = bundle.getFloat(POWER);
+		}
+	}
+
+	//time the staff needs before it can burst again.
+	//a plain Buff rather than a FlavourBuff, so it ticks each turn and keeps the slot text live
+	public static class MentalBurstCooldown extends Buff {
+
+		{
+			type = buffType.NEGATIVE;
+			announced = false;
+		}
+
+		private float left = 0f;
+
+		public void setDuration(float duration) {
+			left = duration;
+		}
+
+		public float remaining() {
+			return left;
+		}
+
+		@Override
+		public boolean act() {
+			left -= TICK;
+
+			if (left <= 0f) {
+				detach();
+			} else {
+				spend(TICK);
+			}
+
+			//nudge the quickslot afterwards, so the slot text shows the new value and
+			//clears on the very turn the cooldown runs out
+			Item.updateQuickslot();
+			return true;
+		}
+
+		@Override
+		public int icon() {
+			return BuffIndicator.COOL_TIME;
+		}
+
+		@Override
+		public String toString() {
+			return Messages.get(this, "name");
+		}
+
+		@Override
+		public String desc() {
+			return Messages.get(this, "desc", dispTurns(left));
+		}
+
+		private static final String LEFT = "left";
+
+		@Override
+		public void storeInBundle(Bundle bundle) {
+			super.storeInBundle(bundle);
+			bundle.put(LEFT, left);
+		}
+
+		@Override
+		public void restoreFromBundle(Bundle bundle) {
+			super.restoreFromBundle(bundle);
+			left = bundle.getFloat(LEFT);
+		}
+	}
 
 	{
 		image = ItemSpriteSheet.MAGES_STAFF;
@@ -124,6 +309,25 @@ public class MagesStaff extends MeleeWeapon {
 	}
 
 	@Override
+	public String statusBottom() {
+
+		//if the weapon isn't IDed, or is cursed, don't display anything
+		if (!isIdentified() || cursed) {
+			return null;
+		}
+		if (wand == null || Dungeon.hero == null) {
+			return null;
+		}
+
+		//while cooling down show the remaining turns, otherwise show that the burst is ready
+		MentalBurstCooldown cooldown = Dungeon.hero.buff(MentalBurstCooldown.class);
+		if (cooldown != null) {
+			return Integer.toString(Math.max(1, Math.round(cooldown.remaining())));
+		}
+		return "OK";
+	}
+
+	@Override
 	public void execute(Hero hero, String action) {
 
 		super.execute(hero, action);
@@ -146,6 +350,10 @@ public class MagesStaff extends MeleeWeapon {
 		}
 	}
 
+	@Override
+	public String defaultAction() {
+		return AC_ZAP;
+	}
 	@Override
 	public int buffedLvl() {
 		if (wand != null){

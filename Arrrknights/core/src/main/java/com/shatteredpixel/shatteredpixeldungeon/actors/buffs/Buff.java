@@ -24,6 +24,7 @@ package com.shatteredpixel.shatteredpixeldungeon.actors.buffs;
 import com.shatteredpixel.shatteredpixeldungeon.TomorrowRogueNight;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
+import com.shatteredpixel.shatteredpixeldungeon.mechanics.CastPower;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.plants.Plant;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
@@ -145,7 +146,7 @@ public class Buff extends Actor {
 
 	public static<T extends FlavourBuff> T append( Char target, Class<T> buffClass, float duration ) {
 		T buff = append( target, buffClass );
-		buff.spend( duration * target.resist(buffClass) );
+		buff.spend( duration * target.resist(buffClass) * CastPower.duration );
 		return buff;
 	}
 
@@ -187,14 +188,14 @@ public class Buff extends Actor {
 	}
 	public static<T extends FlavourBuff> T affect( Char target, Class<T> buffClass, float duration ) {
 		T buff = affect( target, buffClass );
-		buff.spend( duration * target.resist(buffClass) );
+		buff.spend( duration * target.resist(buffClass) * CastPower.duration );
 		return buff;
 	}
 
 	//postpones an already active buff, or creates & attaches a new buff and delays that.
 	public static<T extends FlavourBuff> T prolong( Char target, Class<T> buffClass, float duration ) {
 		T buff = affect( target, buffClass );
-		buff.postpone( duration * target.resist(buffClass) );
+		buff.postpone( duration * target.resist(buffClass) * CastPower.duration );
 		return buff;
 	}
 

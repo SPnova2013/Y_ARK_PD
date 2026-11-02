@@ -46,6 +46,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.StaffKit;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.TalismanOfForesight;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.Bag;
+import com.shatteredpixel.shatteredpixeldungeon.mechanics.CastPower;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.MagicalHolster;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfEnergy;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfRecharging;
@@ -81,7 +82,10 @@ public abstract class Wand extends Item {
 	private boolean curChargeKnown = false;
 	
 	public boolean curseInfusionBonus = false;
-	
+
+	public boolean freeCast = false;
+	public boolean instantCast = false;
+
 	private static final int USES_TO_ID = 10;
 	private float usesLeftToID = USES_TO_ID;
 	private float availableUsesToID = USES_TO_ID/2f;
@@ -122,6 +126,28 @@ public abstract class Wand extends Item {
 		}
 	}
 
+	//how many bolts this cast fires, and how strong each one is.
+	//normally one bolt at full strength, the MagesStaff's mental burst splits it
+	protected int castHits() {
+		MagesStaff.MentalBurst burst = mentalBurst();
+		return burst == null ? 1 : burst.hits();
+	}
+
+	protected float castPower() {
+		MagesStaff.MentalBurst burst = mentalBurst();
+		return burst == null ? 1f : burst.power();
+	}
+
+	private MagesStaff.MentalBurst mentalBurst() {
+		if (Dungeon.hero == null || !(Dungeon.hero.belongings.weapon instanceof MagesStaff)) {
+			return null;
+		}
+		if (((MagesStaff) Dungeon.hero.belongings.weapon).GetWand() != this) {
+			return null;
+		}
+		return Dungeon.hero.buff(MagesStaff.MentalBurst.class);
+	}
+
 	@Override
 	public int targetingPos(Hero user, int dst) {
 		return new Ballistica( user.pos, dst, collisionProperties ).collisionPos;
@@ -138,7 +164,7 @@ public abstract class Wand extends Item {
 			return false;
 		}
 
-		if ( curCharges >= (cursed ? 1 : chargesPerCast())){
+		if ( curCharges >= (cursed ? 1 : chargesPerCast()) || freeCast){
 			return true;
 		} else {
 			GLog.w(Messages.get(this, "fizzles"));
@@ -377,7 +403,7 @@ public abstract class Wand extends Item {
 			}
 		}
 		
-		curCharges -= cursed ? 1 : chargesPerCast();
+		if(!freeCast)curCharges -= cursed ? 1 : chargesPerCast();
 
 		WandOfMagicMissile.MagicCharge buff = curUser.buff(WandOfMagicMissile.MagicCharge.class);
 		if (buff != null && buff.level() > super.buffedLvl()){
@@ -400,7 +426,7 @@ public abstract class Wand extends Item {
 		Invisibility.dispel();
 		updateQuickslot();
 
-		if((curItem instanceof StaffOfConcept)){
+		if((curItem instanceof StaffOfConcept) || ((Wand)curItem).instantCast){
 			curUser.spendAndNext(0f);
 		}else{
 			curUser.spendAndNext(TIME_TO_ZAP);
@@ -589,12 +615,31 @@ public abstract class Wand extends Item {
 									}
 								});
 					} else {
-						curWand.fx(shot, new Callback() {
-							public void call() {
-								curWand.onZap(shot);
-								curWand.wandUsed();
-							}
-						});
+						//a normal cast is one bolt at full power; the staff's mental burst
+						//splits it into several weaker ones
+						final int hits = curWand.castHits();
+						final float power = curWand.castPower();
+						//damaging wands only lose damage, utility wands lose effect strength
+						final boolean scaleEffects = !(curWand instanceof DamageWand);
+
+						for (int i = 1; i <= hits; i++) {
+							final boolean last = (i == hits);
+							curWand.fx(shot, new Callback() {
+								public void call() {
+									CastPower.damage = power;
+									CastPower.duration = scaleEffects ? power : 1f;
+									try {
+										curWand.onZap(shot);
+									} finally {
+										CastPower.reset();
+									}
+									//only the last bolt pays the charge and the turn
+									if (last) {
+										curWand.wandUsed();
+									}
+								}
+							});
+						}
 					}
 					curWand.cursedKnown = true;
 					
