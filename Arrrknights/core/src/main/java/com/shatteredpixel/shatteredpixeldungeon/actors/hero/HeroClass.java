@@ -125,7 +125,7 @@ package com.shatteredpixel.shatteredpixeldungeon.actors.hero;
 	ROSECAT("rosecat", HeroSubClass.DESTROYER, HeroSubClass.GUARDIAN, HeroSubClass.WAR),
 	NEARL("nearl", HeroSubClass.KNIGHT, HeroSubClass.SAVIOR, HeroSubClass.FLASH),
 	CHEN("chen", HeroSubClass.SWORDMASTER, HeroSubClass.SPSHOOTER),
-	RABBIT("rabbit", HeroSubClass.KILLER, HeroSubClass.PHANTOM),
+	RABBIT("rabbit", HeroSubClass.KILLER/*, HeroSubClass.PHANTOM*/),
 	MIDORI("midori", HeroSubClass.MARKSMIDORI, HeroSubClass.KEYANIMATOR, HeroSubClass.SCHOLAR),
 	 IRENE("irene", HeroSubClass.INQUISITOR, HeroSubClass.SAINT);
 

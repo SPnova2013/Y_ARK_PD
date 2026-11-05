@@ -26,6 +26,7 @@ import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.FlavourBuff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.MagicImmune;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Silence;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
@@ -35,6 +36,7 @@ import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.CellSelector;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
+import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
 import com.shatteredpixel.shatteredpixeldungeon.ui.QuickSlotButton;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.noosa.audio.Sample;
@@ -63,6 +65,88 @@ public class Longsword extends MeleeWeapon {
 	private int arts = 2;
 	private int artscap = 4;
 
+	//wolf soul has no charge bar and no button: it wakes up by itself after this many swings
+	public static final int ABILITY_TRIGGER_ATTACKS = 17;
+	public static final int ABILITY_DURATION = 20;
+	public static final float ABILITY_DAMAGE_BONUS = 0.6f;
+
+	private int swings = 0;
+
+	@Override
+	public void onSwing(Char owner, Char enemy) {
+		if (!(owner instanceof Hero) || !isEquipped((Hero) owner)) {
+			return;
+		}
+		if (owner.buff(WolfSoul.class) != null) {
+			//already awake, do not build towards another one
+			return;
+		}
+		if (++swings >= ABILITY_TRIGGER_ATTACKS) {
+			swings = 0;
+			awaken((Hero) owner);
+		}
+
+		//keep the bottom-left counter in step with the swings
+		updateQuickslot();
+	}
+
+	//bottom-left of the slot: how close the wolf is to waking.
+	//no cap is shown, the slot is too narrow for a fraction
+	@Override
+	public String statusBottom() {
+		if (Dungeon.hero == null || Dungeon.hero.buff(WolfSoul.class) != null) {
+			//once awake the buff icon carries the remaining time instead
+			return null;
+		}
+		return swings > 0 ? Integer.toString(swings) : null;
+	}
+
+	private void awaken(Hero hero) {
+		Buff.affect(hero, WolfSoul.class, ABILITY_DURATION);
+		Sample.INSTANCE.play(Assets.Sounds.BURNING);
+		GLog.p(Messages.get(this, "msg_" + (Random.Int(4)+1)));
+	}
+
+	@Override
+	public int damageRoll(Char owner) {
+		int dmg = super.damageRoll(owner);
+		if (owner.buff(WolfSoul.class) != null) {
+			dmg = Math.round(dmg * (1f + ABILITY_DAMAGE_BONUS));
+		}
+		return dmg;
+	}
+
+	//while awake the blade's damage counts as spell damage, see Char#damageTypeOf
+	@Override
+	public boolean dealsSpellDamage(Char owner) {
+		return owner.buff(WolfSoul.class) != null;
+	}
+
+	@Override
+	public String abilityInfo() {
+		return Messages.get(this, "ability_desc", ABILITY_TRIGGER_ATTACKS, ABILITY_DURATION);
+	}
+
+	//the wolf is one of the two ashen souls bound to this blade, all it wants is the horizon
+	public static class WolfSoul extends FlavourBuff {
+
+		{
+			type = buffType.POSITIVE;
+			announced = true;
+		}
+
+		@Override
+		public int icon() {
+			return BuffIndicator.WEAPON;
+		}
+
+		//the icon dims as the wolf sinks back to sleep, roughly showing how long is left
+		@Override
+		public float iconFadePercent() {
+			return Math.max(0, (ABILITY_DURATION - visualcooldown()) / (float) ABILITY_DURATION);
+		}
+	}
+
 	@Override
 	public int max(int lvl) {
 		return  4*(tier) + 2 +   //18 + 5
@@ -78,8 +162,15 @@ public class Longsword extends MeleeWeapon {
 	@Override
 	public ArrayList<String> actions(Hero hero) {
 		ArrayList<String> actions = super.actions(hero);
+		//wolf soul arms itself, so there is no ability button for it
+		actions.remove(AC_ABILITY);
 		actions.add(AC_ZAP);
 		return actions;
+	}
+
+	@Override
+	public String defaultAction() {
+		return AC_ZAP;
 	}
 
 	@Override
@@ -118,11 +209,13 @@ public class Longsword extends MeleeWeapon {
 	}
 
 	private static final String CHARGE = "arts";
+	private static final String SWINGS = "swings";
 
 	@Override
 	public void storeInBundle(Bundle bundle) {
 		super.storeInBundle(bundle);
 		bundle.put(CHARGE, arts);
+		bundle.put(SWINGS, swings);
 	}
 
 	@Override
@@ -130,6 +223,7 @@ public class Longsword extends MeleeWeapon {
 		super.restoreFromBundle(bundle);
 		if (artscap > 0) arts = Math.min(artscap, bundle.getInt(CHARGE));
 		else arts = bundle.getInt(CHARGE);
+		swings = bundle.getInt(SWINGS);
 	}
 
 	protected static final CellSelector.Listener zapper = new CellSelector.Listener() {

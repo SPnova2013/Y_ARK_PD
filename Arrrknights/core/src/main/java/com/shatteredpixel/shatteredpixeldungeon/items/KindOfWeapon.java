@@ -147,6 +147,11 @@ abstract public class KindOfWeapon extends EquipableItem {
 		return 0;
 	}
 	
+	//called once for every swing of the equipped weapon, whether it connects or not.
+	//weapons that count attacks rather than hits should build their effect here.
+	public void onSwing( Char owner, Char enemy ) {
+	}
+
 	public int proc( Char attacker, Char defender, int damage ) {
 		return damage;
 	}

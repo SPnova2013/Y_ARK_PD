@@ -23,9 +23,11 @@ package com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Burning;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Invisibility;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Twilight;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfElements;
@@ -33,9 +35,11 @@ import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfMight;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
+import com.shatteredpixel.shatteredpixeldungeon.ui.AttackIndicator;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundle;
+import com.watabou.utils.Callback;
 
 import java.util.ArrayList;
 
@@ -52,6 +56,60 @@ public class Laevateinn extends MeleeWeapon {
 	}
 
 	private boolean skill = true; // fasle == skill non-active
+
+	//flame blade: the strike itself deals this many times its damage
+	public static final float ABILITY_DAMAGE_MULT = 3f;
+
+	@Override
+	public String targetingPrompt() {
+		return Messages.get(this, "prompt");
+	}
+
+	@Override
+	protected void duelistAbility(Hero hero, Integer target) {
+		if (target == null) {
+			return;
+		}
+
+		final Char enemy = Actor.findChar(target);
+		if (enemy == null || enemy == hero || hero.isCharmedBy(enemy) || !Dungeon.level.heroFOV[target]) {
+			GLog.w(Messages.get(this, "ability_no_target"));
+			return;
+		}
+		if (!hero.canAttack(enemy)) {
+			GLog.w(Messages.get(this, "ability_target_range"));
+			return;
+		}
+
+		//same shape as the duelist's cleave: swing ourselves, then read the outcome
+		hero.sprite.attack(enemy.pos, new Callback() {
+			@Override
+			public void call() {
+				beforeAbilityUsed(hero, enemy);
+				AttackIndicator.target(enemy);
+
+				if (hero.attack(enemy, ABILITY_DAMAGE_MULT, 0, Char.INFINITE_ACCURACY)) {
+					Sample.INSTANCE.play(Assets.Sounds.HIT_STRONG);
+				}
+
+				Invisibility.dispel();
+
+				if (!enemy.isAlive()) {
+					//the killing blow pays the charge back
+					Buff.affect(hero, Charger.class).gainCharge(abilityChargeUse(hero, null));
+					hero.next();
+				} else {
+					hero.spendAndNext(hero.attackDelay());
+				}
+				afterAbilityUsed(hero);
+			}
+		});
+	}
+
+	@Override
+	public String abilityInfo() {
+		return Messages.get(this, "ability_desc", (int) ABILITY_DAMAGE_MULT);
+	}
 
 	@Override
 	public int max(int lvl) {
