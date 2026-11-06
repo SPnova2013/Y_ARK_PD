@@ -579,6 +579,7 @@ public class Assets {
 		public static final String NEURO_WITCH = "sprites/neuro-witch.png";
 		public static final String SEIA = "sprites/seia.png";
 		public static final String BLAZING_SUN = "sprites/BlazingSun.png";
+		public static final String AGNI_OF_NILA = "sprites/AgginiOfNila.png";
 
 		//cover sprites
 		public static final String EX42COVER	= "sprites/ex42cover.png";

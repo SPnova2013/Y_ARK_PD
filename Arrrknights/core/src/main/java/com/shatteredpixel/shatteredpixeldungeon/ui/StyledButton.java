@@ -72,7 +72,11 @@ public class StyledButton extends Button {
 			componentWidth += text.width() + 2;
 
 			text.setPos(
-					x + (width() + componentWidth)/2f - text.width() - 1,
+					//leftJustify was only ever stored, never applied, so every such button
+					//still had its text block centred and the offset varied with the label
+					leftJustify
+							? x + bg.marginLeft() + 1
+							: x + (width() + componentWidth)/2f - text.width() - 1,
 					y + (height() - text.height()) / 2f
 			);
 			PixelScene.align(text);

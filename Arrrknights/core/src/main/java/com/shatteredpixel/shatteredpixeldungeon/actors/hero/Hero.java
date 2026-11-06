@@ -97,6 +97,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Senior;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Slime;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Snake;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.miniboss.BloodMagister;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.AgniOfNila;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.ImpShopkeeper;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Shopkeeper;
 import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
@@ -2228,6 +2229,12 @@ public class Hero extends Char {
                 dmg = 0;
                 Sample.INSTANCE.play( Assets.Sounds.HIT_PARRY, 1, Random.Float(0.96f, 1.05f));
             }
+        }
+
+        //every fire of nila burning on this floor softens the blow, multiplicatively
+        int nila = AgniOfNila.count();
+        if (nila > 0) {
+            dmg = (int) Math.ceil(dmg * Math.pow(0.8f, nila));
         }
 
         int preHP = HP + shielding();

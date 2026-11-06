@@ -2,15 +2,17 @@ package com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Invisibility;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
-import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.ChaliceOfBlood;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.MasterThievesArmband;
-import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.UnstableSpellbook;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfAccuracy;
-import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfMistress;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
+import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
+import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundle;
 
@@ -33,6 +35,60 @@ public class KRISSVector extends MeleeWeapon {
 
     private int mode = 0;
     // 0, 1, 2
+
+    //charge mode: the next landed attack becomes a short burst of this many hits
+    public static final int ABILITY_HITS = 3;
+    public static final float ABILITY_DAMAGE_MULT = 1.45f;
+
+    @Override
+    protected void duelistAbility(Hero hero, Integer target) {
+        if (hero.buff(ChargeMode.class) != null) {
+            GLog.w(Messages.get(this, "ability_armed"));
+            return;
+        }
+
+        hero.belongings.abilityWeapon = this;
+        beforeAbilityUsed(hero, null);
+
+        //stays armed until an attack actually connects
+        Buff.affect(hero, ChargeMode.class);
+
+        hero.sprite.operate(hero.pos);
+        Sample.INSTANCE.play(Assets.Sounds.SKILL_BASIC);
+        Invisibility.dispel();
+
+        afterAbilityUsed(hero);
+        hero.spendAndNext(Actor.TICK);
+    }
+
+    @Override
+    public String abilityInfo() {
+        return Messages.get(this, "ability_desc", ABILITY_HITS, (int) (ABILITY_DAMAGE_MULT * 100));
+    }
+
+    //the burst waits for a hit, so missing does not waste it
+    public static class ChargeMode extends Buff {
+
+        {
+            type = buffType.POSITIVE;
+            announced = true;
+        }
+
+        @Override
+        public int icon() {
+            return BuffIndicator.WEAPON;
+        }
+
+        @Override
+        public String toString() {
+            return Messages.get(this, "name");
+        }
+
+        @Override
+        public String desc() {
+            return Messages.get(this, "desc");
+        }
+    }
 
     @Override
     public int max(int lvl) {
@@ -83,6 +139,20 @@ public class KRISSVector extends MeleeWeapon {
         if (mode == 2) {
             defender.damage(attacker.damageRoll()- defender.drRoll(), attacker);//change from budding
         }
+
+        if (attacker.buff(ChargeMode.class) != null && defender.isAlive()) {
+            Buff.detach(attacker, ChargeMode.class);
+
+            int hit = Math.round(damage * ABILITY_DAMAGE_MULT- defender.drRoll());
+
+            //two extra hits land here, the third is the swing itself
+            for (int i = 1; i < ABILITY_HITS && defender.isAlive(); i++) {
+                defender.damage(hit, attacker);
+            }
+
+            return super.proc(attacker, defender, hit);
+        }
+
         return super.proc(attacker, defender, damage);
     }
 

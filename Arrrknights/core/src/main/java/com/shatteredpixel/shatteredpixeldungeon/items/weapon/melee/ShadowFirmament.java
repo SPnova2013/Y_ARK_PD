@@ -32,10 +32,10 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Invisibility;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroClass;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroSubClass;
-import com.shatteredpixel.shatteredpixeldungeon.effects.coversprite.EX42Cover;
-import com.shatteredpixel.shatteredpixeldungeon.effects.coversprite.FrostBlastCover;
+import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
 import com.shatteredpixel.shatteredpixeldungeon.effects.coversprite.ShadowlessCover;
 import com.shatteredpixel.shatteredpixeldungeon.effects.coversprite.ShadowlessFinishCover;
+import com.shatteredpixel.shatteredpixeldungeon.effects.particles.ElmoParticle;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.ChaliceOfBlood;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfMagicMissile;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.chimera.Shadow;
@@ -141,6 +141,7 @@ public class ShadowFirmament extends MeleeWeapon {
 
 		//blink to the chosen cell
 		hero.sprite.interruptMotion();
+		CellEmitter.get( hero.pos ).burst( ElmoParticle.FACTORY, 6 );
 		hero.move(target, false);
 		hero.sprite.place(target);
 		Dungeon.observe();
@@ -243,6 +244,7 @@ public class ShadowFirmament extends MeleeWeapon {
 		/*new FrostBlastCover().centerAndPlay(hero.pos);*/
 		Invisibility.dispel();
 		hero.sprite.alpha(1f);
+		CellEmitter.get( hero.pos ).burst( ElmoParticle.FACTORY, 32 );
 
 		afterAbilityUsed(hero);
 		hero.spendAndNext(Actor.TICK);

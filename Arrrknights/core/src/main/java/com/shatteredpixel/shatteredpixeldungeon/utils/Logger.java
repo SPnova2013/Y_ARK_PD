@@ -26,6 +26,12 @@ public abstract class Logger extends Gizmo {
 
     private static float logExportInterval = 10;
     private static final String TAG = "Logger";
+
+    //entries used to be flushed one by one, i.e. a file open/write/close for every
+    //actor that spent time. Buffering them cuts that to a couple of writes per second.
+    private static final int FLUSH_BATCH = 64;
+    private static final long FLUSH_INTERVAL_MS = 2000;
+    private long lastFlush = 0;
     private final String[] entryHeader;
     private boolean headerWritten = false;
     private final Object lock = new Object();
@@ -63,13 +69,18 @@ public abstract class Logger extends Gizmo {
         if (entryData.size() != entryHeader.length) {
             throw new IllegalArgumentException("Entry data does not match template length.");
         }
+        boolean flush;
         synchronized (lock) {
             entries.add(entryData);
             if (entries.size() > maxEntries) {
                 entries.remove(0);
             }
+            flush = entries.size() >= FLUSH_BATCH
+                    || System.currentTimeMillis() - lastFlush >= FLUSH_INTERVAL_MS;
         }
-        logToFile();
+        if (flush) {
+            logToFile();
+        }
     }
 
     public synchronized void clearEntries() {
@@ -79,6 +90,7 @@ public abstract class Logger extends Gizmo {
     }
 
     public synchronized void logToFile() {
+        lastFlush = System.currentTimeMillis();
         if (entries.isEmpty()) {
             return;
         }
