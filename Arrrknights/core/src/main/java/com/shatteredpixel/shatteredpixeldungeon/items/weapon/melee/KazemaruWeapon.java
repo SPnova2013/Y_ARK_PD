@@ -6,9 +6,11 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Hallucination;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Invisibility;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Silence;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.PaperTwin;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfTeleportation;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
@@ -49,6 +51,54 @@ public class KazemaruWeapon extends MeleeWeapon {
         } else {
             return Messages.get(this, "typical_stats_desc", 15, 20);
         }
+    }
+
+    //how much of the hero's life the fold costs
+    public static final int ABILITY_LIFE_COST = 50;
+
+    //纸艺·双影: fold a paper twin out of half of the hero's life
+    @Override
+    protected void duelistAbility(Hero hero, Integer target) {
+
+        ArrayList<Integer> spots = new ArrayList<>();
+        for (int i : PathFinder.NEIGHBOURS8) {
+            int p = hero.pos + i;
+            if (p < 0 || p >= Dungeon.level.length()) continue;
+            //guard against stepping around the edge of a row
+            if (Dungeon.level.distance(hero.pos, p) != 1) continue;
+            if (Actor.findChar(p) != null || !Dungeon.level.passable[p]) continue;
+            spots.add(p);
+        }
+
+        if (spots.isEmpty()) {
+            GLog.w(Messages.get(this, "no_space"));
+            return;
+        }
+
+        hero.belongings.abilityWeapon = this;
+        beforeAbilityUsed(hero, null);
+
+        //pay with half of the life it is folded from
+        int lost = hero.HP - Math.max(1, hero.HP / 2);
+        hero.HP -= lost;
+        if (lost > 0) {
+            hero.sprite.showStatus(CharSprite.NEGATIVE, "-%d", lost);
+        }
+
+        PaperTwin twin = new PaperTwin();
+        twin.setup(hero);
+        GameScene.add(twin);
+        ScrollOfTeleportation.appear(twin, spots.get(Random.Int(spots.size())));
+        Sample.INSTANCE.play(Assets.Sounds.TELEPORT);
+        Invisibility.dispel();
+
+        afterAbilityUsed(hero);
+        hero.spendAndNext(Actor.TICK);
+    }
+
+    @Override
+    public String abilityInfo() {
+        return Messages.get(this, "ability_desc", ABILITY_LIFE_COST);
     }
 
     @Override
