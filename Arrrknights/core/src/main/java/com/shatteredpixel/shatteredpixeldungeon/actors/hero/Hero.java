@@ -236,6 +236,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Echeveria;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Enfild2;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Gluttony;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.KRISSVector;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Greatsword;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MinosFury;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Niansword;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.PatriotSpear;
@@ -926,6 +927,12 @@ public class Hero extends Char {
         if (buff(MinosFury.GuardMode.class) != null
                 && belongings.weapon instanceof MinosFury) {
             dr = Math.round(dr * (1f + MinosFury.ABILITY_DEFENSE_BONUS));
+        }
+
+        //boiling blood hardens the body too, again on the total
+        if (buff(Greatsword.BoilingBurst.class) != null
+                && belongings.weapon instanceof Greatsword) {
+            dr = Math.round(dr * (1f + Greatsword.ABILITY_STAT_BONUS));
         }
 
         return dr;
