@@ -224,6 +224,12 @@ public class MeleeWeapon extends Weapon {
 		hero.belongings.abilityWeapon = this;
 		Charger charger = Buff.affect(hero, Charger.class);
 
+		//a pool carried over from a long-cooldown weapon must not pay for several normal abilities
+		if (charger.charges > charger.chargeCap()) {
+			charger.charges = charger.chargeCap();
+			charger.partialCharge = 0;
+		}
+
 		charger.partialCharge -= abilityChargeUse(hero, target);
 		while (charger.partialCharge < 0 && charger.charges > 0) {
 			charger.charges--;
@@ -236,6 +242,36 @@ public class MeleeWeapon extends Weapon {
 	public static void onAbilityKill( Hero hero, Char killed ){}
 	protected int baseChargeUse(Hero hero, Char target){
 		return 1; //abilities use 1 charge by default
+	}
+
+	//weapons whose ability runs on one long recharge can report that length here.
+	//the duelist charger then uses it as the cap and refills one charge per turn,
+	//so the cap doubles as the cooldown and one use spends the whole pool.
+	//0 means the weapon simply uses the normal charge pool.
+	public int abilityChargeCap(){
+		return 0;
+	}
+
+	//true while the weapon's own ability effect is still running. a long lasting ability
+	//freezes its charge for that time, so the cooldown only starts once it is over.
+	public boolean abilityEffectActive(Char owner){
+		return false;
+	}
+
+	//slot text for those weapons: ready, or how many turns of charge are still missing
+	public static String abilityChargeStatus(){
+		if (Dungeon.hero == null) {
+			return null;
+		}
+		Charger charger = Dungeon.hero.buff(Charger.class);
+		if (charger == null) {
+			return null;
+		}
+		int cap = charger.chargeCap();
+		if (charger.charges >= cap) {
+			return "OK";
+		}
+		return Integer.toString(Math.max(1, Math.round(cap - charger.charges - charger.partialCharge)));
 	}
 
 	public final float abilityChargeUse(Hero hero, Char target){
@@ -352,7 +388,7 @@ public class MeleeWeapon extends Weapon {
 		if (isEquipped(Dungeon.hero)
 				&& Dungeon.hero.buff(Charger.class) != null) {
 			Charger buff = Dungeon.hero.buff(Charger.class);
-			return buff.charges + "/" + buff.chargeCap();
+			return Math.min(buff.charges, buff.chargeCap()) + "/" + buff.chargeCap();
 		} else {
 			return super.status();
 		}
@@ -405,26 +441,36 @@ public class MeleeWeapon extends Weapon {
 
 		@Override
 		public boolean act() {
+			//a still running ability holds its own charge back
+			MeleeWeapon holding = fixedChargeWeapon();
+			boolean held = holding != null && target != null && holding.abilityEffectActive(target);
+
 			if (charges < chargeCap()){
-				if (Regeneration.regenOn()){
-					//60 to 45 turns per charge
-					float chargeToGain = 1/(60f-1.5f*(chargeCap()-charges));
+				if (Regeneration.regenOn() && !held){
+					float chargeToGain;
+					if (holding != null) {
+						//one charge per turn, so the cap is exactly the cooldown in turns
+						chargeToGain = 1f;
+					} else {
+						//60 to 45 turns per charge
+						chargeToGain = 1/(60f-1.5f*(chargeCap()-charges));
 
-					//40 to 30 turns per charge for champion
-					if (Dungeon.hero.subClassSet.contains(HeroSubClass.INQUISITOR)){
-						chargeToGain *= 1.5f;
-					}
+						//40 to 30 turns per charge for champion
+						if (Dungeon.hero.subClassSet.contains(HeroSubClass.INQUISITOR)){
+							chargeToGain *= 1.5f;
+						}
 
-					//50% slower charge gain with brawler's stance enabled, even if buff is inactive
-					if (Dungeon.hero.buff(RingOfForce.BrawlersStance.class) != null){
-						chargeToGain *= 0.50f;
+						//50% slower charge gain with brawler's stance enabled, even if buff is inactive
+						if (Dungeon.hero.buff(RingOfForce.BrawlersStance.class) != null){
+							chargeToGain *= 0.50f;
+						}
 					}
 
 					partialCharge += chargeToGain;
 				}
 
 				int points = 0/*((Hero)target).pointsInTalent(Talent.WEAPON_RECHARGING)*/;
-				if (points > 0 && target.buff(Recharging.class) != null || target.buff(ArtifactRecharge.class) != null){
+				if (!held && (points > 0 && target.buff(Recharging.class) != null || target.buff(ArtifactRecharge.class) != null)){
 					//1 every 15 turns at +1, 10 turns at +2
 					partialCharge += 1/(20f - 5f*points);
 				}
@@ -460,12 +506,29 @@ public class MeleeWeapon extends Weapon {
 		}
 
 		public int chargeCap(){
+			MeleeWeapon fixed = fixedChargeWeapon();
+			if (fixed != null){
+				return fixed.abilityChargeCap();
+			}
+
 			//caps at level 19 with 8 or 10 charges
 			if (Dungeon.hero.subClassSet.contains(HeroSubClass.INQUISITOR)){
 				return Math.min(10, 4 + (Dungeon.hero.lvl - 1) / 3);
 			} else {
 				return Math.min(8, 2 + (Dungeon.hero.lvl - 1) / 3);
 			}
+		}
+
+		//the equipped weapon when it runs on one long recharge, otherwise null
+		private MeleeWeapon fixedChargeWeapon(){
+			if (Dungeon.hero == null) {
+				return null;
+			}
+			KindOfWeapon wep = Dungeon.hero.belongings.weapon;
+			if (wep instanceof MeleeWeapon && ((MeleeWeapon) wep).abilityChargeCap() > 0){
+				return (MeleeWeapon) wep;
+			}
+			return null;
 		}
 
 		public void gainCharge( float charge ){

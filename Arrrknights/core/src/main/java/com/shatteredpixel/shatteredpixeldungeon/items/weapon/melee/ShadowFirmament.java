@@ -55,7 +55,9 @@ import java.util.ArrayList;
 
 public class ShadowFirmament extends MeleeWeapon {
 
-	//the ability needs a completely full charge, and consumes all of it
+	//the ability runs on one pool of ABILITY_RECHARGE charges, one per turn,
+	//and spends all of them at once
+	public static final int ABILITY_RECHARGE = 40;
 	public static final int ABILITY_HITS = 10;
 	public static final int ABILITY_RADIUS = 2;
 	public static final float ABILITY_HIT_DAMAGE_FACTOR = 1f;
@@ -95,9 +97,14 @@ public class ShadowFirmament extends MeleeWeapon {
 	}
 
 	@Override
+	public int abilityChargeCap() {
+		return ABILITY_RECHARGE;
+	}
+
+	@Override
 	protected int baseChargeUse(Hero hero, Char target) {
-		//paid for with the weapon's own charge, not with duelist charges
-		return 0;
+		//one whole pool per use, and the pool is the cooldown
+		return ABILITY_RECHARGE;
 	}
 
 	@Override
@@ -120,11 +127,6 @@ public class ShadowFirmament extends MeleeWeapon {
 			return;
 		}
 
-		if (charge < chargeCap) {
-			GLog.w(Messages.get(this, "no_charge"));
-			return;
-		}
-
 		if (!Dungeon.level.heroFOV[target]
 				|| !Dungeon.level.passable[target]
 				|| Actor.findChar(target) != null) {
@@ -134,10 +136,6 @@ public class ShadowFirmament extends MeleeWeapon {
 
 		hero.belongings.abilityWeapon = this;
 		beforeAbilityUsed(hero, null);
-
-		//the whole charge is spent, even if nothing ends up in reach
-		charge = 0;
-		updateQuickslot();
 
 		//blink to the chosen cell
 		hero.sprite.interruptMotion();
@@ -250,21 +248,7 @@ public class ShadowFirmament extends MeleeWeapon {
 		hero.spendAndNext(Actor.TICK);
 	}
 
-	@Override
-	public String status() {
 
-		//if the weapon isn't IDed, or is cursed, don't display anything
-		if (!isIdentified() || cursed) {
-			return null;
-		}
-
-		//display as percent
-		if (chargeCap == 100) {
-			return Messages.format("%d%%", charge);
-		}
-
-		return null;
-	}
 
 	@Override
 	public int proc(Char attacker, Char defender, int damage) {

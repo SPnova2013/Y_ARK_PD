@@ -91,13 +91,26 @@ public class MagesStaff extends MeleeWeapon {
 	public static final float ABILITY_PARALYSIS = 5f;
 
 	@Override
+	public int abilityChargeCap() {
+		return Math.max(1, ABILITY_COOLDOWN_BASE - buffedLvl());
+	}
+
+	@Override
+	public boolean abilityEffectActive(Char owner) {
+		//the burst holds its charge back for as long as it lasts
+		return owner.buff(MentalBurst.class) != null;
+	}
+
+	@Override
+	protected int baseChargeUse(Hero hero, Char target) {
+		//one whole pool per use, and the pool is the cooldown
+		return abilityChargeCap();
+	}
+
+	@Override
 	protected void duelistAbility(Hero hero, Integer target) {
 		if (wand == null) {
 			GLog.w(Messages.get(this, "ability_no_wand"));
-			return;
-		}
-		if (hero.buff(MentalBurstCooldown.class) != null) {
-			GLog.w(Messages.get(this, "ability_cooling"));
 			return;
 		}
 
@@ -111,7 +124,6 @@ public class MagesStaff extends MeleeWeapon {
 		float power = ABILITY_POWER_BASE + ABILITY_POWER_PER_LEVEL * lvl;
 
 		Buff.prolong(hero, MentalBurst.class, ABILITY_DURATION_BASE + lvl/2).setup(hits, power);
-		Buff.affect(hero, MentalBurstCooldown.class).setDuration(Math.max(1, ABILITY_COOLDOWN_BASE - lvl));
 
 		hero.sprite.operate(hero.pos);
 		Sample.INSTANCE.play(Assets.Sounds.SKILL_BASIC);
@@ -191,70 +203,6 @@ public class MagesStaff extends MeleeWeapon {
 		}
 	}
 
-	//time the staff needs before it can burst again.
-	//a plain Buff rather than a FlavourBuff, so it ticks each turn and keeps the slot text live
-	public static class MentalBurstCooldown extends Buff {
-
-		{
-			type = buffType.NEGATIVE;
-			announced = false;
-		}
-
-		private float left = 0f;
-
-		public void setDuration(float duration) {
-			left = duration;
-		}
-
-		public float remaining() {
-			return left;
-		}
-
-		@Override
-		public boolean act() {
-			left -= TICK;
-
-			if (left <= 0f) {
-				detach();
-			} else {
-				spend(TICK);
-			}
-
-			//nudge the quickslot afterwards, so the slot text shows the new value and
-			//clears on the very turn the cooldown runs out
-			Item.updateQuickslot();
-			return true;
-		}
-
-		@Override
-		public int icon() {
-			return BuffIndicator.COOL_TIME;
-		}
-
-		@Override
-		public String toString() {
-			return Messages.get(this, "name");
-		}
-
-		@Override
-		public String desc() {
-			return Messages.get(this, "desc", dispTurns(left));
-		}
-
-		private static final String LEFT = "left";
-
-		@Override
-		public void storeInBundle(Bundle bundle) {
-			super.storeInBundle(bundle);
-			bundle.put(LEFT, left);
-		}
-
-		@Override
-		public void restoreFromBundle(Bundle bundle) {
-			super.restoreFromBundle(bundle);
-			left = bundle.getFloat(LEFT);
-		}
-	}
 
 	{
 		image = ItemSpriteSheet.MAGES_STAFF;
@@ -319,12 +267,7 @@ public class MagesStaff extends MeleeWeapon {
 			return null;
 		}
 
-		//while cooling down show the remaining turns, otherwise show that the burst is ready
-		MentalBurstCooldown cooldown = Dungeon.hero.buff(MentalBurstCooldown.class);
-		if (cooldown != null) {
-			return Integer.toString(Math.max(1, Math.round(cooldown.remaining())));
-		}
-		return "OK";
+		return MeleeWeapon.abilityChargeStatus();
 	}
 
 	@Override

@@ -79,18 +79,29 @@ public class ImageoverForm extends MeleeWeapon {
     public static final int ABILITY_REACH_BONUS = 1;
 
     @Override
+    public int abilityChargeCap() {
+        return ABILITY_RECHARGE;
+    }
+
+    @Override
+    public boolean abilityEffectActive(Char owner) {
+        //the stance holds its charge back for as long as it lasts
+        return owner.buff(WriteForm.class) != null;
+    }
+
+    @Override
+    protected int baseChargeUse(Hero hero, Char target) {
+        //one whole pool per use, and the pool is the cooldown
+        return ABILITY_RECHARGE;
+    }
+
+    @Override
     protected void duelistAbility(Hero hero, Integer target) {
-        if (hero.buff(ImagoRecharge.class) != null) {
-            GLog.w(Messages.get(this, "ability_cooling"));
-            return;
-        }
 
         hero.belongings.abilityWeapon = this;
         beforeAbilityUsed(hero, null);
 
         Buff.affect(hero, WriteForm.class, ABILITY_DURATION);
-        //spend the single charge, it comes back on its own after ABILITY_RECHARGE turns
-        Buff.affect(hero, ImagoRecharge.class).setDuration(ABILITY_RECHARGE);
 
         hero.sprite.operate(hero.pos);
         Sample.INSTANCE.play(Assets.Sounds.SKILL_BASIC);
@@ -169,66 +180,6 @@ public class ImageoverForm extends MeleeWeapon {
         @Override
         public float iconFadePercent() {
             return Math.max(0, (ABILITY_DURATION - visualcooldown()) / (float) ABILITY_DURATION);
-        }
-    }
-
-    //the single charge of the stance, refilled over ABILITY_RECHARGE turns
-    public static class ImagoRecharge extends Buff {
-
-        {
-            type = buffType.NEGATIVE;
-            announced = false;
-        }
-
-        private float left = 0f;
-
-        public void setDuration(float duration) {
-            left = duration;
-        }
-
-        public float remaining() {
-            return left;
-        }
-
-        @Override
-        public boolean act() {
-            left -= TICK;
-
-            if (left <= 0f) {
-                detach();
-            } else {
-                spend(TICK);
-            }
-            return true;
-        }
-
-        @Override
-        public int icon() {
-            return BuffIndicator.COOL_TIME;
-        }
-
-        @Override
-        public String toString() {
-            return Messages.get(this, "name");
-        }
-
-        @Override
-        public String desc() {
-            return Messages.get(this, "desc", dispTurns(left));
-        }
-
-        private static final String LEFT = "left";
-
-        @Override
-        public void storeInBundle(Bundle bundle) {
-            super.storeInBundle(bundle);
-            bundle.put(LEFT, left);
-        }
-
-        @Override
-        public void restoreFromBundle(Bundle bundle) {
-            super.restoreFromBundle(bundle);
-            left = bundle.getFloat(LEFT);
         }
     }
 

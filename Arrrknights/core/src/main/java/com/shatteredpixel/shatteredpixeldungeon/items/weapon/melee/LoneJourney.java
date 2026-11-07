@@ -55,19 +55,29 @@ public class LoneJourney extends MeleeWeapon {
     }
 
     @Override
+    public int abilityChargeCap() {
+        return ABILITY_RECHARGE;
+    }
+
+    @Override
+    public boolean abilityEffectActive(Char owner) {
+        //the road holds its charge back for as long as it lasts
+        return owner.buff(LongRoad.class) != null;
+    }
+
+    @Override
+    protected int baseChargeUse(Hero hero, Char target) {
+        //one whole pool per use, and the pool is the cooldown
+        return ABILITY_RECHARGE;
+    }
+
+    @Override
     protected void duelistAbility(Hero hero, Integer target) {
-        if (hero.buff(LongRoadRecharge.class) != null) {
-            GLog.w(Messages.get(this, "ability_cooling"));
-            return;
-        }
 
         hero.belongings.abilityWeapon = this;
         beforeAbilityUsed(hero, null);
 
         Buff.affect(hero, LongRoad.class, ABILITY_DURATION);
-        //spend the single charge, it comes back on its own after ABILITY_RECHARGE turns
-        Buff.affect(hero, LongRoadRecharge.class).setDuration(ABILITY_RECHARGE);
-        updateQuickslot();
 
         hero.sprite.operate(hero.pos);
         Sample.INSTANCE.play(Assets.Sounds.SKILL_BASIC);
@@ -188,11 +198,7 @@ public class LoneJourney extends MeleeWeapon {
             return null;
         }
 
-        LongRoadRecharge recharge = Dungeon.hero.buff(LongRoadRecharge.class);
-        if (recharge != null) {
-            return Integer.toString(Math.max(1, Math.round(recharge.remaining())));
-        }
-        return "OK";
+        return MeleeWeapon.abilityChargeStatus();
     }
 
     //the lone road: faster strides, and the magic on each hit bites deeper
@@ -212,71 +218,6 @@ public class LoneJourney extends MeleeWeapon {
         @Override
         public float iconFadePercent() {
             return Math.max(0, (ABILITY_DURATION - visualcooldown()) / (float) ABILITY_DURATION);
-        }
-    }
-
-    //the ability's single charge, spent on use and refilled over ABILITY_RECHARGE turns.
-    //while it is attached the ability cannot be used, otherwise it is ready
-    public static class LongRoadRecharge extends Buff {
-
-        {
-            type = buffType.NEGATIVE;
-            announced = false;
-        }
-
-        private float left = 0f;
-
-        public void setDuration(float duration) {
-            left = duration;
-        }
-
-        public float remaining() {
-            return left;
-        }
-
-        @Override
-        public boolean act() {
-            left -= TICK;
-
-            if (left <= 0f) {
-                detach();
-            } else {
-                spend(TICK);
-            }
-
-            //nudge the quickslot afterwards, so the slot text shows the new value and
-            //clears on the very turn the charge comes back
-            Item.updateQuickslot();
-            return true;
-        }
-
-        @Override
-        public int icon() {
-            return BuffIndicator.COOL_TIME;
-        }
-
-        @Override
-        public String toString() {
-            return Messages.get(this, "name");
-        }
-
-        @Override
-        public String desc() {
-            return Messages.get(this, "desc", dispTurns(left));
-        }
-
-        private static final String LEFT = "left";
-
-        @Override
-        public void storeInBundle(Bundle bundle) {
-            super.storeInBundle(bundle);
-            bundle.put(LEFT, left);
-        }
-
-        @Override
-        public void restoreFromBundle(Bundle bundle) {
-            super.restoreFromBundle(bundle);
-            left = bundle.getFloat(LEFT);
         }
     }
 
