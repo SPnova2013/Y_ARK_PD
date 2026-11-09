@@ -2,6 +2,7 @@ package com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
@@ -9,6 +10,7 @@ import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
+import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.noosa.Camera;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundle;
@@ -29,6 +31,29 @@ public class GoldDogSword extends MeleeWeapon {
 
     private int charge = 0;
     private int chargeCap = 12;
+
+    //磨刀鳞的上等鳍: a full charge for one turn instead of the usual three
+    @Override
+    protected void duelistAbility(Hero hero, Integer target) {
+
+        hero.belongings.abilityWeapon = this;
+        beforeAbilityUsed(hero, null);
+
+        charge = chargeCap;
+        hero.sprite.showStatus(CharSprite.POSITIVE, Messages.get(this, "charge"));
+        hero.sprite.operate(hero.pos);
+        Sample.INSTANCE.play(Assets.Sounds.CHARGEUP);
+        updateQuickslot();
+
+        afterAbilityUsed(hero);
+        //one turn only, the fin does the rest
+        hero.spendAndNext(Actor.TICK);
+    }
+
+    @Override
+    public String abilityInfo() {
+        return Messages.get(this, "ability_desc");
+    }
 
     @Override
     public int max(int lvl) {

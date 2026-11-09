@@ -222,6 +222,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfMagicMappi
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.SP.StaffOfMudrock;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfBlastWave;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfLivingEarth;
+import com.shatteredpixel.shatteredpixeldungeon.items.wands.Wand;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfMagicMissile;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.SpiritBow;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
@@ -236,6 +237,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Echeveria;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Enfild2;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Gluttony;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.KRISSVector;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Greatshield;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Greatsword;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MinosFury;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Niansword;
@@ -1337,6 +1339,15 @@ public class Hero extends Char {
         return actResult;
     }
 
+    //true when the greatshield's guard should absorb this damage.
+    //a miss: attacks and spells from other characters, but not hunger, traps or true damage.
+    private boolean guardsAgainst(Object src) {
+        if (buff(Greatshield.Guard.class) == null) return false;
+        if (buff(Greatshield.GuardLapse.class) != null) return false;
+        if (!(belongings.weapon instanceof Greatshield)) return false;
+        return src instanceof Char || src instanceof Wand;
+    }
+
     public void busy() {
         ready = false;
     }
@@ -2131,6 +2142,13 @@ public class Hero extends Char {
     public void damage(int dmg, Object src) {
         if (buff(TimekeepersHourglass.timeStasis.class) != null)
             return;
+
+        //护卫: the greatshield turns aside every blow and spell while it holds
+        if (dmg > 0 && guardsAgainst(src)) {
+            sprite.showStatus(CharSprite.POSITIVE, Messages.get(Greatshield.class, "blocked"));
+            Sample.INSTANCE.play(Assets.Sounds.HIT_PARRY, 1f, 1.2f);
+            return;
+        }
 
         ScholarNotebook notebook = Dungeon.hero.belongings.getItem(ScholarNotebook.class);
 
