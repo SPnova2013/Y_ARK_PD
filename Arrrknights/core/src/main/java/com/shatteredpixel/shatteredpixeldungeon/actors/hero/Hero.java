@@ -237,6 +237,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Echeveria;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Enfild2;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Gluttony;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.KRISSVector;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.FlametailSword;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.FolkSong;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Greatshield;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Greatsword;
@@ -826,6 +827,12 @@ public class Hero extends Char {
         if(buff(DangerDanceBonus.class)!=null){
             DangerDanceBonus DDbonus = buff(DangerDanceBonus.class);
             evasion+= DDbonus.getcount();
+        }
+
+        //焰心: the flame wraps the body while it burns
+        if (buff(FlametailSword.FlameHeart.class) != null
+                && belongings.weapon instanceof FlametailSword) {
+            evasion *= 1f + FlametailSword.ABILITY_EVASION_BONUS;
         }
 
         return Math.round(evasion);
