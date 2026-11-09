@@ -30,8 +30,6 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.FlavourBuff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Invisibility;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.items.KindOfWeapon;
-import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
-import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.ui.AttackIndicator;
@@ -104,17 +102,11 @@ public class Gloves extends MeleeWeapon {
 			public void call() {
 				AttackIndicator.target(enemy);
 
-				//a guaranteed hit
-				if (hero.attack(enemy, 1f, 0f, Char.INFINITE_ACCURACY)) {
+				//a guaranteed hit, with all the gathered momentum folded into it
+				if (hero.attack(enemy, 1f, bonus, Char.INFINITE_ACCURACY)) {
 					Sample.INSTANCE.play(Assets.Sounds.HIT_STRONG);
 				}
 				Invisibility.dispel();
-
-				//the gathered momentum lands a moment later
-				if (bonus > 0 && enemy.isAlive()) {
-					CellEmitter.get(enemy.pos).burst(Speck.factory(Speck.LIGHT), 6);
-					enemy.damage(bonus, hero);
-				}
 
 				combo = 0;
 				lastSwingLanded = true;

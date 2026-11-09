@@ -152,4 +152,19 @@ public class Gluttony extends MeleeWeapon {
             return Messages.format("%d%%", charge);
         return null;
     }
+
+    //bottom-left: how many weapon charges the ability has right now.
+    //the cap is left out on purpose, the slot is too narrow for a fraction
+    @Override
+    public String statusBottom() {
+
+        if (!isIdentified() || cursed || Dungeon.hero == null) {
+            return null;
+        }
+        Charger charger = Dungeon.hero.buff(Charger.class);
+        if (charger == null) {
+            return null;
+        }
+        return Integer.toString(Math.min(charger.charges, charger.chargeCap()));
+    }
 }
