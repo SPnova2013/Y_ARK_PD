@@ -237,6 +237,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Echeveria;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Enfild2;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Gluttony;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.KRISSVector;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.FolkSong;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Greatshield;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Greatsword;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MinosFury;
@@ -2260,6 +2261,11 @@ public class Hero extends Char {
         int nila = AgniOfNila.count();
         if (nila > 0) {
             dmg = (int) Math.ceil(dmg * Math.pow(0.8f, nila));
+        }
+
+        //肉斩骨断: while the song plays the hero simply cannot be brought down
+        if (dmg > 0 && buff(FolkSong.FleshAndBone.class) != null) {
+            dmg = Math.min(dmg, Math.max(0, HP - 1));
         }
 
         int preHP = HP + shielding();

@@ -23,15 +23,25 @@ package com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
+import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Invisibility;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Twilight;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroClass;
+import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
+import com.shatteredpixel.shatteredpixeldungeon.effects.particles.ElmoParticle;
+import com.shatteredpixel.shatteredpixeldungeon.effects.particles.SmokeParticle;
+import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfBlastWave;
+import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundle;
+import com.watabou.utils.PathFinder;
 
 import java.util.ArrayList;
 
@@ -50,6 +60,59 @@ public class Gauntlet extends MeleeWeapon {
 	}
 
 	private boolean swiching = false;
+
+	//震地碎岩击: two full swings, then everything is thrown back
+	public static final int ABILITY_HITS = 2;
+	public static final int ABILITY_POWER = 2;
+
+	@Override
+	protected void duelistAbility(Hero hero, Integer target) {
+		hero.belongings.abilityWeapon = this;
+		beforeAbilityUsed(hero, null);
+
+		int dmg = hero.damageRoll();
+		int w = Dungeon.level.width();
+
+		for (int i : PathFinder.NEIGHBOURS9) {
+			int cell = hero.pos + i;
+			if (Dungeon.level.heroFOV[cell]) {
+				CellEmitter.get(cell).burst(SmokeParticle.FACTORY, 4);
+			}
+			if (cell < 0 || cell >= Dungeon.level.length()) continue;
+			//guard against stepping around the edge of a row
+			if (Dungeon.level.distance(hero.pos, cell) != 1) continue;
+
+			Char ch = Actor.findChar(cell);
+			if (ch == null || ch == hero || !ch.isAlive()) continue;
+			if (ch.alignment != Char.Alignment.ENEMY) continue;
+
+			for (int hit = 0; hit < ABILITY_HITS && ch.isAlive(); hit++) {
+				ch.damage(dmg, hero);
+			}
+			if (!ch.isAlive()) continue;
+
+			//throw it two tiles away from the hero, exactly like a blast wave
+			int dirX = Integer.signum((ch.pos % w) - (hero.pos % w));
+			int dirY = Integer.signum((ch.pos / w) - (hero.pos / w));
+			int ex = Math.max(0, Math.min(w - 1, (ch.pos % w) + ABILITY_POWER * dirX));
+			int ey = Math.max(0, Math.min(Dungeon.level.height() - 1, (ch.pos / w) + ABILITY_POWER * dirY));
+
+			Ballistica trajectory = new Ballistica(ch.pos, ey * w + ex, Ballistica.MAGIC_BOLT);
+			WandOfBlastWave.throwChar(ch, trajectory, ABILITY_POWER, false, true, true);
+		}
+
+		CellEmitter.get(hero.pos).burst(ElmoParticle.FACTORY, 16);
+		Sample.INSTANCE.play(Assets.Sounds.BLAST);
+		Invisibility.dispel();
+
+		afterAbilityUsed(hero);
+		hero.spendAndNext(Actor.TICK);
+	}
+
+	@Override
+	public String abilityInfo() {
+		return Messages.get(this, "ability_desc", ABILITY_HITS, ABILITY_POWER);
+	}
 
 	@Override
 	public int max(int lvl) {
@@ -89,6 +152,9 @@ public class Gauntlet extends MeleeWeapon {
 
 	@Override
 	public String status() {
+		if (Dungeon.hero != null && Dungeon.hero.heroClass == HeroClass.IRENE) {
+			return super.status();
+		}
 		if (this.isIdentified()) {
 			if (swiching) return "EX";
 			else return "NM";

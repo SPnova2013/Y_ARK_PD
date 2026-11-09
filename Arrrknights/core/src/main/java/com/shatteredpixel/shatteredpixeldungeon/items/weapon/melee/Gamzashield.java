@@ -6,7 +6,9 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Blindness;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Invisibility;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.MagicImmune;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Paralysis;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Beam;
 import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
@@ -51,6 +53,46 @@ public class Gamzashield extends MeleeWeapon implements MeleeWeapon.BlockingWeap
     public int max(int lvl) {
         return Math.round(2.5f * (tier + 1)) +     //10 base, down from 20
                 lvl * (tier - 1);                   //+2 per level, down from +4
+    }
+
+    //突破防线: one shockwave around the hero that also pins whatever it hits
+    public static final float ABILITY_PARALYSIS = 5f;
+
+    @Override
+    protected void duelistAbility(Hero hero, Integer target) {
+        hero.belongings.abilityWeapon = this;
+        beforeAbilityUsed(hero, null);
+
+        int dmg = hero.damageRoll();
+
+        for (int i : PathFinder.NEIGHBOURS8) {
+            int cell = hero.pos + i;
+            if (cell < 0 || cell >= Dungeon.level.length()) continue;
+            //guard against stepping around the edge of a row
+            if (Dungeon.level.distance(hero.pos, cell) != 1) continue;
+
+            Char ch = Actor.findChar(cell);
+            if (ch == null || ch == hero || !ch.isAlive()) continue;
+            if (ch.alignment != Char.Alignment.ENEMY) continue;
+
+            ch.damage(dmg, hero);
+            if (ch.isAlive()) {
+                Buff.affect(ch, Paralysis.class, ABILITY_PARALYSIS);
+                ch.sprite.emitter().burst(Speck.factory(Speck.LIGHT), 4);
+            }
+        }
+
+        CellEmitter.get(hero.pos).burst(Speck.factory(Speck.LIGHT), 12);
+        Sample.INSTANCE.play(Assets.Sounds.BLAST);
+        Invisibility.dispel();
+
+        afterAbilityUsed(hero);
+        hero.spendAndNext(Actor.TICK);
+    }
+
+    @Override
+    public String abilityInfo() {
+        return Messages.get(this, "ability_desc", (int) ABILITY_PARALYSIS);
     }
 
     @Override
@@ -117,6 +159,18 @@ public class Gamzashield extends MeleeWeapon implements MeleeWeapon.BlockingWeap
         return null;
     }
 
+    @Override
+    public String statusBottom() {
+
+        if (!isIdentified() || cursed || Dungeon.hero == null) {
+            return null;
+        }
+        Charger charger = Dungeon.hero.buff(Charger.class);
+        if (charger == null) {
+            return null;
+        }
+        return Integer.toString(Math.min(charger.charges, charger.chargeCap()));
+    }
 
     public boolean tryToZap(Hero owner, int target) {
 
