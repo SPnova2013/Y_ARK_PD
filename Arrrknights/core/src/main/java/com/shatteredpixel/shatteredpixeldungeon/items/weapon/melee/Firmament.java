@@ -23,22 +23,37 @@ package com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.ChenCombo;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Combo;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Invisibility;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroClass;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroSubClass;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Talu_BlackSnake;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.YogDzewa;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.ScaleArmor;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.ChaliceOfBlood;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfForce;
+import com.shatteredpixel.shatteredpixeldungeon.effects.Beam;
+import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
+import com.shatteredpixel.shatteredpixeldungeon.effects.particles.PurpleParticle;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.chimera.Shadow;
+import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
+import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
+import com.shatteredpixel.shatteredpixeldungeon.tiles.DungeonTilemap;
+import com.shatteredpixel.shatteredpixeldungeon.ui.AttackIndicator;
+import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
+import com.watabou.noosa.audio.Sample;
+import com.watabou.utils.Callback;
 import com.watabou.utils.Random;
+
+import java.util.ArrayList;
 
 public class Firmament extends MeleeWeapon {
 
@@ -61,6 +76,139 @@ public class Firmament extends MeleeWeapon {
     }
     public void setCurrentComboCount(int value) {
         currentComboCount = value;
+    }
+
+    //拔刀: leap in front of the target, cut it once, then let the slash run down the line.
+    //exactly Chen's second combo move.
+    public static final int ABILITY_RANGE = 3;
+    public static final float ABILITY_DAMAGE_MULT = 1.5f;
+
+    @Override
+    public String targetingPrompt() {
+        return Messages.get(this, "prompt");
+    }
+
+    @Override
+    protected void duelistAbility(Hero hero, Integer target) {
+        if (target == null) {
+            return;
+        }
+
+        final Char enemy = Actor.findChar(target);
+        if (enemy == null || enemy == hero || !Dungeon.level.heroFOV[target] || hero.isCharmedBy(enemy)) {
+            GLog.w(Messages.get(this, "ability_no_target"));
+            return;
+        }
+
+        //work out the landing spot first, so a bad target costs nothing
+        final int leapPos;
+        if (hero.canAttack(enemy)) {
+            leapPos = -1;
+        } else {
+            Ballistica path = new Ballistica(hero.pos, enemy.pos, Ballistica.PROJECTILE);
+            if (path.collisionPos != enemy.pos) {
+                GLog.w(Messages.get(this, "ability_no_target"));
+                return;
+            }
+            leapPos = path.path.get(path.dist - 1);
+            if (!Dungeon.level.passable[leapPos]) {
+                GLog.w(Messages.get(this, "ability_no_target"));
+                return;
+            }
+        }
+
+        hero.belongings.abilityWeapon = this;
+        beforeAbilityUsed(hero, null);
+        hero.busy();
+
+        if (leapPos >= 0) {
+            hero.sprite.jump(hero.pos, leapPos, new Callback() {
+                @Override
+                public void call() {
+                    hero.move(leapPos);
+                    Dungeon.level.occupyCell(hero);
+                    Dungeon.observe();
+                    GameScene.updateFog();
+                    drawAndSlash(hero, enemy);
+                }
+            });
+        } else {
+            drawAndSlash(hero, enemy);
+        }
+    }
+
+    //the draw itself, then the ray
+    private void drawAndSlash(final Hero hero, final Char enemy) {
+        hero.sprite.attack(enemy.pos, new Callback() {
+            @Override
+            public void call() {
+                AttackIndicator.target(enemy);
+
+                //one full hit
+                if (hero.attack(enemy, 1f, 0f, Char.INFINITE_ACCURACY)) {
+                    Sample.INSTANCE.play(Assets.Sounds.HIT_SLASH);
+                }
+                Invisibility.dispel();
+
+                //then the slash carries on past it
+                slashLine(hero, enemy.pos);
+
+                hero.spendAndNext(hero.attackDelay());
+                afterAbilityUsed(hero);
+            }
+        });
+    }
+
+    //the death ray, from the hero through the target and a little further
+    private void slashLine(Hero hero, int target) {
+        int dist = ABILITY_RANGE;
+        if (hero.hasTalent(Talent.UP_EX2)) dist += hero.pointsInTalent(Talent.UP_EX2);
+
+        Ballistica beam = new Ballistica(hero.pos, target, Ballistica.WONT_STOP);
+        int maxDistance = Math.min(dist, beam.dist);
+        int cell = beam.path.get(Math.min(beam.dist, maxDistance));
+        hero.sprite.parent.add(new Beam.DeathRay(hero.sprite.center(), DungeonTilemap.raisedTileCenterToWorld(cell)));
+
+        boolean terrainAffected = false;
+        ArrayList<Char> chars = new ArrayList<>();
+
+        for (int c : beam.subPath(1, maxDistance)) {
+            Char ch = Actor.findChar(c);
+            if (ch != null && ch != hero && ch.isAlive()) {
+                chars.add(ch);
+            }
+
+            if (Dungeon.level.flamable[c]) {
+                Dungeon.level.destroy(c);
+                GameScene.updateMap(c);
+                terrainAffected = true;
+            }
+
+            CellEmitter.center(c).burst(PurpleParticle.BURST, Random.IntRange(1, 2));
+        }
+
+        if (terrainAffected) {
+            Dungeon.observe();
+        }
+
+        float mult = ABILITY_DAMAGE_MULT;
+        if (hero.hasTalent(Talent.UP_SP2)) {
+            mult += hero.pointsInTalent(Talent.UP_SP2) * 0.2f;
+        }
+        int dmg = Math.round(hero.damageRoll() * mult);
+
+        for (Char ch : chars) {
+            ch.damage(dmg, hero);
+            ch.sprite.centerEmitter().burst(PurpleParticle.BURST, Random.IntRange(1, 2));
+            ch.sprite.flash();
+        }
+
+        Sample.INSTANCE.play(Assets.Sounds.HIT_SLASH);
+    }
+
+    @Override
+    public String abilityInfo() {
+        return Messages.get(this, "ability_desc", ABILITY_RANGE, (int) (ABILITY_DAMAGE_MULT * 100));
     }
 
     @Override
