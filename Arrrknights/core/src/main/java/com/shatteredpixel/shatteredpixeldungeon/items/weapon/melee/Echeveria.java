@@ -11,6 +11,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.MagicImmune;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Paralysis;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Silence;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroClass;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.effects.MagicMissile;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Pushing;
@@ -58,6 +59,70 @@ public class Echeveria extends MeleeWeapon{
 
     protected int collisionProperties = Ballistica.STOP_TARGET;
 
+    //澄净闪耀: two drones that pick their own prey
+    public static final int ABILITY_SUMMONS = 2;
+
+    @Override
+    protected void duelistAbility(Hero hero, Integer target) {
+        //nothing to point at means nothing to call out
+        if (!enemyInSight()) {
+            GLog.w(Messages.get(this, "ability_no_target"));
+            return;
+        }
+
+        //find the room first, so a crowded corner costs nothing
+        ArrayList<Integer> points = new ArrayList<>();
+        for (int i : PathFinder.NEIGHBOURS8) {
+            int cell = hero.pos + i;
+            if (cell < 0 || cell >= Dungeon.level.length()) continue;
+            if (Dungeon.level.distance(hero.pos, cell) != 1) continue;
+            if (Actor.findChar(cell) != null || !Dungeon.level.passable[cell]) continue;
+            points.add(cell);
+        }
+        if (points.isEmpty()) {
+            GLog.w(Messages.get(this, "ability_no_space"));
+            return;
+        }
+
+        hero.belongings.abilityWeapon = this;
+        beforeAbilityUsed(hero, null);
+
+        for (int k = 0; k < ABILITY_SUMMONS && !points.isEmpty(); k++) {
+            int index = Random.index(points);
+
+            PinkdogDrone drone = new PinkdogDrone();
+            drone.setting(buffedLvl(), null);
+            drone.setAutoTarget(true);
+            GameScene.add(drone);
+            ScrollOfTeleportation.appear(drone, points.get(index));
+
+            points.remove(index);
+        }
+
+        hero.sprite.operate(hero.pos);
+        Sample.INSTANCE.play(Assets.Sounds.ZAP);
+        Invisibility.dispel();
+
+        afterAbilityUsed(hero);
+        hero.spendAndNext(Actor.TICK);
+    }
+
+    @Override
+    public String abilityInfo() {
+        return Messages.get(this, "ability_desc", ABILITY_SUMMONS);
+    }
+
+    //any living, visible enemy at all
+    private boolean enemyInSight() {
+        for (Mob mob : Dungeon.level.mobs.toArray(new Mob[0])) {
+            if (mob.isAlive() && mob.alignment == Char.Alignment.ENEMY
+                    && mob.invisible <= 0 && Dungeon.level.heroFOV[mob.pos]) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
     public int max(int lvl) {
         return  3*(tier-1) +            	//12 + 3
@@ -67,7 +132,10 @@ public class Echeveria extends MeleeWeapon{
     @Override
     public ArrayList<String> actions(Hero hero) {
         ArrayList<String> actions = super.actions(hero);
-        actions.add(AC_SUMON);
+        //for Irene the ability takes the place of the summoning button
+        if (hero.heroClass != HeroClass.IRENE) {
+            actions.add(AC_SUMON);
+        }
         return actions;
     }
 
@@ -192,6 +260,10 @@ public class Echeveria extends MeleeWeapon{
 
     @Override
     public String status() {
+        //Irene runs the ability, so show its charge rather than the old skill's
+        if (Dungeon.hero != null && Dungeon.hero.heroClass == HeroClass.IRENE) {
+            return super.status();
+        }
         if (chargeCap == 100)
             return Messages.format("%d%%", charge);
         return null;
@@ -232,6 +304,12 @@ public class Echeveria extends MeleeWeapon{
         Mob LockTarget;
         int targetId = -1;
         int AttackCount = 1;
+        //true for drones summoned by the ability: they pick their own prey
+        boolean autoTarget = false;
+
+        public void setAutoTarget(boolean value) {
+            autoTarget = value;
+        }
 
         @Override
         public int damageRoll() {
@@ -266,12 +344,83 @@ public class Echeveria extends MeleeWeapon{
                     LockTarget = (Mob) ch;
                 }}
 
+            if (autoTarget) {
+                //keep the current prey only while the hero can still see it
+                if (LockTarget == null || !LockTarget.isAlive()
+                        || LockTarget.alignment != Alignment.ENEMY
+                        || LockTarget.invisible > 0
+                        || !Dungeon.level.heroFOV[LockTarget.pos]) {
+                    LockTarget = seekTarget();
+                }
+                if (LockTarget == null) {
+                    die(this);
+                    return true;
+                }
+
+                //fly straight to the prey instead of walking, distance is no object
+                if (!Dungeon.level.adjacent(pos, LockTarget.pos)) {
+                    appearNextTo(LockTarget);
+                }
+
+                enemy = LockTarget;
+                return super.act();
+            }
+
             if (LockTarget != null && LockTarget.isAlive()) enemy = LockTarget;
             else {
                 die(this);
                 return true;
             }
             return super.act();
+        }
+
+        //nearest enemy the hero can see. distance is ignored on purpose:
+        //the drone flies to its prey instead of walking there
+        private Mob seekTarget() {
+            if (fieldOfView == null || fieldOfView.length != Dungeon.level.length()) {
+                fieldOfView = new boolean[Dungeon.level.length()];
+            }
+            Dungeon.level.updateFieldOfView(this, fieldOfView);
+
+            Mob best = null;
+            int bestDist = Integer.MAX_VALUE;
+
+            for (Mob mob : Dungeon.level.mobs.toArray(new Mob[0])) {
+                if (mob == this || !mob.isAlive()) continue;
+                if (mob.alignment != Alignment.ENEMY) continue;
+                if (!Dungeon.hero.fieldOfView[mob.pos]) continue;
+
+                int d = Dungeon.level.distance(pos, mob.pos);
+                if (d < bestDist) {
+                    bestDist = d;
+                    best = mob;
+                }
+            }
+
+            return best;
+        }
+
+        //appear on a free tile right beside the prey, then refresh our own sight
+        private boolean appearNextTo(Char target) {
+            if (target == null || target.pos < 0) return false;
+
+            ArrayList<Integer> points = new ArrayList<>();
+            for (int i : PathFinder.NEIGHBOURS8) {
+                int cell = target.pos + i;
+                if (cell < 0 || cell >= Dungeon.level.length()) continue;
+                if (Dungeon.level.distance(target.pos, cell) != 1) continue;
+                if (Actor.findChar(cell) != null || !Dungeon.level.passable[cell]) continue;
+                points.add(cell);
+            }
+            if (points.isEmpty()) return false;
+
+            ScrollOfTeleportation.appear(this, Random.element(points));
+
+            if (fieldOfView == null || fieldOfView.length != Dungeon.level.length()) {
+                fieldOfView = new boolean[Dungeon.level.length()];
+            }
+            Dungeon.level.updateFieldOfView(this, fieldOfView);
+            return true;
         }
 
         @Override
@@ -329,11 +478,13 @@ public class Echeveria extends MeleeWeapon{
 
         public static final String TARGET = "targetId";
         public static final String ATTACK = "AttackCount";
+        public static final String AUTO = "autoTarget";
 
         @Override
         public void storeInBundle(Bundle bundle) {
             super.storeInBundle(bundle);
             bundle.put(ATTACK, AttackCount);
+            bundle.put(AUTO, autoTarget);
             if (LockTarget != null) bundle.put(TARGET, LockTarget.id());
         }
 
@@ -343,6 +494,7 @@ public class Echeveria extends MeleeWeapon{
             if (bundle.contains( TARGET )){
             targetId = bundle.getInt(TARGET);}
             AttackCount = bundle.getInt(ATTACK);
+            autoTarget = bundle.getBoolean(AUTO);
             enemySeen = true;
         }
     }

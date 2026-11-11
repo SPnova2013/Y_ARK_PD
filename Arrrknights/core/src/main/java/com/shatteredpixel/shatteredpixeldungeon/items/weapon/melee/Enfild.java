@@ -27,6 +27,10 @@ import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.FlavourBuff;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Invisibility;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Roots;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfFuror;
@@ -34,6 +38,8 @@ import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfTeleportat
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
+import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
+import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.PathFinder;
 import com.watabou.utils.Random;
@@ -76,6 +82,50 @@ public class Enfild extends MeleeWeapon {
         return delay;
     }
 
+    //阻挡弹: every hit pins whatever it touches in place
+    public static final int ABILITY_DURATION = 10;
+    public static final float ABILITY_ROOTS = 1f;
+
+    //a free action: the round is simply loaded
+    @Override
+    protected void duelistAbility(Hero hero, Integer target) {
+        hero.belongings.abilityWeapon = this;
+        beforeAbilityUsed(hero, null);
+
+        Buff.prolong(hero, BlockingRound.class, ABILITY_DURATION);
+
+        hero.sprite.operate(hero.pos);
+        Sample.INSTANCE.play(Assets.Sounds.CHARGEUP);
+        Invisibility.dispel();
+
+        afterAbilityUsed(hero);
+        //no spendAndNext here on purpose, loading a round costs no turn
+    }
+
+    @Override
+    public String abilityInfo() {
+        return Messages.get(this, "ability_desc", ABILITY_DURATION, (int) ABILITY_ROOTS);
+    }
+
+    //阻挡弹: the loaded round itself
+    public static class BlockingRound extends FlavourBuff {
+
+        {
+            type = buffType.POSITIVE;
+            announced = true;
+        }
+
+        @Override
+        public int icon() {
+            return BuffIndicator.WEAPON;
+        }
+
+        @Override
+        public float iconFadePercent() {
+            return Math.max(0, (ABILITY_DURATION - visualcooldown()) / (float) ABILITY_DURATION);
+        }
+    }
+
     @Override
     public int value() { return super.value() + 60; }
 
@@ -89,6 +139,12 @@ public class Enfild extends MeleeWeapon {
             charge = 0;
         }
         else SPCharge(20);
+
+        //a blocking round roots whatever it hits
+        if (attacker.buff(BlockingRound.class) != null && defender.isAlive()) {
+            Buff.affect(defender, Roots.class, ABILITY_ROOTS);
+        }
+
         return super.proc(attacker, defender, damage);
     }
 
@@ -106,5 +162,17 @@ public class Enfild extends MeleeWeapon {
 
         //otherwise, if there's no charge, return null.
         return null;
+    }
+    @Override
+    public String statusBottom() {
+
+        if (!isIdentified() || cursed || Dungeon.hero == null) {
+            return null;
+        }
+        Charger charger = Dungeon.hero.buff(Charger.class);
+        if (charger == null) {
+            return null;
+        }
+        return Integer.toString(Math.min(charger.charges, charger.chargeCap()));
     }
 }
