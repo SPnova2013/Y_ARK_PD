@@ -509,6 +509,7 @@ public class Assets {
 		public static final String NPC_PILOT	= "sprites/pilot.png";
 		public static final String NPC_PHANTOM	= "sprites/phantom.png";
 		public static final String NIGHT_SHADE	= "sprites/phantom-Sheet.png";
+		public static final String WOLVES_COVER	= "sprites/Wolves.png";
 		public static final String NPC_ASTESIA	= "sprites/astesia_npc.png";
 		public static final String NPC_GAVIAL	= "sprites/gavial.png";
 		public static final String NPC_PINK	= "sprites/pink_doggi.png";

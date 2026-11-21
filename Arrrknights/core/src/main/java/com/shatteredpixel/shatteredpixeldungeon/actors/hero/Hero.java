@@ -840,6 +840,11 @@ public class Hero extends Char {
             evasion *= 1f + FlametailSword.ABILITY_EVASION_BONUS;
         }
 
+        //弦月: the arc turns the body aside as well
+        if (buff(Decapitator.CrescentMoon.class) != null) {
+            evasion *= 1f + Decapitator.ABILITY_EVASION_BONUS;
+        }
+
         return Math.round(evasion);
     }
 

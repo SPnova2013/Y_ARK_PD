@@ -26,6 +26,7 @@ import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Barkskin;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Cripple;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.MagicImmune;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Roots;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
@@ -125,6 +126,12 @@ public class Dart extends MissileWeapon {
 	public int proc(Char attacker, Char defender, int damage) {
 		if (bow != null){
 			damage = bow.proc(attacker, defender, damage);
+
+			//a bolt the crossbow speeds up can also be a broken leg arrow
+			if (attacker != null && attacker.buff(Crossbow.BrokenLegArrow.class) != null) {
+				Buff.detach(attacker, Crossbow.BrokenLegArrow.class);
+				Buff.prolong(defender, Cripple.class, Crossbow.ABILITY_CRIPPLE);
+			}
 		}
 
 		return super.proc(attacker, defender, damage);
