@@ -160,6 +160,8 @@ public class MeleeWeapon extends Weapon {
 
 		if (action.equals(AC_ABILITY)){
 			usesTargeting = false;
+			//a weapon swap can land between two charge ticks, so square the pool up first
+			Buff.affect(hero, Charger.class).rescaleOnSwap();
 			if (!isEquipped(hero)) {
 				/*if (hero.hasTalent(Talent.SWIFT_EQUIP)){
 					if (hero.buff(Talent.SwiftEquipCooldown.class) == null
@@ -439,8 +441,16 @@ public class MeleeWeapon extends Weapon {
 		public int charges = 2;
 		public float partialCharge;
 
+		//what kind of pool the charges in hand belong to
+		private boolean lastFixed = false;
+		private int lastCap = 0;
+		private boolean capKnown = false;
+
 		@Override
 		public boolean act() {
+			//a swap between the two charge models converts the pool first
+			rescaleOnSwap();
+
 			//a still running ability holds its own charge back
 			MeleeWeapon holding = fixedChargeWeapon();
 			boolean held = holding != null && target != null && holding.abilityEffectActive(target);
@@ -531,6 +541,85 @@ public class MeleeWeapon extends Weapon {
 			return null;
 		}
 
+		//turns needed to fill the slot at this fill level, matching the gain in act()
+		private float slotCost(int filled, int cap) {
+			return 60f - 1.5f * (cap - filled);
+		}
+
+		//how many turns of charging are banked in a pool of this shape right now
+		private float bankedTurns(boolean fixed, int cap) {
+			if (cap <= 0) {
+				return 0f;
+			}
+			if (fixed) {
+				//one long charge is exactly one turn
+				return Math.min(cap, charges + partialCharge);
+			}
+
+			float turns = 0f;
+			int filled = Math.min(charges, cap);
+			for (int i = 0; i < filled; i++) {
+				turns += slotCost(i, cap);
+			}
+			if (filled < cap) {
+				turns += partialCharge * slotCost(filled, cap);
+			}
+			return turns;
+		}
+
+		//spend a budget of turns on the pool that is equipped now
+		private void fillFromTurns(float turns) {
+			int cap = chargeCap();
+
+			if (fixedChargeWeapon() != null) {
+				float value = Math.max(0f, Math.min(turns, cap));
+				charges = (int) Math.floor(value);
+				partialCharge = Math.max(0f, Math.min(value - charges, 0.999f));
+				return;
+			}
+
+			int filled = 0;
+			float partial = 0f;
+			float left = Math.max(0f, turns);
+
+			while (filled < cap) {
+				float cost = slotCost(filled, cap);
+				if (left >= cost) {
+					left -= cost;
+					filled++;
+				} else {
+					partial = left / cost;
+					break;
+				}
+			}
+
+			charges = filled;
+			partialCharge = Math.max(0f, Math.min(partial, 0.999f));
+		}
+
+		//one long charge and a pool of short ones hold different amounts of time per point.
+		//on a swap the banked turns are simply carried over, so whichever pool cannot hold
+		//all of them loses the excess (a full long charge rarely fills a whole pool).
+		public void rescaleOnSwap() {
+			boolean nowFixed = fixedChargeWeapon() != null;
+			int cap = chargeCap();
+
+			if (capKnown && lastCap > 0) {
+				boolean modelChanged = nowFixed != lastFixed;
+				//two long charge weapons can hold different pools as well
+				boolean otherLongCharge = nowFixed && lastFixed && cap != lastCap;
+
+				if (modelChanged || otherLongCharge) {
+					fillFromTurns(bankedTurns(lastFixed, lastCap));
+					updateQuickslot();
+				}
+			}
+
+			lastFixed = nowFixed;
+			lastCap = cap;
+			capKnown = true;
+		}
+
 		public void gainCharge( float charge ){
 			if (charges < chargeCap()) {
 				partialCharge += charge;
@@ -548,12 +637,16 @@ public class MeleeWeapon extends Weapon {
 
 		public static final String CHARGES          = "charges";
 		private static final String PARTIALCHARGE   = "partialCharge";
+		private static final String LAST_FIXED      = "lastFixed";
+		private static final String LAST_CAP        = "lastCap";
 
 		@Override
 		public void storeInBundle(Bundle bundle) {
 			super.storeInBundle(bundle);
 			bundle.put(CHARGES, charges);
 			bundle.put(PARTIALCHARGE, partialCharge);
+			bundle.put(LAST_FIXED, lastFixed);
+			bundle.put(LAST_CAP, lastCap);
 		}
 
 		@Override
@@ -561,6 +654,9 @@ public class MeleeWeapon extends Weapon {
 			super.restoreFromBundle(bundle);
 			charges = bundle.getInt(CHARGES);
 			partialCharge = bundle.getFloat(PARTIALCHARGE);
+			lastFixed = bundle.getBoolean(LAST_FIXED);
+			lastCap = bundle.getInt(LAST_CAP);
+			capKnown = lastCap > 0;
 		}
 
 		@Override

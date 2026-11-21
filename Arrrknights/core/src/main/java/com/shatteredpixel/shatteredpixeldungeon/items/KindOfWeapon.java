@@ -50,10 +50,14 @@ abstract public class KindOfWeapon extends EquipableItem {
 	public boolean doEquip( Hero hero ) {
 
 		detachAll( hero.belongings.backpack );
+
+		//remember what is being taken off before the unequip clears it
+		KindOfWeapon previous = hero.belongings.weapon;
 		
 		if (hero.belongings.weapon == null || hero.belongings.weapon.doUnequip( hero, true )) {
 			
 			hero.belongings.weapon = this;
+			Dungeon.quickslot.followWeapon( previous, this );
 			activate( hero );
 			Talent.onItemEquipped(hero, this);
 			updateQuickslot();

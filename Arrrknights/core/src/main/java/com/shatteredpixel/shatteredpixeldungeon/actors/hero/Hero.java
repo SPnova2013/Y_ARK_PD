@@ -237,6 +237,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Echeveria;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Enfild2;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Gluttony;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.KRISSVector;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.DeepAbyss;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.FlametailSword;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.FolkSong;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Greatshield;
@@ -437,6 +438,10 @@ public class Hero extends Char {
             if(buff(ChampionHero.R2Overloading.class) != null) R2ShieldToBe += HT/2;
             if(buff(ChampionHero.R2Perfected.class) != null) R2ShieldToBe += HT;
             Buff.affect(Dungeon.hero, ROR2Shield.class).setMaxShield(R2ShieldToBe, false);
+        }
+        //the tide keeps the body swollen even when the rest of the maths runs again
+        if (buff(DeepAbyss.TidalSong.class) != null) {
+            HT = Math.round(HT * (1f + DeepAbyss.ABILITY_BONUS));
         }
         HP = Math.min(HP, HT);
     }
@@ -945,6 +950,11 @@ public class Hero extends Char {
             dr = Math.round(dr * (1f + Greatsword.ABILITY_STAT_BONUS));
         }
 
+        //the tide swells the whole guard as well
+        if (buff(DeepAbyss.TidalSong.class) != null) {
+            dr = Math.round(dr * (1f + DeepAbyss.ABILITY_BONUS));
+        }
+
         return dr;
     }
 
@@ -1000,6 +1010,11 @@ public class Hero extends Char {
             for(Weapon.Chimera chis : ((Weapon) wep).chimeras){
                 dmg *= chis.dmgFactor();
             }
+        }
+
+        //the tide swells every blow
+        if (buff(DeepAbyss.TidalSong.class) != null) {
+            dmg = Math.round(dmg * (1f + DeepAbyss.ABILITY_BONUS));
         }
 
         return buff(Fury.class) != null ? (int) (dmg * 1.5f) : dmg;

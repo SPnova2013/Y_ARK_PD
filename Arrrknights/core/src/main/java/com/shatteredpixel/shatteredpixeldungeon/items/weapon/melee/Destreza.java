@@ -23,13 +23,18 @@ package com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Invisibility;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Poison;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.SpikesBuff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
+import com.shatteredpixel.shatteredpixeldungeon.effects.particles.ElmoParticle;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.AlchemyKit;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
+import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Random;
 
 public class Destreza extends MeleeWeapon {
@@ -41,6 +46,26 @@ public class Destreza extends MeleeWeapon {
 
 		tier = 3;
 		RCH = 4;    //lots of extra reach
+	}
+
+	//护身尖刺: the same guard of spikes the skill grants
+	@Override
+	protected void duelistAbility(Hero hero, Integer target) {
+		hero.belongings.abilityWeapon = this;
+		beforeAbilityUsed(hero, null);
+
+		hero.sprite.emitter().burst(ElmoParticle.FACTORY, 5);
+		Sample.INSTANCE.play(Assets.Sounds.SKILL_BASIC);
+		Buff.affect(hero, SpikesBuff.class, SpikesBuff.DURATION);
+		Invisibility.dispel();
+
+		afterAbilityUsed(hero);
+		hero.spendAndNext(Actor.TICK);
+	}
+
+	@Override
+	public String abilityInfo() {
+		return Messages.get(this, "ability_desc", (int) SpikesBuff.DURATION);
 	}
 
 	@Override

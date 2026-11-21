@@ -101,6 +101,18 @@ public class QuickSlot {
 		return getSlot(item) != -1;
 	}
 
+	//a quickslot that pointed at the weapon just taken off follows the new one
+	public void followWeapon(Item previous, Item current){
+		if (previous == null || current == null || previous == current){
+			return;
+		}
+		for (int i = 0; i < SIZE; i++){
+			if (getItem(i) == previous){
+				setSlot(i, current);
+			}
+		}
+	}
+
 	public void replacePlaceholder(Item item){
 		for (int i = 0; i < SIZE; i++)
 			if (isPlaceholder(i) && item.isSimilar(getItem(i)))

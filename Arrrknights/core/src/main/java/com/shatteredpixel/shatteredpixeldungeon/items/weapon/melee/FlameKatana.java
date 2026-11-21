@@ -8,6 +8,8 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Invisibility;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
+import com.shatteredpixel.shatteredpixeldungeon.items.Item;
+import com.shatteredpixel.shatteredpixeldungeon.items.KindOfWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
@@ -99,9 +101,12 @@ public class FlameKatana extends MeleeWeapon {
             n.chimeras = chimeras;
             n.level(lvl);
 
+            KindOfWeapon previous = Dungeon.hero.belongings.weapon;
             Dungeon.hero.belongings.weapon = n;
+            Dungeon.quickslot.followWeapon( previous, n );
 
             Dungeon.hero.sprite.emitter().burst(Speck.factory(Speck.RED_LIGHT),12);
+            Item.updateQuickslot();
         }
     }
 
