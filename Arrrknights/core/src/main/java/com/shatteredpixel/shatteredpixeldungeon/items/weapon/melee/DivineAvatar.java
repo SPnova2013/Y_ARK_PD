@@ -6,7 +6,10 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Bless;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Blindness;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Invisibility;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.MagicalSleep;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroClass;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
 import com.shatteredpixel.shatteredpixeldungeon.items.Skill.SkillBook;
@@ -40,10 +43,53 @@ public class DivineAvatar extends MeleeWeapon {
         return  5*(tier) +   //25 + 5
                 lvl*(tier); }
 
+    //the ability runs on the normal duelist charge, the same light the old button shines
+    @Override
+    public String abilityInfo() {
+        return Messages.get(this, "ability_desc", 20);
+    }
+
+    @Override
+    protected void duelistAbility(Hero hero, Integer target) {
+        hero.belongings.abilityWeapon = this;
+        beforeAbilityUsed(hero, null);
+
+        shine(hero);
+
+        updateQuickslot();
+        afterAbilityUsed(hero);
+        //no spendAndNext here on purpose, the light costs no turn
+    }
+
+    //光!: the light itself, shared by the old button and the ability
+    private void shine(Hero hero) {
+        for (Mob mob : Dungeon.level.mobs.toArray(new Mob[0])) {
+            if (mob.alignment != Char.Alignment.ALLY && Dungeon.level.heroFOV[mob.pos]
+                    && !mob.properties().contains(Char.Property.BOSS)
+                    && !mob.properties().contains(Char.Property.MINIBOSS)
+                    && mob.state != mob.PASSIVE) {
+                Buff.affect(mob, MagicalSleep.class);
+            }
+        }
+
+        int heal = hero.HT / 5;
+        if (hero.buff(Aegis.AegisBuff.class) != null) {
+            Aegis.addShield(heal);
+        }
+        hero.HP = Math.min(hero.HP + heal, hero.HT);
+        hero.sprite.showStatus(CharSprite.POSITIVE, "+%dHP", heal);
+
+        GameScene.flash(0x80FFFFFF);
+        Sample.INSTANCE.play(Assets.Sounds.SKILL_BABYNIGHT);
+    }
+
     @Override
     public ArrayList<String> actions(Hero hero) {
         ArrayList<String> actions = super.actions(hero);
-        actions.add(AC_ZAP);
+        //for Irene the ability takes the place of the old button
+        if (hero.heroClass != HeroClass.IRENE) {
+            actions.add(AC_ZAP);
+        }
         return actions;
     }
 
@@ -54,23 +100,7 @@ public class DivineAvatar extends MeleeWeapon {
 
         if (action.equals(AC_ZAP)) {
             if (charge >= chargeCap && Dungeon.hero.belongings.weapon == this) {
-                for (Mob mob : Dungeon.level.mobs.toArray( new Mob[0] )) {
-                    if (mob.alignment != Char.Alignment.ALLY && Dungeon.level.heroFOV[mob.pos]
-                    && !mob.properties().contains(Char.Property.BOSS) && !mob.properties().contains(Char.Property.MINIBOSS)
-                    && mob.state != mob.PASSIVE) {
-                       mob.state = mob.SLEEPING;
-                    }
-                }
-
-                int heal = Dungeon.hero.HT / 5;
-                if (Dungeon.hero.buff( Aegis.AegisBuff.class) != null){
-                    Aegis.addShield(heal);
-                }
-                Dungeon.hero.HP = Math.min(Dungeon.hero.HP + heal, Dungeon.hero.HT);
-                Dungeon.hero.sprite.showStatus(CharSprite.POSITIVE, "+%dHP", heal);
-
-                GameScene.flash( 0x80FFFFFF );
-                Sample.INSTANCE.play(Assets.Sounds.SKILL_BABYNIGHT);
+                shine(hero);
                 charge = 0;
             }
         }
@@ -102,6 +132,11 @@ public class DivineAvatar extends MeleeWeapon {
 
     @Override
     public String status() {
+
+        //Irene runs the ability, so show its charge rather than the old skill's
+        if (Dungeon.hero != null && Dungeon.hero.heroClass == HeroClass.IRENE) {
+            return super.status();
+        }
 
         //if the artifact isn't IDed, or is cursed, don't display anything
         if (!isIdentified() || cursed) {
