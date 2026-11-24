@@ -232,6 +232,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.weapon.chimera.Hyphen200;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.chimera.Surrender;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.chimera.Teller;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.enchantments.Blocking;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.CatGun;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Decapitator;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Echeveria;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Enfild2;
@@ -958,6 +959,11 @@ public class Hero extends Char {
         //the tide swells the whole guard as well
         if (buff(DeepAbyss.TidalSong.class) != null) {
             dr = Math.round(dr * (1f + DeepAbyss.ABILITY_BONUS));
+        }
+
+        //指令：结构加固 doubles the whole guard
+        if (buff(CatGun.StructuralIntegrity.class) != null) {
+            dr = Math.round(dr * 2f);
         }
 
         return dr;
@@ -2011,6 +2017,15 @@ public class Hero extends Char {
 
     @Override
     public int defenseProc(Char enemy, int damage) {
+
+        //指令：结构加固 braces the body: a flat chance to shrug a physical blow off
+        if (damage > 0 && buff(CatGun.StructuralIntegrity.class) != null
+                && Random.Float() < CatGun.BLOCK_CHANCE) {
+            sprite.showStatus(CharSprite.NEUTRAL, Messages.get(CatGun.class, "def_verb"));
+            Sample.INSTANCE.play(Assets.Sounds.HIT_PARRY, 1f, 1.2f);
+            return 0;
+        }
+
         if (RingOfDominate.Dominate_curse(this)) {
             if (Random.Int(HT) > HP * 3) {
                 Buff.affect(this, Corruption.class);
