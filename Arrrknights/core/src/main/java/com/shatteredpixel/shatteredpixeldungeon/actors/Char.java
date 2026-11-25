@@ -1081,6 +1081,7 @@ public abstract class Char extends Actor {
 		}
 		
 		Dungeon.level.occupyCell(this );
+
 	}
 	
 	public int distance( Char other ) {

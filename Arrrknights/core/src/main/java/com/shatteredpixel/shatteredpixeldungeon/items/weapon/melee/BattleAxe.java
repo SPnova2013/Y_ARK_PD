@@ -28,9 +28,8 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Camouflage;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Preparation;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Invisibility;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.ArmoredBrute;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Brute;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.MudrockZealot;
@@ -42,10 +41,11 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.YogDzewa;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.miniboss.BloodMagister;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.miniboss.Faust;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.miniboss.Mon3tr;
-import com.shatteredpixel.shatteredpixeldungeon.effects.Effects;
+import com.shatteredpixel.shatteredpixeldungeon.effects.CheckedCell;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
-import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.ChaliceOfBlood;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.TalismanOfForesight;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfMagicMapping;
+import com.shatteredpixel.shatteredpixeldungeon.mechanics.ShadowCaster;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
@@ -53,10 +53,10 @@ import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.watabou.noosa.Camera;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.Group;
-import com.watabou.noosa.Halo;
 import com.watabou.noosa.Image;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundle;
+import com.watabou.utils.Point;
 import com.watabou.utils.PointF;
 
 import java.util.ArrayList;
@@ -82,6 +82,98 @@ public class BattleAxe extends MeleeWeapon {
 
 	private int starpower = 0 ;
 	private int starpowercap = 3;
+
+	//星座守护: the stars above lay the ground bare
+	public static final int ABILITY_RANGE_BASE = 5;
+
+	public int abilityRange() {
+		return ABILITY_RANGE_BASE + buffedLvl() / 2;
+	}
+
+	@Override
+	public String abilityInfo() {
+		return Messages.get(this, "ability_desc", abilityRange());
+	}
+	@Override
+	public String statusBottom() {
+		if (!isIdentified() || cursed) return null;
+		if (isEquipped(Dungeon.hero)
+				&& Dungeon.hero.buff(Charger.class) != null) {
+			Charger buff = Dungeon.hero.buff(Charger.class);
+			return String.valueOf(buff.charges);
+		} else {
+			return super.status();
+		}
+	}
+
+	@Override
+	protected void duelistAbility(Hero hero, Integer target) {
+		hero.belongings.abilityWeapon = this;
+		beforeAbilityUsed(hero, null);
+
+		//the reveal itself, exactly like the stone of clairvoyance
+		revealAround(hero.pos, abilityRange());
+
+		//and one more point of star power
+		if (starpower < starpowercap) {
+			starpower++;
+		}
+		if (starpower > 0 && hero.buff(StarpowerBuff.class) == null) {
+			Buff.affect(hero, StarpowerBuff.class);
+		}
+		updateQuickslot();
+
+		hero.sprite.operate(hero.pos);
+		Sample.INSTANCE.play(Assets.Sounds.SKILL_BASIC);
+		Invisibility.dispel();
+
+		afterAbilityUsed(hero);
+		hero.spendAndNext(Actor.TICK);
+	}
+
+	private void revealAround(int cell, int range) {
+		int dist = Math.min(range, ShadowCaster.MAX_DISTANCE);
+
+		Point c = Dungeon.level.cellToPoint(cell);
+		int[] rounding = ShadowCaster.rounding[dist];
+
+		int left, right, curr;
+		boolean noticed = false;
+
+		for (int y = Math.max(0, c.y - dist); y <= Math.min(Dungeon.level.height() - 1, c.y + dist); y++) {
+			if (rounding[Math.abs(c.y - y)] < Math.abs(c.y - y)) {
+				left = c.x - rounding[Math.abs(c.y - y)];
+			} else {
+				left = dist;
+				while (rounding[left] < rounding[Math.abs(c.y - y)]) {
+					left--;
+				}
+				left = c.x - left;
+			}
+			right = Math.min(Dungeon.level.width() - 1, c.x + c.x - left);
+			left = Math.max(0, left);
+			for (curr = left + y * Dungeon.level.width(); curr <= right + y * Dungeon.level.width(); curr++) {
+				GameScene.effectOverFog(new CheckedCell(curr, cell));
+				Dungeon.level.mapped[curr] = true;
+
+				if (Dungeon.level.secret[curr]) {
+					Dungeon.level.discover(curr);
+					if (Dungeon.level.heroFOV[curr]) {
+						GameScene.discoverTile(curr, Dungeon.level.map[curr]);
+						ScrollOfMagicMapping.discover(curr);
+						noticed = true;
+					}
+				}
+			}
+		}
+
+		if (noticed) {
+			Sample.INSTANCE.play(Assets.Sounds.SECRET);
+		}
+
+		Sample.INSTANCE.play(Assets.Sounds.TELEPORT);
+		GameScene.updateFog();
+	}
 
 	@Override
 	public ArrayList<String> actions(Hero hero) {

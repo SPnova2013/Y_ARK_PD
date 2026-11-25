@@ -29,9 +29,9 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Invisibility;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Paralysis;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroClass;
 import com.shatteredpixel.shatteredpixeldungeon.effects.MagicMissile;
 import com.shatteredpixel.shatteredpixeldungeon.items.Bonk;
-import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.TalismanOfForesight;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.TimekeepersHourglass;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfAccuracy;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
@@ -40,10 +40,10 @@ import com.shatteredpixel.shatteredpixeldungeon.plants.Swiftthistle;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.CellSelector;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
+import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
 import com.shatteredpixel.shatteredpixeldungeon.ui.QuickSlotButton;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.noosa.audio.Sample;
-import com.watabou.utils.Bundle;
 import com.watabou.utils.Callback;
 import com.watabou.utils.Random;
 
@@ -70,8 +70,70 @@ public class Castlebreaker extends MeleeWeapon {
 				lvl*(tier+1) - 1;   //scaling unchanged
 	}
 
+	//高效冲击: the next hit lands twice, each blow at double strength
+	public static final float ABILITY_DAMAGE_MULT = 2f;
+
+	//a free action: the chamber is simply packed tighter
+	@Override
+	protected void duelistAbility(Hero hero, Integer target) {
+		hero.belongings.abilityWeapon = this;
+		beforeAbilityUsed(hero, null);
+
+		Buff.affect(hero, EfficientImpact.class);
+
+		hero.sprite.operate(hero.pos);
+		Sample.INSTANCE.play(Assets.Sounds.SKILL_BASIC);
+		Invisibility.dispel();
+
+		afterAbilityUsed(hero);
+		//no spendAndNext here on purpose, packing the charge costs no turn
+	}
+
+	@Override
+	public String abilityInfo() {
+		return Messages.get(this, "ability_desc", (int) (ABILITY_DAMAGE_MULT * 100));
+	}
+
+	//the packed charge
+	public static class EfficientImpact extends Buff {
+
+		{
+			type = buffType.POSITIVE;
+			announced = true;
+		}
+
+		@Override
+		public int icon() {
+			return BuffIndicator.WEAPON;
+		}
+
+		@Override
+		public String toString() {
+			return Messages.get(this, "name");
+		}
+
+		@Override
+		public String desc() {
+			return Messages.get(this, "desc");
+		}
+	}
+
 	@Override
 	public int proc(Char attacker, Char defender, int damage) {
+		if (attacker.buff(EfficientImpact.class) != null) {
+			Buff.detach(attacker, EfficientImpact.class);
+
+			int hit = Math.round(damage * ABILITY_DAMAGE_MULT);
+
+			//the stored charge comes around a second time
+			if (defender.isAlive()) {
+				defender.sprite.flash();
+				defender.damage(hit, attacker);
+			}
+
+			damage = hit;
+		}
+
 		if (Dungeon.hero.belongings.getItem(RingOfAccuracy.class) != null) {
 			if (Dungeon.hero.belongings.getItem(RingOfAccuracy.class).isEquipped(Dungeon.hero)) {
 				SPCharge(4);
@@ -84,7 +146,10 @@ public class Castlebreaker extends MeleeWeapon {
 	@Override
 	public ArrayList<String> actions(Hero hero) {
 		ArrayList<String> actions = super.actions(hero);
-		actions.add(AC_ZAP);
+		//for Irene the ability takes the place of the old button
+		if (hero.heroClass != HeroClass.IRENE) {
+			actions.add(AC_ZAP);
+		}
 		return actions;
 	}
 
@@ -124,6 +189,12 @@ public class Castlebreaker extends MeleeWeapon {
 
 	@Override
 	public String status() {
+
+		//Irene runs the ability, so show its charge rather than the old skill's
+		if (Dungeon.hero != null && Dungeon.hero.heroClass == HeroClass.IRENE) {
+			return super.status();
+		}
+
 		if (chargeCap == 100)
 			return Messages.format("%d%%", charge);
 
