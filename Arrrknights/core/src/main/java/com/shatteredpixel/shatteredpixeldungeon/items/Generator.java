@@ -586,7 +586,7 @@ public class Generator {
                     SakuraSword.class,
                     ApocalypseAspirant.class
             };
-            WEP_T5.probs = new float[]{4, 3, 3, 4, 4, 4, 4, 3, 3, 4, 4, 4, 3, 3, 3, 3, 3, 0, 0, 0, 0, 0, 0, 0};//59
+            WEP_T5.probs = new float[]{4, 3, 3, 4, 4, 4, 4, 3, 3, 4, 4, 4, 3, 3, 3, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0};//59
 
             //see Generator.randomArmor
             ARMOR.classes = new Class<?>[]{

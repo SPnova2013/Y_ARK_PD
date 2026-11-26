@@ -10,6 +10,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Burning;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Invisibility;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroClass;
 import com.shatteredpixel.shatteredpixeldungeon.effects.coversprite.EX42Cover;
 import com.shatteredpixel.shatteredpixeldungeon.effects.coversprite.GawainCover;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
@@ -36,11 +37,73 @@ public class Murakumo extends MeleeWeapon{
         usesTargeting = true;
         defaultAction = AC_GAWAIN;
     }
+    //高文: the leap, now as the duelist's own move
+
     @Override
     public ArrayList<String> actions(Hero hero) {
         ArrayList<String> actions = super.actions(hero);
-        actions.add(AC_GAWAIN);
+        //for Irene the ability takes the place of the old button
+        if (hero.heroClass != HeroClass.IRENE) {
+            actions.add(AC_GAWAIN);
+        }
         return actions;
+    }
+
+    @Override
+    public String targetingPrompt() {
+        return Messages.get(this, "prompt");
+    }
+
+    @Override
+    protected void duelistAbility(Hero hero, Integer target) {
+        if (target == null) {
+            return;
+        }
+        if (hero.rooted) {
+            Camera.main.shake(1, 1f);
+            GLog.w(Messages.get(this, "rooted"));
+            return;
+        }
+        if (Dungeon.level.distance(hero.pos, target) > 1) {
+            GLog.w(Messages.get(this, "cant_reach"));
+            return;
+        }
+
+        //landing on someone means leaping in place, the sweep still goes off
+        final Char enemy = Actor.findChar(target);
+        final int dest = enemy != null ? hero.pos : target;
+
+        hero.belongings.abilityWeapon = this;
+        beforeAbilityUsed(hero, null);
+        hero.busy();
+
+        hero.sprite.jump(hero.pos, dest, 0.5f, 0.3f, new Callback() {
+            @Override
+            public void call() {
+                hero.move(dest);
+                Dungeon.level.occupyCell(hero);
+                Dungeon.observe();
+                GameScene.updateFog();
+
+                int dmg = damageRoll(hero);
+                for (int i : PathFinder.NEIGHBOURS8) {
+                    Char mob = Actor.findChar(hero.pos + i);
+                    if (mob != null && mob != hero && mob.alignment != Char.Alignment.ALLY) {
+                        mob.damage(Math.max(0, dmg - mob.drRoll()), hero);
+                    }
+                }
+
+                if (hero.CharSkin == Hero.ES) {
+                    new GawainCover().centerAndPlay(dest);
+                }
+
+                Camera.main.shake(2, 0.6f);
+                Invisibility.dispel();
+
+                afterAbilityUsed(hero);
+                hero.spendAndNext(hero.attackDelay());
+            }
+        });
     }
     @Override
     public void execute(Hero hero, String action) {

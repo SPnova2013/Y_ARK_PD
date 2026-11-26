@@ -7,6 +7,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Paralysis;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroClass;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Pushing;
@@ -17,6 +18,7 @@ import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
+import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Callback;
 import com.watabou.utils.Random;
@@ -50,8 +52,42 @@ public class SakuraSword extends MeleeWeapon {
     @Override
     public ArrayList<String> actions(Hero hero) {
         ArrayList<String> actions = super.actions(hero);
-        actions.add(AC_SAKURA);
+        //for Irene the ability takes the place of the old button
+        if (hero.heroClass != HeroClass.IRENE) {
+            actions.add(AC_SAKURA);
+        }
         return actions;
+    }
+
+    //the ability runs on the normal duelist charge, the same stance the old button enters
+    @Override
+    protected void duelistAbility(Hero hero, Integer target) {
+        if (ExMode) {
+            GLog.w(Messages.get(this, "already_ex"));
+            return;
+        }
+
+        hero.belongings.abilityWeapon = this;
+        beforeAbilityUsed(hero, null);
+
+        enterExMode();
+
+        updateQuickslot();
+        afterAbilityUsed(hero);
+        //no spendAndNext here on purpose, the stance costs no turn
+    }
+
+    @Override
+    public String abilityInfo() {
+        return Messages.get(this, "ability_desc");
+    }
+
+    //绯焰地狱: the stance itself, shared by the old button and the ability
+    private void enterExMode() {
+        ExMode = true;
+        RCH = 8;
+        ACC = 3f;
+        GameScene.flash(0x80FFFFFF);
     }
 
     public boolean isExMode(){
@@ -64,10 +100,7 @@ public class SakuraSword extends MeleeWeapon {
         super.execute(hero, action);
 
         if (action.equals(AC_SAKURA) && charge >= chargeCap && isEquipped(hero) && !ExMode) {
-            ExMode = true;
-            RCH = 8;
-            ACC = 3f;
-            GameScene.flash( 0x80FFFFFF );
+            enterExMode();
         }
     }
 
@@ -121,8 +154,25 @@ public class SakuraSword extends MeleeWeapon {
         }
     }
 
+    //while the crimson hell burns, the slot shows what is left of it
+    @Override
+    public String statusBottom() {
+        if (Dungeon.hero == null || Dungeon.hero.heroClass != HeroClass.IRENE) {
+            return null;
+        }
+        if (!isIdentified() || cursed || !ExMode) {
+            return null;
+        }
+        return String.valueOf(Math.max(0, Math.ceil(charge/9f)));
+    }
+
     @Override
     public String status() {
+
+        //Irene runs the ability, so show its charge rather than the old skill's
+        if (Dungeon.hero != null && Dungeon.hero.heroClass == HeroClass.IRENE) {
+            return super.status();
+        }
 
         //if the artifact isn't IDed, or is cursed, don't display anything
         if (!isIdentified() || cursed) {

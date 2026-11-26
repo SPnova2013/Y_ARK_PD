@@ -31,6 +31,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Paralysis;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Twilight;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Vertigo;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroClass;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfBlastWave;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
@@ -82,8 +83,49 @@ public class RunicBlade extends MeleeWeapon {
 	@Override
 	public ArrayList<String> actions(Hero hero) {
 		ArrayList<String> actions = super.actions(hero);
-		actions.add(AC_ZAP);
+		//for Irene the ability takes the place of the old button
+		if (hero.heroClass != HeroClass.IRENE) {
+			actions.add(AC_ZAP);
+		}
 		return actions;
+	}
+
+	//the ability runs on the normal duelist charge, the same rain the old button calls
+	@Override
+	protected void duelistAbility(Hero hero, Integer target) {
+		hero.belongings.abilityWeapon = this;
+		beforeAbilityUsed(hero, null);
+
+		swordRain(hero);
+
+		updateQuickslot();
+		afterAbilityUsed(hero);
+		//no spendAndNext here on purpose, the rain costs no turn
+	}
+
+	@Override
+	public String abilityInfo() {
+		return Messages.get(this, "ability_desc");
+	}
+
+	//剑雨: the rain itself, shared by the old button and the ability
+	private void swordRain(Hero hero) {
+		hero.sprite.zap(0);
+
+		PathFinder.buildDistanceMap(hero.pos, BArray.not(Dungeon.level.solid, null), 2);
+		for (int cell = 0; cell < PathFinder.distance.length; cell++) {
+			if (PathFinder.distance[cell] < Integer.MAX_VALUE) {
+				Char ch = Actor.findChar(cell);
+				if (ch != null && !(ch instanceof Hero)) {
+					ch.damage(hero.damageRoll() / 2, hero);
+					ch.sprite.burst(CharSprite.NEGATIVE, 10);
+					if (ch.isAlive()) Buff.prolong(ch, Paralysis.class, 2);
+				}
+			}
+		}
+
+		Buff.affect(hero, ArtifactRecharge.class).set(6).ignoreHornOfPlenty = false;
+		Sample.INSTANCE.play(Assets.Sounds.SKILL_TEXAS);
 	}
 
 	@Override
@@ -94,20 +136,7 @@ public class RunicBlade extends MeleeWeapon {
 		if (action.equals(AC_ZAP)) {
 			if (Dungeon.hero.belongings.weapon == this) {
 				if (charge >= chargeCap) {
-					curUser.sprite.zap(0);
-					PathFinder.buildDistanceMap(curUser.pos, BArray.not(Dungeon.level.solid, null), 2);
-					for (int cell = 0; cell < PathFinder.distance.length; cell++) {
-						if (PathFinder.distance[cell] < Integer.MAX_VALUE) {
-							Char ch = Actor.findChar(cell);
-							if (ch != null&& !(ch instanceof Hero)) {
-								ch.damage(Dungeon.hero.damageRoll() / 2, Dungeon.hero);
-								ch.sprite.burst(CharSprite.NEGATIVE, 10);
-								if (ch.isAlive()) Buff.prolong(ch, Paralysis.class, 2);
-								 }}}
-
-
-					Buff.affect(Dungeon.hero, ArtifactRecharge.class).set(6).ignoreHornOfPlenty=false;
-					Sample.INSTANCE.play(Assets.Sounds.SKILL_TEXAS);
+					swordRain(hero);
 					charge = 0;
 				}
 			}
@@ -117,6 +146,11 @@ public class RunicBlade extends MeleeWeapon {
 
 	@Override
 	public String status() {
+
+		//Irene runs the ability, so show its charge rather than the old skill's
+		if (Dungeon.hero != null && Dungeon.hero.heroClass == HeroClass.IRENE) {
+			return super.status();
+		}
 
 		//if the artifact isn't IDed, or is cursed, don't display anything
 		if (!isIdentified() || cursed) {
