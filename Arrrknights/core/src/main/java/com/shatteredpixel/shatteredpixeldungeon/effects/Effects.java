@@ -35,6 +35,7 @@ public class Effects {
 		DEATH_RAY,
 		LIGHT_RAY,
 		HEALTH_RAY,
+		JUDGEMENT_CUT,
 		RIPPLE_ORIGIN
 	}
 	
@@ -64,6 +65,9 @@ public class Effects {
 				break;
 			case HEALTH_RAY:
 				icon.frame(icon.texture.uvRect(16, 31, 32, 37));
+				break;
+			case JUDGEMENT_CUT:
+				icon.frame(icon.texture.uvRect(16, 38, 32, 44));
 				break;
 			case RIPPLE_ORIGIN:
 				icon.frame(icon.texture.uvRect(16, 48, 32, 64));
